@@ -39,12 +39,10 @@ async function handleLogin(req, res) {
   try {
     const { username, password } = JSON.parse(body || '{}');
     
-    // Get login page
     const loginPage = await makeRequest('/Account/Login');
     const token = loginPage.body.match(/__RequestVerificationToken[^>]*value="([^"]+)"/)?.[1] || '';
     const cookies1 = (loginPage.headers['set-cookie'] || []).map(c => c.split(';')[0]);
     
-    // Login
     const fd = new URLSearchParams();
     fd.append('Input.UserName', username);
     fd.append('Input.Password', password);
@@ -71,29 +69,24 @@ async function handleLogin(req, res) {
     const cookieStr = [...cookies1, ...cookies2].join('; ');
     const apiHeaders = { 'Cookie': cookieStr, 'Accept': 'application/json' };
     
-    // Fetch biography
     const bioRes = await makeRequest('/Biography/GetBasicBiographySummary', { headers: apiHeaders });
     const rawBio = JSON.parse(bioRes.body).data?.[0] || {};
     
-    // Fetch curriculum
     const currRes = await makeRequest('/RegistrationSummary/GetCurriculumInfo', { headers: apiHeaders });
     const rawCurr = JSON.parse(currRes.body).data?.[0] || {};
     
-    // Fetch student
     let rawStudent = {};
     if (rawCurr.CurriculumTblCode) {
       const stuRes = await makeRequest(`/RegistrationSummary/GetStudentBasicInfo?curriculumCode=${rawCurr.CurriculumTblCode}`, { headers: apiHeaders });
       rawStudent = JSON.parse(stuRes.body).data?.[0] || {};
     }
     
-    // Fetch registrations
     let rawRegs = [];
     if (rawStudent.StudentCurriculumTblCode) {
       const regRes = await makeRequest(`/RegistrationSummary/GetStudentRegistration?studentCurriculumCode=${rawStudent.StudentCurriculumTblCode}`, { headers: apiHeaders });
       rawRegs = JSON.parse(regRes.body).data || [];
     }
     
-    // Fetch courses
     let rawCourses = [];
     for (const reg of rawRegs) {
       const coursesRes = await makeRequest(`/RegistrationSummary/GetRegisteredCourses?registrationCode=${reg.RegistrationCode}`, { headers: apiHeaders });
@@ -103,19 +96,23 @@ async function handleLogin(req, res) {
       }
     }
     
-    // Fetch placement
     let rawCriteria = [];
     let rawResults = [];
+    let rawAllStudents = [];
+    let rawSelectionPriority = [];
     try {
-      const [criteriaRes, resultRes] = await Promise.all([
+      const [criteriaRes, resultRes, allStudentsRes, selectionRes] = await Promise.all([
         makeRequest('/Placement/GetPlacementCriteria', { headers: apiHeaders }),
         makeRequest('/Placement/GetPlacementResultSummary', { headers: apiHeaders }),
+        makeRequest('/Placement/GetDepartmentApplicationSummary', { headers: apiHeaders }),
+        makeRequest('/Placement/GetSelectionPriority', { headers: apiHeaders }),
       ]);
       rawCriteria = JSON.parse(criteriaRes.body).data || [];
       rawResults = JSON.parse(resultRes.body).data || [];
+      rawAllStudents = JSON.parse(allStudentsRes.body).data || [];
+      rawSelectionPriority = JSON.parse(selectionRes.body).data || [];
     } catch(e) {}
     
-    // Parse
     const biography = {
       fullName: `${rawBio.FirstName || ''} ${rawBio.FatherName || ''} ${rawBio.GFatherName || ''}`.trim(),
       studentId: rawBio.StudentID || '',
@@ -169,6 +166,15 @@ async function handleLogin(req, res) {
       },
     }));
     
+    const allStudentsList = rawAllStudents.map(s => ({
+      studentId: s.StudentID || s.studentId || '',
+      fullName: s.FullName || s.fullName || (s.FirstName + ' ' + s.FatherName).trim(),
+      department: s.DestinationDepartment || s.Department || '',
+      priority: s.Priority || '',
+      totalScore: s.TotalResult || s.TotalScore || '',
+      status: s.ApplicationStatus || s.PlacementStatus || '',
+    }));
+
     const placementCriteria = rawCriteria.map(c => ({
       name: c.Criterianame || '',
       percent: c.ValueInPercent || 0,
@@ -187,7 +193,7 @@ async function handleLogin(req, res) {
         program: rawCurr.CurrDetail || '',
         registrations,
         courses,
-        placement: { results: placementResults, criteria: placementCriteria },
+        placement: { results: placementResults, criteria: placementCriteria, allStudents: allStudentsList },
         summary: { totalSemesters: registrations.length, totalCredits, cumulativeGPA: latestCGPA },
       },
     }));
@@ -200,29 +206,24 @@ async function handleLogin(req, res) {
 
 // Create server
 const server = http.createServer(async (req, res) => {
-  // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   
-  // Handle OPTIONS
   if (req.method === 'OPTIONS') {
     res.writeHead(200);
     return res.end();
   }
   
-  // Handle API routes
   if (req.url === '/api/login') {
     return handleLogin(req, res);
   }
   
   // Serve static files
-  let filePath = path.join(__dirname, 'public', req.url === '/' ? 'index.html' : req.url);
+  let urlPath = req.url.split('?')[0];
+  if (urlPath === '/') urlPath = '/index.html';
   
-  // If no extension, try .html
-  if (!path.extname(filePath)) {
-    filePath += '.html';
-  }
+  let filePath = path.join(__dirname, 'public', urlPath);
   
   fs.readFile(filePath, (err, data) => {
     if (err) {
@@ -237,16 +238,20 @@ const server = http.createServer(async (req, res) => {
         }
       });
     } else {
-      const ext = path.extname(filePath);
+      const ext = path.extname(filePath).toLowerCase();
       const types = {
         '.html': 'text/html',
         '.css': 'text/css',
         '.js': 'text/javascript',
+        '.json': 'application/json',
         '.jpg': 'image/jpeg',
         '.jpeg': 'image/jpeg',
         '.png': 'image/png',
+        '.svg': 'image/svg+xml',
+        '.ico': 'image/x-icon',
+        '.webp': 'image/webp',
       };
-      res.writeHead(200, { 'Content-Type': types[ext] || 'text/plain' });
+      res.writeHead(200, { 'Content-Type': types[ext] || 'application/octet-stream' });
       res.end(data);
     }
   });
