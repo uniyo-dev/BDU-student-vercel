@@ -69,17 +69,23 @@
   
   var html = '';
   
-  // Profile Header Card
+  // Profile Header
   html += '<div class="semester-block semester-1">';
   html += '<div class="semester-title"><i class="fas fa-user-graduate"></i> ' + (bio.fullName || 'Student') + '</div>';
-  html += '<div style="text-align:center;padding:12px;">';
-  html += '<span class="status-badge pass" style="font-size:14px;padding:6px 20px;">' + (bio.studentId || '') + '</span>';
+  html += '<div style="text-align:center;padding:8px;">';
+  html += '<span class="status-badge pass" style="font-size:12px;padding:4px 16px;">' + (bio.studentId || '') + '</span>';
   html += '</div></div>';
   
-  // Gender & Nationality
-  html += '<div class="gpa-grid">';
-  html += '<div class="gpa-card sgpa"><div class="gpa-value">' + (bio.gender || '—') + '</div><div class="gpa-label">Gender</div></div>';
-  html += '<div class="gpa-card cgpa"><div class="gpa-value" style="font-size:14px;">' + (bio.nationality || '—') + '</div><div class="gpa-label">Nationality</div></div>';
+  // Gender & Nationality - SMALLER blocks, centered
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 16px 12px;">';
+  html += '<div style="background:linear-gradient(135deg,#d1fae5,#ecfdf5);border:2px solid #6ee7b7;border-radius:12px;padding:10px;text-align:center;max-width:150px;margin:0 auto;">';
+  html += '<div style="font-size:14px;font-weight:700;color:#059669;">' + (bio.gender || '—') + '</div>';
+  html += '<div style="font-size:9px;color:#059669;text-transform:uppercase;font-weight:700;">Gender</div>';
+  html += '</div>';
+  html += '<div style="background:linear-gradient(135deg,#dbeafe,#eff6ff);border:2px solid #93c5fd;border-radius:12px;padding:10px;text-align:center;max-width:150px;margin:0 auto;">';
+  html += '<div style="font-size:12px;font-weight:700;color:#2563eb;">' + (bio.nationality || '—') + '</div>';
+  html += '<div style="font-size:9px;color:#2563eb;text-transform:uppercase;font-weight:700;">Nationality</div>';
+  html += '</div>';
   html += '</div>';
   
   // Academic Biography
@@ -100,13 +106,12 @@
   html += detailRow('Nationality', bio.nationality);
   html += detailRow('Phone', bio.phone);
   html += detailRow('Email', bio.email || '—');
-  html += detailRow('Birth Woreda', bio.birthWoreda || bio.woreda);
   html += '</div>';
   
   container.innerHTML = html;
   
   function detailRow(label, value) {
-    if (!value || value === 'null' || value === 'undefined' || value === '') return '';
+    if (!value || value === 'null' || value === '') return '';
     return '<div class="course-row">' +
       '<div class="course-info"><div class="ccode">' + label + '</div></div>' +
       '<div class="course-grade"><span class="score">' + value + '</span></div>' +

@@ -19,7 +19,7 @@
   <style>
     html, body { height: 100%; overflow: hidden; }
     .app-container { height: 100vh; display: flex; flex-direction: column; }
-    .scroll-content { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: 70px; }
+    .scroll-content { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 16px 0 70px; }
     .bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); max-width: 420px; width: 100%; }
   </style>
 </head>
@@ -73,20 +73,25 @@
     
     html += '<div class="semester-block semester-1">';
     html += '<div class="semester-title"><i class="fas fa-check-circle"></i> Placement Status</div>';
-    html += '<div style="text-align:center;padding:16px;">';
-    html += '<div style="font-size:20px;font-weight:800;color:#1a5f9c;">' + selected.department + '</div>';
-    html += '<div style="font-size:13px;margin-top:4px;">Priority: ' + selected.priority + '</div>';
-    html += '<div style="font-size:13px;">Score: ' + selected.totalScore + '</div>';
+    html += '<div style="text-align:center;padding:10px;">';
+    html += '<div style="font-size:16px;font-weight:800;color:#1a5f9c;">' + selected.department + '</div>';
+    html += '<div style="font-size:11px;margin-top:2px;">Priority: ' + selected.priority + '</div>';
+    html += '<div style="font-size:11px;">Score: ' + selected.totalScore + '</div>';
     html += '</div></div>';
     
-    html += '<div class="gpa-grid">';
+    // SMALLER blocks for departments
+    html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 16px 12px;">';
     results.forEach(function(r) {
       var isSel = r.status === 'Selected';
-      html += '<div class="gpa-card ' + (isSel ? 'cgpa' : 'sgpa') + '">';
-      html += '<div style="font-size:13px;font-weight:700;">' + r.department + '</div>';
-      html += '<div style="font-size:11px;">' + r.priority + '</div>';
-      html += '<div class="gpa-value" style="font-size:16px;">' + r.totalScore + '</div>';
-      html += '<div class="gpa-label">' + r.status + '</div>';
+      var bg = isSel ? 'linear-gradient(135deg,#dbeafe,#eff6ff)' : 'linear-gradient(135deg,#fef3c7,#fffbeb)';
+      var border = isSel ? '2px solid #93c5fd' : '2px solid #fcd34d';
+      var color = isSel ? '#2563eb' : '#92400e';
+      
+      html += '<div style="background:' + bg + ';border:' + border + ';border-radius:12px;padding:10px;text-align:center;max-width:150px;margin:0 auto;width:100%;">';
+      html += '<div style="font-size:12px;font-weight:700;color:' + color + ';">' + r.department + '</div>';
+      html += '<div style="font-size:10px;color:' + color + ';margin-top:2px;">' + r.priority + '</div>';
+      html += '<div style="font-size:14px;font-weight:800;color:' + color + ';margin-top:2px;">' + r.totalScore + '</div>';
+      html += '<div style="font-size:8px;color:' + color + ';text-transform:uppercase;font-weight:700;margin-top:2px;">' + r.status + '</div>';
       html += '</div>';
     });
     html += '</div>';
