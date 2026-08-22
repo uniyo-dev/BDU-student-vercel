@@ -1,10 +1,11 @@
-/* ===== BDU STUDENT PORTAL - COMPLETE STYLES ===== */
+/* ===== BDU STUDENT PORTAL - FIXED HEIGHT ===== */
 :root {
   --primary: #0b1e33;
   --primary-light: #1a5f9c;
   --success: #1f8b4c;
-  --success-bg: #d4edda;
   --border: #e3eaf2;
+  --nav-height: 70px;
+  --banner-height: 100px;
 }
 
 * {
@@ -14,23 +15,41 @@
   font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
 }
 
+html, body {
+  height: 100%;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+}
+
 body {
   background: #eef2f7;
   display: flex;
   justify-content: center;
-  min-height: 100vh;
+  align-items: center;
 }
 
 .app-container {
   max-width: 420px;
   width: 100%;
+  height: 100vh;
+  height: 100dvh;
   background: white;
-  border-radius: 32px;
+  border-radius: 0;
   box-shadow: 0 20px 40px -12px rgba(0, 20, 40, 0.25);
-  min-height: 100vh;
   overflow: hidden;
   position: relative;
-  padding-bottom: 80px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Scrollable content area */
+.scroll-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: var(--nav-height);
 }
 
 /* ===== FIXED BOTTOM NAV ===== */
@@ -41,9 +60,11 @@ body {
   transform: translateX(-50%);
   max-width: 420px;
   width: 100%;
+  height: var(--nav-height);
   display: flex;
   justify-content: space-around;
-  padding: 10px 12px 14px;
+  align-items: center;
+  padding: 8px 12px;
   background: #fafcff;
   border-top: 1px solid var(--border);
   z-index: 9999;
@@ -60,7 +81,6 @@ body {
   gap: 3px;
   cursor: pointer;
   padding: 4px 8px;
-  transition: all 0.2s;
 }
 
 .bottom-nav span i {
@@ -79,9 +99,10 @@ body {
 /* ===== BANNER ===== */
 .banner-header {
   width: 100%;
-  height: 100px;
+  height: var(--banner-height);
   overflow: hidden;
   position: relative;
+  flex-shrink: 0;
 }
 
 .banner-header img.banner-img {
@@ -111,9 +132,6 @@ body {
   border: 2px solid white;
 }
 
-.banner-overlay .uni-name { font-size: 12px; font-weight: 700; }
-.banner-overlay .uni-sub { font-size: 10px; opacity: 0.8; }
-
 /* ===== PORTAL HEADER ===== */
 .portal-header {
   padding: 16px 20px;
@@ -121,6 +139,7 @@ body {
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid #e3eaf2;
+  flex-shrink: 0;
 }
 
 .portal-header h1 {
@@ -129,21 +148,11 @@ body {
   color: #0b1e33;
 }
 
-.portal-header .sub {
-  font-size: 12px;
-  color: #4a5b6e;
-  background: #f0f4fa;
-  padding: 6px 14px;
-  border-radius: 40px;
-  cursor: pointer;
-}
-
-/* ===== COLORED SEMESTER BLOCKS ===== */
+/* ===== COLORED BLOCKS ===== */
 .semester-block {
   border-radius: 16px;
   padding: 16px;
   margin: 0 16px 12px;
-  position: relative;
 }
 
 .semester-1 {
@@ -156,18 +165,6 @@ body {
   border: 2px solid #c4b5fd;
 }
 
-.semester-title {
-  font-size: 15px;
-  font-weight: 800;
-  margin-bottom: 12px;
-  color: #1a5f9c;
-}
-
-.semester-2 .semester-title {
-  color: #7c3aed;
-}
-
-/* ===== COLORED GPA BLOCKS ===== */
 .gpa-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -206,9 +203,6 @@ body {
   margin-top: 4px;
 }
 
-.sgpa .gpa-label { color: #059669; }
-.cgpa .gpa-label { color: #2563eb; }
-
 /* ===== COURSE ROWS ===== */
 .course-row {
   display: flex;
@@ -218,48 +212,29 @@ body {
   border-bottom: 1px solid #edf2f9;
 }
 
-.course-info .cname {
-  font-weight: 600;
-  color: #0b1e33;
-  font-size: 13px;
-}
-
-.course-info .ccode {
-  font-size: 11px;
-  color: #4f6885;
-}
-
-.course-grade .score {
-  font-weight: 700;
-  color: #0b1e33;
-  font-size: 13px;
-}
-
-.course-grade .letter {
-  background: #1f8b4c;
-  color: white;
-  border-radius: 40px;
-  font-size: 11px;
-  padding: 2px 10px;
-  font-weight: 700;
-  margin-left: 4px;
-  display: inline-block;
-}
-
-.course-grade .pts {
-  font-size: 11px;
-  color: #3e5f7e;
-}
-
-/* ===== PROFILE ===== */
-.profile-card {
-  background: white;
-  border-radius: 16px;
-  padding: 16px;
-  margin: 0 16px 12px;
-  border: 1px solid #e3eaf2;
-}
-
-/* ===== UTILITIES ===== */
+/* ===== HIDDEN ===== */
 .hidden { display: none !important; }
-.text-center { text-align: center; }
+
+/* Scrollable content - can scroll infinitely INSIDE */
+.scroll-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  overscroll-behavior: contain;
+}
+
+/* Custom scrollbar */
+.scroll-content::-webkit-scrollbar {
+  width: 4px;
+}
+
+.scroll-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scroll-content::-webkit-scrollbar-thumb {
+  background: #94a3b8;
+  border-radius: 10px;
+}
