@@ -4,36 +4,31 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BDU - Grade Report</title>
-  
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  
   <style>
     @page {
       size: A4;
-      margin: 0;
+      margin: 10mm;
     }
     
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+      font-family: Arial, Helvetica, sans-serif;
     }
     
     body {
       background: #eef2f7;
-      display: flex;
-      justify-content: center;
-      min-height: 100vh;
+      color: #000;
     }
     
     .a4-sheet {
-      width: 210mm;
-      min-height: 297mm;
+      width: 190mm;
+      min-height: 277mm;
       background: white;
       margin: 0 auto;
-      padding: 10mm 8mm;
-      position: relative;
+      padding: 10mm;
       box-shadow: 0 10px 30px rgba(0,0,0,0.2);
     }
     
@@ -41,7 +36,7 @@
       body { background: white; }
       .a4-sheet {
         width: 100%;
-        min-height: 100vh;
+        min-height: auto;
         box-shadow: none;
         margin: 0;
         padding: 0;
@@ -51,7 +46,7 @@
     
     .report-header {
       text-align: center;
-      border-bottom: 2px solid #0b1e33;
+      border-bottom: 2px solid #000;
       padding-bottom: 5px;
       margin-bottom: 8px;
     }
@@ -60,110 +55,109 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 8px;
-      margin-bottom: 3px;
+      gap: 10px;
+      margin-bottom: 5px;
     }
     
     .logo-row img {
-      width: 40px;
-      height: 40px;
+      width: 50px;
+      height: 50px;
       border-radius: 50%;
       object-fit: cover;
     }
     
     .uni-name {
-      font-size: 11px;
-      font-weight: 800;
+      font-size: 14px;
+      font-weight: bold;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      color: #000;
     }
     
     .report-title {
-      font-size: 9px;
-      font-weight: 700;
-      color: #1a4b78;
+      font-size: 12px;
+      font-weight: bold;
+      color: #000;
       margin-top: 2px;
       text-transform: uppercase;
-      letter-spacing: 1px;
     }
     
     .student-info {
       width: 100%;
-      font-size: 8px;
+      font-size: 11px;
       border-collapse: collapse;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
+      color: #000;
     }
     
     .student-info td {
-      padding: 1px 3px;
+      padding: 3px 5px;
+      color: #000;
     }
     
     .semester-header {
-      background: #1a4b78;
+      background: #333;
       color: white;
-      padding: 3px 6px;
-      font-weight: 700;
-      font-size: 8px;
+      padding: 5px 8px;
+      font-weight: bold;
+      font-size: 11px;
       border-radius: 3px 3px 0 0;
-      margin-top: 4px;
+      margin-top: 6px;
     }
     
     .grade-table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 7px;
+      font-size: 10px;
+      color: #000;
     }
     
     .grade-table th {
-      background: #0b1e33;
+      background: #333;
       color: white;
-      padding: 2px 3px;
-      font-size: 6px;
+      padding: 4px 5px;
+      font-size: 9px;
       text-align: left;
     }
     
     .grade-table td {
-      padding: 1px 3px;
-      border-bottom: 1px solid #e2e8f0;
+      padding: 3px 5px;
+      border-bottom: 1px solid #ccc;
+      color: #000;
     }
     
     .signature-area {
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
-      position: absolute;
-      bottom: 8mm;
-      left: 8mm;
-      right: 8mm;
+      margin-top: 20px;
     }
     
     .signature-box {
       text-align: center;
-      font-size: 6px;
+      font-size: 9px;
+      color: #000;
     }
     
     .signature-box img {
-      width: 45px;
-      height: 35px;
+      width: 60px;
+      height: 45px;
       object-fit: contain;
+      margin-bottom: 3px;
     }
     
     .stamp-box img {
-      width: 45px;
-      height: 45px;
+      width: 60px;
+      height: 60px;
       object-fit: contain;
     }
     
     .report-footer {
-      position: absolute;
-      bottom: 2mm;
-      left: 8mm;
-      right: 8mm;
       text-align: center;
-      font-size: 5px;
-      color: #4f647c;
-      border-top: 1px solid #e2e8f0;
-      padding-top: 2px;
+      font-size: 8px;
+      color: #333;
+      margin-top: 10px;
+      padding-top: 5px;
+      border-top: 1px solid #ccc;
     }
   </style>
 </head>
@@ -173,10 +167,10 @@
     <div class="report-header">
       <div class="logo-row">
         <img src="/images/logo.jpg" alt="Logo">
-        <img src="/images/ethiopian_emblem.jpg" alt="Emblem" style="width:35px;height:35px;">
+        <img src="/images/ethiopian_emblem.jpg" alt="Emblem">
       </div>
-      <div class="uni-name">Bahir Dar University</div>
-      <div class="report-title">Official Grade Report</div>
+      <div class="uni-name">BAHIR DAR UNIVERSITY</div>
+      <div class="report-title">OFFICIAL GRADE REPORT</div>
     </div>
     
     <table class="student-info">
@@ -227,19 +221,72 @@
   </div>
   
   <div class="no-print" style="text-align:center;padding:16px;">
-    <button onclick="window.print()" style="padding:12px 24px;background:#1a5f9c;color:white;border:none;border-radius:50px;font-weight:700;font-size:14px;cursor:pointer;">
-      <i class="fas fa-print"></i> Print / Save as PDF
+    <button onclick="window.print()" style="padding:14px 28px;background:#1a5f9c;color:white;border:none;border-radius:50px;font-weight:bold;font-size:16px;cursor:pointer;margin-right:8px;">
+      Print / Save PDF
     </button>
-    <button onclick="location.href='/pages/results.html'" style="padding:12px 24px;background:#64748b;color:white;border:none;border-radius:50px;font-weight:700;font-size:14px;cursor:pointer;margin-left:8px;">
-      <i class="fas fa-arrow-left"></i> Back
+    <button onclick="location.href='/pages/results.html'" style="padding:14px 28px;background:#64748b;color:white;border:none;border-radius:50px;font-weight:bold;font-size:16px;cursor:pointer;">
+      Back
     </button>
   </div>
 
-  <script src="/js/config.js"></script>
-  <script src="/js/api.js"></script>
-  <script src="/js/auth.js"></script>
-  <script src="/js/store.js"></script>
-  <script src="/js/ui.js"></script>
-  <script src="/js/renderer-grade-report.js"></script>
+<script>
+(function() {
+  const saved = sessionStorage.getItem('bdu_student_data');
+  
+  if (!saved) {
+    document.getElementById('report-content').innerHTML = '<div style="text-align:center;padding:20px;font-size:12px;color:#000;">Please login first</div>';
+    return;
+  }
+  
+  const data = JSON.parse(saved);
+  const bio = data.biography || {};
+  const summary = data.summary || {};
+  const registrations = data.registrations || [];
+  
+  document.getElementById('report-name').textContent = bio.fullName || '';
+  document.getElementById('report-id').textContent = bio.studentId || '';
+  document.getElementById('report-program').textContent = data.program || '';
+  document.getElementById('report-year').textContent = registrations[0]?.acYear || '';
+  document.getElementById('report-total-credits').textContent = summary.totalCredits || '0';
+  document.getElementById('report-cgpa').textContent = summary.cumulativeGPA || '—';
+  document.getElementById('report-status').textContent = registrations[registrations.length - 1]?.status || 'Pass';
+  
+  let html = '';
+  
+  registrations.forEach((reg, index) => {
+    const semCourses = data.courses?.find(c => c.semester === reg.semester);
+    
+    html += '<div class="semester-header">';
+    html += 'Semester ' + reg.semester + ' — SGPA: ' + reg.sgpa + ' | CGPA: ' + reg.cgpa + ' | ' + reg.status;
+    html += '</div>';
+    html += '<table class="grade-table">';
+    html += '<thead><tr>';
+    html += '<th style="width:12%;">Code</th>';
+    html += '<th style="width:43%;">Course Title</th>';
+    html += '<th style="width:7%;">Cr</th>';
+    html += '<th style="width:10%;">Grade</th>';
+    html += '<th style="width:10%;">Points</th>';
+    html += '<th style="width:18%;">%</th>';
+    html += '</tr></thead><tbody>';
+    
+    if (semCourses && semCourses.courses) {
+      semCourses.courses.forEach(function(c) {
+        html += '<tr>';
+        html += '<td>' + c.code + '</td>';
+        html += '<td>' + c.title + '</td>';
+        html += '<td>' + c.credit + '</td>';
+        html += '<td><strong>' + c.grade + '</strong></td>';
+        html += '<td>' + c.points + '</td>';
+        html += '<td>' + (c.percentage || '—') + '</td>';
+        html += '</tr>';
+      });
+    }
+    
+    html += '</tbody></table>';
+  });
+  
+  document.getElementById('report-content').innerHTML = html;
+})();
+</script>
 </body>
 </html>
