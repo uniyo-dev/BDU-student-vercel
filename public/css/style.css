@@ -836,3 +836,38 @@ html {
   padding-right: 8px;
   border-radius: 8px;
 }
+
+/* Splash screen animations */
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Full screen app feel */
+html, body {
+  height: 100%;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+input, textarea {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* Prevent overscroll */
+body {
+  overscroll-behavior: none;
+}
+
+/* Safe area for notched phones */
+.app-container {
+  padding-bottom: env(safe-area-inset-bottom);
+}

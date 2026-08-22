@@ -1,0 +1,64 @@
+.course-list { padding: 0 1.5rem 1rem; }
+
+.course-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.9rem 0;
+  border-bottom: 1px solid var(--border);
+  transition: var(--transition);
+  animation: fadeInUp 0.4s ease;
+}
+
+.course-row:last-child { border-bottom: none; }
+
+.course-row:hover {
+  background: #f8faff;
+  padding-left: 8px;
+  padding-right: 8px;
+  border-radius: 12px;
+}
+
+.course-info .cname {
+  font-weight: 600;
+  color: var(--primary);
+  font-size: 0.95rem;
+}
+
+.course-info .ccode { font-size: 0.7rem; color: #4f6885; font-weight: 500; }
+.course-info .cred { font-size: 0.7rem; color: #4f6885; margin-left: 8px; }
+
+.course-grade { text-align: right; }
+
+.course-grade .score {
+  font-weight: 700;
+  color: var(--primary);
+  font-size: 1rem;
+}
+
+.course-grade .letter {
+  background: var(--success);
+  color: white;
+  border-radius: 40px;
+  font-size: 0.7rem;
+  padding: 0.1rem 0.8rem;
+  font-weight: 700;
+  margin-left: 6px;
+  display: inline-block;
+  transition: var(--transition);
+}
+
+.course-grade .letter:hover {
+  transform: scale(1.2);
+  box-shadow: 0 4px 8px rgba(31, 139, 76, 0.3);
+}
+
+.course-grade .letter.incomplete { background: #6f8aa8; }
+.course-grade .pts { font-size: 0.7rem; color: #3e5f7e; font-weight: 500; }
+
+.course-section-title {
+  padding: 0 1.5rem 0.2rem;
+  font-weight: 700;
+  color: var(--primary);
+  font-size: 0.9rem;
+}

@@ -1,0 +1,48 @@
+.profile-screen { padding: 0 0 1rem; }
+
+.profile-header { padding: 1.5rem 1.5rem 0.5rem; }
+
+.profile-header .name {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.profile-header .id {
+  font-size: 0.9rem;
+  color: #2e4a6a;
+  font-weight: 500;
+  background: #eef5fd;
+  padding: 0.2rem 1rem;
+  border-radius: 40px;
+  display: inline-block;
+  margin-top: 2px;
+}
+
+.profile-section { padding: 1rem 1.5rem 0.2rem; }
+
+.profile-section .section-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #1d364f;
+  margin-bottom: 0.7rem;
+}
+
+.profile-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.9rem;
+  transition: var(--transition);
+}
+
+.profile-row:hover {
+  background: #f8faff;
+  padding-left: 8px;
+  padding-right: 8px;
+  border-radius: 8px;
+}
+
+.profile-row .label { color: #4a637f; font-weight: 500; }
+.profile-row .value { color: var(--primary); font-weight: 600; }

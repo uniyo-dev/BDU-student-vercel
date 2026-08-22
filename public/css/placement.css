@@ -1,0 +1,104 @@
+.placement-header { padding: 1.2rem 1.5rem 0.5rem; }
+
+.placement-header .main-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.placement-header .sub-title {
+  color: #3e5772;
+  font-weight: 500;
+  font-size: 0.9rem;
+  margin-top: 0.2rem;
+}
+
+.status-card {
+  background: #f2f8ff;
+  margin: 0.8rem 1.5rem 1.2rem;
+  border-radius: 28px;
+  padding: 1.5rem 1.2rem;
+  text-align: center;
+  border: 2px solid var(--border);
+  transition: var(--transition);
+  animation: scaleIn 0.6s ease;
+}
+
+.status-card:hover {
+  box-shadow: 0 12px 30px rgba(26, 95, 156, 0.2);
+  transform: translateY(-4px);
+}
+
+.status-card .status-icon {
+  font-size: 3rem;
+  color: var(--primary-light);
+  margin-bottom: 0.5rem;
+  animation: bounce 2s ease infinite;
+}
+
+.status-card .status-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 0.3rem;
+}
+
+.status-card .status-subtitle {
+  font-size: 0.85rem;
+  color: #4a637f;
+  font-weight: 500;
+}
+
+.preference-list { padding: 0 1.5rem 1rem; }
+
+.preference-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: #f7faff;
+  padding: 0.8rem 1.2rem;
+  border-radius: 16px;
+  margin-bottom: 0.6rem;
+  border: 1px solid var(--border);
+  transition: var(--transition);
+  animation: slideInLeft 0.5s ease;
+}
+
+.preference-item:hover {
+  transform: translateX(6px);
+  box-shadow: 0 8px 16px rgba(0, 20, 40, 0.1);
+  background: #eef5fd;
+}
+
+.preference-item .rank {
+  font-weight: 700;
+  color: var(--primary-light);
+  font-size: 0.9rem;
+  min-width: 2rem;
+}
+
+.preference-item .dept-name {
+  font-weight: 600;
+  color: var(--primary);
+  flex: 1;
+}
+
+.preference-item .dept-code {
+  font-size: 0.75rem;
+  color: #4f6885;
+  font-weight: 500;
+}
+
+.status-indicator {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.8rem;
+  border-radius: 40px;
+  font-weight: 600;
+  transition: var(--transition);
+}
+
+.status-indicator:hover { transform: scale(1.1); }
+
+.status-indicator.confirmed { background: var(--success-bg); color: #155724; }
+.status-indicator.pending { background: var(--warning-bg); color: #856404; }
+.status-indicator.review { background: var(--info-bg); color: #0c5460; }

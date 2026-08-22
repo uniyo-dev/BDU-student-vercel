@@ -1,0 +1,43 @@
+.app-container {
+  max-width: 420px;
+  width: 100%;
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  min-height: 100vh;
+  position: relative;
+}
+
+.portal-header {
+  padding: 1.25rem 1.5rem 0.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+}
+
+.portal-header h1 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  color: var(--primary);
+}
+
+.portal-header h1 i { color: var(--primary-light); margin-right: 6px; }
+
+.portal-header .sub {
+  font-size: 0.75rem;
+  color: #4a5b6e;
+  background: #f0f4fa;
+  padding: 0.3rem 0.9rem;
+  border-radius: 40px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.portal-header .sub:hover { background: #e0e8f0; }
+
+.page { display: none; }
+.page.active { display: block; animation: fadeInUp 0.3s ease; }

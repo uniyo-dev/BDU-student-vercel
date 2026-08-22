@@ -1,0 +1,38 @@
+.bottom-nav {
+  display: flex;
+  justify-content: space-around;
+  padding: 0.7rem 1rem 0.9rem;
+  background: #fafcff;
+  border-top: 1px solid var(--border);
+  position: sticky;
+  bottom: 0;
+  z-index: 100;
+}
+
+.bottom-nav span {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #5b718b;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.bottom-nav span:hover {
+  color: var(--primary);
+  transform: translateY(-4px);
+}
+
+.bottom-nav span:hover i { transform: scale(1.3); }
+
+.bottom-nav span i {
+  font-size: 1.2rem;
+  color: #3f5b7a;
+  transition: var(--transition);
+}
+
+.bottom-nav .active i { color: var(--primary); }
+.bottom-nav .active { color: var(--primary); animation: pulse 2s ease infinite; }

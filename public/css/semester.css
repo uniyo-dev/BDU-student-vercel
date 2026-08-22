@@ -1,0 +1,55 @@
+.semester-block {
+  border-radius: 20px;
+  padding: 16px;
+  margin-bottom: 16px;
+  transition: var(--transition);
+  animation: fadeInUp 0.5s ease;
+}
+
+.semester-block.semester-1 {
+  background: linear-gradient(135deg, var(--sem1-bg), #eff6ff);
+  border: 2px solid var(--sem1-color);
+}
+
+.semester-block.semester-2 {
+  background: linear-gradient(135deg, var(--sem2-bg), #faf5ff);
+  border: 2px solid var(--sem2-color);
+}
+
+.semester-block .semester-title {
+  font-size: 14px;
+  font-weight: 800;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.semester-block.semester-1 .semester-title { color: var(--sem1-color); }
+.semester-block.semester-2 .semester-title { color: var(--sem2-color); }
+
+.semester-toggle {
+  display: flex;
+  gap: 1.8rem;
+  padding: 0.5rem 1.5rem 0.2rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.semester-toggle .sem {
+  color: #6e86a1;
+  cursor: pointer;
+  padding-bottom: 4px;
+  border-bottom: 3px solid transparent;
+  transition: var(--transition);
+}
+
+.semester-toggle .sem:hover {
+  color: var(--primary);
+  transform: translateY(-2px);
+}
+
+.semester-toggle .sem.active {
+  color: var(--primary);
+  border-bottom: 3px solid var(--primary);
+}
