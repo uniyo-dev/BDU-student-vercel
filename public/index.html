@@ -1,189 +1,95 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDU Student Portal - Login</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="/css/style.css">
-    <style>
-        .login-container {
-            max-width: 420px;
-            width: 100%;
-            background: white;
-            border-radius: 32px;
-            box-shadow: 0 20px 40px -12px rgba(0, 20, 40, 0.25);
-            overflow: hidden;
-            min-height: 100vh;
-        }
-        
-        .banner-header {
-            width: 100%;
-            height: 160px;
-            overflow: hidden;
-            position: relative;
-        }
-        .banner-header img.banner-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: center;
-        }
-        .banner-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 30px 16px 12px;
-            background: linear-gradient(transparent, rgba(11,30,51,0.85));
-            color: white;
-            text-align: center;
-        }
-        .banner-overlay .uni-title {
-            font-size: 15px;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-        }
-        .banner-overlay .uni-sub {
-            font-size: 11px;
-            opacity: 0.8;
-            margin-top: 2px;
-        }
-        
-        .login-screen { padding: 1.2rem 1.8rem 2rem; text-align: center; }
-        
-        .logo-large {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin: -35px auto 12px;
-            border: 3px solid white;
-            box-shadow: 0 4px 12px rgba(0,20,40,0.2);
-            display: block;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .login-screen label { display: block; text-align: left; font-size: 0.9rem; font-weight: 600; color: #1f334a; margin-top: 1.2rem; margin-bottom: 0.3rem; }
-        .login-screen input {
-            width: 100%;
-            padding: 0.85rem 1.2rem;
-            border: 1px solid #d9e0e9;
-            border-radius: 60px;
-            font-size: 0.95rem;
-            background: #f9fbfd;
-            transition: 0.2s;
-            text-align: left;
-        }
-        .login-screen input:focus { border-color: #1a5f9c; outline: none; background: white; box-shadow: 0 0 0 3px rgba(26, 95, 156, 0.15); }
-        .login-screen .login-btn {
-            width: 100%;
-            margin-top: 2rem;
-            padding: 0.9rem;
-            background: #0b1e33;
-            color: white;
-            font-weight: 700;
-            font-size: 1.1rem;
-            border: none;
-            border-radius: 60px;
-            cursor: pointer;
-            letter-spacing: 0.3px;
-            transition: 0.15s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        .login-screen .login-btn:active { transform: scale(0.95); }
-        .login-screen .login-btn:disabled { opacity: 0.7; cursor: not-allowed; }
-        .login-screen .secure-note {
-            margin-top: 1.4rem;
-            font-size: 0.8rem;
-            color: #4f647c;
-            text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            flex-wrap: wrap;
-        }
-        .login-screen .secure-note i { color: #1f8b4c; }
-        .login-error { display: none; background: #fee2e2; color: #991b1b; padding: 10px 14px; border-radius: 12px; font-size: 0.8rem; margin-bottom: 12px; font-weight: 500; }
-        .login-error.show { display: block; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Bahir Dar University Student Portal - Check academic results, GPA, and department placement">
+  <title>BDU Student Portal - Login</title>
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="/css/variables.css">
+  <link rel="stylesheet" href="/css/reset.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/banner.css">
+  <link rel="stylesheet" href="/css/login.css">
+  <link rel="stylesheet" href="/css/animations.css">
+  <link rel="stylesheet" href="/css/utilities.css">
+  
+  <!-- PWA -->
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" href="/images/logo.jpg">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
 </head>
 <body>
 
-<div class="login-container">
+  <!-- Splash Screen -->
+  <div id="splash-screen">
+    <div class="splash-content">
+      <img src="/images/logo.jpg" alt="BDU Logo" class="splash-logo">
+      <div class="splash-title">Bahir Dar University</div>
+      <div class="splash-subtitle">Student Portal</div>
+      <div class="splash-spinner"></div>
+    </div>
+  </div>
+
+  <!-- Main App -->
+  <div class="app-container">
     <!-- Banner -->
     <div class="banner-header">
-        <img src="/images/banner.jpeg" alt="BDU Banner" class="banner-img">
-        <div class="banner-overlay">
-            <div class="uni-title">Bahir Dar University</div>
-            <div class="uni-sub">Student Portal (26/27)</div>
-        </div>
+      <img src="/images/banner.jpeg" alt="BDU Banner" class="banner-img">
+      <div class="banner-overlay">
+        <div class="uni-name">Bahir Dar University</div>
+        <div class="uni-sub">Student Portal (26/27)</div>
+      </div>
     </div>
-    
+
+    <!-- Login Form -->
     <div class="login-screen">
-        <!-- Logo -->
-        <img src="/images/logo.jpg" alt="BDU Logo" class="logo-large">
+      <img src="/images/logo.jpg" alt="BDU Logo" class="logo-large">
+      
+      <div id="login-error" class="login-error"></div>
+      
+      <form id="login-form">
+        <label for="username">Portal Username</label>
+        <input type="text" id="login-username" placeholder="e.g. bdu10460670" autocomplete="username" required>
         
-        <div id="login-error" class="login-error"></div>
-
-        <form id="loginForm">
-            <label for="username">Portal Username</label>
-            <input type="text" id="login-username" placeholder="e.g. bdu10460670" autocomplete="username" required>
-
-            <label for="password">Password</label>
-            <input type="password" id="login-password" placeholder="Enter your password" autocomplete="current-password" required>
-
-            <button type="submit" class="login-btn" id="login-btn">
-                <i class="fas fa-arrow-right-to-bracket"></i> 
-                <span id="login-btn-text">Login to Portal</span>
-                <span id="login-btn-spinner" class="spinner hidden"></span>
-            </button>
-        </form>
-
-        <div class="secure-note">
-            <i class="fas fa-lock"></i> Securely connects to studentportal.bdu.edu.et
-            <span>·</span>
-            <i class="fas fa-database"></i> We do not store your password.
-        </div>
+        <label for="password">Password</label>
+        <input type="password" id="login-password" placeholder="Enter your password" autocomplete="current-password" required>
+        
+        <button type="submit" class="login-btn" id="login-btn">
+          <i class="fas fa-arrow-right-to-bracket"></i>
+          <span id="login-btn-text">Login to Portal</span>
+          <span id="login-btn-spinner" class="spinner hidden"></span>
+        </button>
+      </form>
+      
+      <div class="secure-note">
+        <i class="fas fa-lock"></i>
+        <span>Securely connects to studentportal.bdu.edu.et</span>
+        <span>·</span>
+        <i class="fas fa-database"></i>
+        <span>We do not store your password.</span>
+      </div>
     </div>
-</div>
+  </div>
 
-<div id="loading-overlay" class="loading-overlay hidden"><div class="loading-spinner"></div></div>
-
-<script src="/js/api.js"></script>
-<script>
-document.getElementById('loginForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const username = document.getElementById('login-username').value.trim();
-  const password = document.getElementById('login-password').value;
-  const errorDiv = document.getElementById('login-error');
-  errorDiv.classList.remove('show');
+  <!-- JS -->
+  <script src="/js/config.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/store.js"></script>
+  <script src="/js/ui.js"></script>
+  <script src="/js/login-handler.js"></script>
   
-  const btn = document.getElementById('login-btn');
-  const btnText = document.getElementById('login-btn-text');
-  const btnSpinner = document.getElementById('login-btn-spinner');
-  btn.disabled = true; btnText.textContent = 'Logging in...'; btnSpinner.classList.remove('hidden');
-  
-  try {
-    const response = await loginAndGetData(username, password);
-    if (response.success) {
-      window.location.href = '/pages/dashboard.html';
-    } else {
-      errorDiv.textContent = response.error || 'Invalid credentials';
-      errorDiv.classList.add('show');
+  <!-- Service Worker -->
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("/sw.js").catch(console.error);
+      });
     }
-  } catch (error) {
-    errorDiv.textContent = error.message || 'Login failed';
-    errorDiv.classList.add('show');
-  } finally {
-    btn.disabled = false; btnText.textContent = 'Login to Portal'; btnSpinner.classList.add('hidden');
-  }
-});
-</script>
+  </script>
 </body>
 </html>
