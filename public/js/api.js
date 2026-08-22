@@ -1,3 +1,4 @@
+// API Module
 const API_BASE = '/api';
 
 async function apiCall(endpoint, options = {}) {
@@ -11,7 +12,6 @@ async function apiCall(endpoint, options = {}) {
   
   if (data.success && data.data) {
     sessionStorage.setItem('bdu_logged_in', 'true');
-    sessionStorage.setItem('bdu_username', sessionStorage.getItem('bdu_username') || '');
     sessionStorage.setItem('bdu_student_data', JSON.stringify(data.data));
   }
   
@@ -26,10 +26,15 @@ async function loginAndGetData(username, password) {
   });
 }
 
+// Global getter functions
 function getStudentData() {
   const saved = sessionStorage.getItem('bdu_student_data');
   if (saved) {
     try { return JSON.parse(saved); } catch(e) { return null; }
   }
   return null;
+}
+
+function isLoggedIn() {
+  return sessionStorage.getItem('bdu_logged_in') === 'true';
 }

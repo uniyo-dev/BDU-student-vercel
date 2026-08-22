@@ -1,72 +1,109 @@
-// Profile Renderer
-const ProfileRenderer = {
+// Profile Renderer - Production Quality
+class ProfileRenderer {
+  constructor() {
+    this.container = document.getElementById('profile-content');
+    this.data = null;
+    this.bio = null;
+  }
+
   init() {
-    UI.redirectIfNotLoggedIn();
+    this.loadData();
     this.render();
-  },
+  }
+
+  loadData() {
+    const saved = sessionStorage.getItem('bdu_student_data');
+    if (saved) {
+      try {
+        this.data = JSON.parse(saved);
+        this.bio = this.data?.biography || null;
+      } catch(e) {
+        console.error('Failed to parse student data:', e);
+      }
+    }
+  }
 
   render() {
-    const data = Store.getStudentData();
-    const bio = data?.biography;
+    if (!this.container) return;
     
-    if (!bio) {
-      document.getElementById('profile-content').innerHTML = 
-        '<div class="text-center" style="padding:40px;color:#4a637f;">No profile data</div>';
+    if (!this.bio) {
+      this.renderEmpty();
       return;
     }
     
     const html = `
+      ${this.renderHeader()}
+      ${this.renderQuickInfo()}
+      ${this.renderAcademicBio()}
+      ${this.renderPersonalBio()}
+    `;
+    
+    this.container.innerHTML = html;
+  }
+
+  renderHeader() {
+    return `
       <div class="semester-block semester-1">
         <div class="semester-title">
           <i class="fas fa-user-graduate"></i>
-          ${bio.fullName}
+          ${this.bio.fullName || 'Student'}
         </div>
         <div style="text-align:center;padding:12px;">
-          <div class="status-badge pass">${bio.studentId}</div>
+          <span class="status-badge pass">${this.bio.studentId || ''}</span>
         </div>
       </div>
-      
-      <div class="gpa-grid">
+    `;
+  }
+
+  renderQuickInfo() {
+    return `
+      <div class="gpa-grid" style="margin:0 20px 16px;">
         <div class="gpa-card sgpa">
-          <div class="gpa-value">${bio.gender}</div>
+          <div class="gpa-value">${this.bio.gender || '—'}</div>
           <div class="gpa-label">Gender</div>
         </div>
         <div class="gpa-card cgpa">
-          <div class="gpa-value" style="font-size:14px;">${bio.nationality}</div>
+          <div class="gpa-value" style="font-size:14px;">${this.bio.nationality || '—'}</div>
           <div class="gpa-label">Nationality</div>
         </div>
       </div>
-      
+    `;
+  }
+
+  renderAcademicBio() {
+    return `
       <div class="semester-block semester-1">
         <div class="semester-title">
           <i class="fas fa-book-open"></i>
           Academic Biography
         </div>
-        ${this.renderDetail('Program', data.program)}
-        ${this.renderDetail('Enrollment Date', bio.enrollmentDate)}
-        ${this.renderDetail('High School Stream', bio.highSchoolStream)}
+        ${this.renderRow('Program', this.data?.program)}
+        ${this.renderRow('Enrollment Date', this.bio.enrollmentDate)}
+        ${this.renderRow('High School Stream', this.bio.highSchoolStream)}
       </div>
-      
+    `;
+  }
+
+  renderPersonalBio() {
+    return `
       <div class="semester-block semester-2">
         <div class="semester-title">
           <i class="fas fa-user"></i>
           Personal Biography
         </div>
-        ${this.renderDetail('Full Name', bio.fullName)}
-        ${this.renderDetail('Student ID', bio.studentId)}
-        ${this.renderDetail('Gender', bio.gender)}
-        ${this.renderDetail('Birth Date', bio.birthDate)}
-        ${this.renderDetail('Nationality', bio.nationality)}
-        ${this.renderDetail('Phone', bio.phone)}
-        ${this.renderDetail('Email', bio.email || '—')}
+        ${this.renderRow('Full Name', this.bio.fullName)}
+        ${this.renderRow('Student ID', this.bio.studentId)}
+        ${this.renderRow('Gender', this.bio.gender)}
+        ${this.renderRow('Birth Date', this.bio.birthDate)}
+        ${this.renderRow('Nationality', this.bio.nationality)}
+        ${this.renderRow('Phone', this.bio.phone)}
+        ${this.renderRow('Email', this.bio.email || '—')}
       </div>
     `;
-    
-    document.getElementById('profile-content').innerHTML = html;
-  },
+  }
 
-  renderDetail(label, value) {
-    if (!value) return '';
+  renderRow(label, value) {
+    if (!value || value === 'null' || value === 'undefined' || value === '') return '';
     return `
       <div class="course-row">
         <div class="course-info">
@@ -78,6 +115,24 @@ const ProfileRenderer = {
       </div>
     `;
   }
-};
 
-document.addEventListener('DOMContentLoaded', () => ProfileRenderer.init());
+  renderEmpty() {
+    this.container.innerHTML = `
+      <div class="semester-block semester-1">
+        <div class="semester-title">
+          <i class="fas fa-exclamation-circle"></i>
+          No Profile Data
+        </div>
+        <div style="text-align:center;padding:20px;color:#4a637f;">
+          Please login first to view your profile.
+        </div>
+      </div>
+    `;
+  }
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', () => {
+  const renderer = new ProfileRenderer();
+  renderer.init();
+});

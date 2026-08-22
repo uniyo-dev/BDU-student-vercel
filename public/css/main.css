@@ -1,215 +1,29 @@
-/* ===== BDU STUDENT PORTAL - MAIN STYLES ===== */
-:root {
-  --primary: #0b1e33;
-  --primary-light: #1a5f9c;
-  --accent: #3498db;
-  --success: #1f8b4c;
-  --success-bg: #d4edda;
-  --warning: #e67e22;
-  --warning-bg: #fff3cd;
-  --danger: #c0392b;
-  --danger-bg: #f8d7da;
-  --info: #17a2b8;
-  --info-bg: #d1ecf1;
-  --sem1-color: #1a5f9c;
-  --sem1-bg: #dbeafe;
-  --sem2-color: #7c3aed;
-  --sem2-bg: #ede9fe;
-  --gpa-color: #059669;
-  --gpa-bg: #d1fae5;
-  --cgpa-color: #2563eb;
-  --cgpa-bg: #dbeafe;
-  --card-bg: #ffffff;
-  --body-bg: #eef2f7;
-  --border: #e3eaf2;
-  --shadow: 0 20px 40px -12px rgba(0, 20, 40, 0.25);
-  --radius: 32px;
-  --radius-sm: 16px;
-  --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
+/* ===== BDU STUDENT PORTAL - MAIN CSS ===== */
+/* This file combines all styles for pages that use only one CSS file */
 
-/* ===== RESET ===== */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
-}
+@import url('variables.css');
+@import url('reset.css');
+@import url('layout.css');
+@import url('banner.css');
+@import url('login.css');
+@import url('dashboard.css');
+@import url('semester.css');
+@import url('gpa.css');
+@import url('courses.css');
+@import url('placement.css');
+@import url('profile.css');
+@import url('navigation.css');
+@import url('animations.css');
+@import url('print.css');
+@import url('utilities.css');
+@import url('splash.css');
 
-body {
-  background: var(--body-bg);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  padding: 1rem;
-}
-
-/* ===== APP CONTAINER ===== */
+/* Additional global styles */
 .app-container {
-  max-width: 420px;
-  width: 100%;
-  background: var(--card-bg);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  overflow: hidden;
-  min-height: 100vh;
-  position: relative;
+  font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
 }
 
-/* ===== PORTAL HEADER ===== */
-.portal-header {
-  padding: 1.25rem 1.5rem 0.75rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid rgba(0,0,0,0.04);
-}
-
-.portal-header h1 {
-  font-size: 1.1rem;
-  font-weight: 700;
-  letter-spacing: -0.3px;
-  color: var(--primary);
-}
-
-.portal-header h1 i { color: var(--primary-light); margin-right: 6px; }
-
-.portal-header .sub {
-  font-size: 0.75rem;
-  color: #4a5b6e;
-  background: #f0f4fa;
-  padding: 0.3rem 0.9rem;
-  border-radius: 40px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: var(--transition);
-}
-
-.portal-header .sub:hover { background: #e0e8f0; }
-
-/* ===== BANNER ===== */
-.banner-header {
-  width: 100%;
-  height: 120px;
-  overflow: hidden;
-  position: relative;
-}
-
-.banner-header img.banner-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-}
-
-.banner-overlay {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 25px 16px 10px;
-  background: linear-gradient(transparent, rgba(11,30,51,0.9));
-  color: white;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.banner-overlay img {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid white;
-}
-
-.banner-overlay .uni-name { font-size: 12px; font-weight: 700; }
-.banner-overlay .uni-sub { font-size: 10px; opacity: 0.8; }
-
-/* ===== SEMESTER BLOCKS (Colorful) ===== */
-.semester-block {
-  border-radius: 20px;
-  padding: 16px;
-  margin-bottom: 16px;
-  transition: var(--transition);
-  animation: fadeInUp 0.5s ease;
-}
-
-.semester-block.semester-1 {
-  background: linear-gradient(135deg, var(--sem1-bg), #eff6ff);
-  border: 2px solid var(--sem1-color);
-}
-
-.semester-block.semester-2 {
-  background: linear-gradient(135deg, var(--sem2-bg), #faf5ff);
-  border: 2px solid var(--sem2-color);
-}
-
-.semester-block .semester-title {
-  font-size: 14px;
-  font-weight: 800;
-  margin-bottom: 12px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.semester-block.semester-1 .semester-title { color: var(--sem1-color); }
-.semester-block.semester-2 .semester-title { color: var(--sem2-color); }
-
-/* ===== GPA BLOCKS (Colorful) ===== */
-.gpa-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-bottom: 16px;
-}
-
-.gpa-card {
-  border-radius: 16px;
-  padding: 16px;
-  text-align: center;
-  transition: var(--transition);
-  animation: fadeInUp 0.5s ease;
-}
-
-.gpa-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-}
-
-.gpa-card.sgpa {
-  background: linear-gradient(135deg, var(--gpa-bg), #ecfdf5);
-  border: 2px solid var(--gpa-color);
-}
-
-.gpa-card.cgpa {
-  background: linear-gradient(135deg, var(--cgpa-bg), #eff6ff);
-  border: 2px solid var(--cgpa-color);
-}
-
-.gpa-card .gpa-value {
-  font-size: 28px;
-  font-weight: 800;
-  letter-spacing: -1px;
-}
-
-.gpa-card.sgpa .gpa-value { color: var(--gpa-color); }
-.gpa-card.cgpa .gpa-value { color: var(--cgpa-color); }
-
-.gpa-card .gpa-label {
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  font-weight: 700;
-  margin-top: 4px;
-}
-
-.gpa-card.sgpa .gpa-label { color: var(--gpa-color); }
-.gpa-card.cgpa .gpa-label { color: var(--cgpa-color); }
-
-/* ===== STATUS BADGE ===== */
+/* Status badge variations */
 .status-badge {
   display: inline-block;
   padding: 4px 14px;
@@ -217,7 +31,11 @@ body {
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.5px;
-  transition: var(--transition);
+  transition: all 0.3s ease;
+}
+
+.status-badge:hover {
+  transform: scale(1.05);
 }
 
 .status-badge.pass { background: var(--success-bg); color: #155724; }
@@ -225,100 +43,3 @@ body {
 .status-badge.fail { background: var(--danger-bg); color: #721c24; }
 .status-badge.selected { background: var(--success-bg); color: #155724; }
 .status-badge.review { background: var(--info-bg); color: #0c5460; }
-
-/* ===== COURSE ROWS ===== */
-.course-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 0;
-  border-bottom: 1px solid var(--border);
-  transition: var(--transition);
-  animation: fadeInUp 0.4s ease;
-}
-
-.course-row:hover {
-  background: #f8faff;
-  padding-left: 8px;
-  padding-right: 8px;
-  border-radius: 12px;
-}
-
-.course-info .cname { font-weight: 600; color: var(--primary); font-size: 14px; }
-.course-info .ccode { font-size: 11px; color: #4f6885; font-weight: 500; }
-.course-info .cred { font-size: 11px; color: #4f6885; margin-left: 8px; }
-
-.course-grade { text-align: right; }
-.course-grade .score { font-weight: 700; color: var(--primary); font-size: 14px; }
-.course-grade .letter {
-  background: var(--success);
-  color: white;
-  border-radius: 40px;
-  font-size: 11px;
-  padding: 2px 10px;
-  font-weight: 700;
-  margin-left: 6px;
-  display: inline-block;
-}
-.course-grade .pts { font-size: 11px; color: #3e5f7e; font-weight: 500; }
-
-/* ===== ANIMATIONS ===== */
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes slideInLeft {
-  from { opacity: 0; transform: translateX(-30px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-
-@keyframes scaleIn {
-  from { opacity: 0; transform: scale(0.8); }
-  to { opacity: 1; transform: scale(1); }
-}
-
-@keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-/* ===== BOTTOM NAV ===== */
-.bottom-nav {
-  display: flex;
-  justify-content: space-around;
-  padding: 10px 12px 14px;
-  background: #fafcff;
-  border-top: 1px solid var(--border);
-  position: sticky;
-  bottom: 0;
-}
-
-.bottom-nav span {
-  font-size: 10px;
-  font-weight: 600;
-  color: #5b718b;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 3px;
-  cursor: pointer;
-  transition: var(--transition);
-}
-
-.bottom-nav span:hover { color: var(--primary); }
-.bottom-nav span i { font-size: 18px; color: #3f5b7a; }
-.bottom-nav .active i { color: var(--primary); }
-.bottom-nav .active { color: var(--primary); }
-
-/* ===== UTILITIES ===== */
-.hidden { display: none !important; }
-.text-center { text-align: center; }
-.mt-1 { margin-top: 8px; }
-.mt-2 { margin-top: 16px; }
-.mb-1 { margin-bottom: 8px; }
-.mb-2 { margin-bottom: 16px; }
