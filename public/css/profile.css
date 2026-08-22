@@ -1,48 +1,76 @@
-.profile-screen { padding: 0 0 1rem; }
+/* Profile */
+.profile-screen {
+  padding: 0 0 80px;
+}
 
-.profile-header { padding: 1.5rem 1.5rem 0.5rem; }
+.profile-header {
+  padding: var(--spacing-xl) var(--spacing-xl) var(--spacing-sm);
+}
 
 .profile-header .name {
-  font-size: 1.6rem;
-  font-weight: 700;
+  font-size: var(--font-xl);
+  font-weight: 800;
   color: var(--primary);
+  background: linear-gradient(90deg, var(--primary), var(--primary-light));
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 3s linear infinite;
 }
 
 .profile-header .id {
-  font-size: 0.9rem;
+  font-size: var(--font-sm);
   color: #2e4a6a;
   font-weight: 500;
   background: #eef5fd;
-  padding: 0.2rem 1rem;
-  border-radius: 40px;
+  padding: var(--spacing-xs) var(--spacing-lg);
+  border-radius: var(--radius-full);
   display: inline-block;
-  margin-top: 2px;
+  margin-top: var(--spacing-xs);
+  border: 1px solid var(--sem1-border);
 }
 
-.profile-section { padding: 1rem 1.5rem 0.2rem; }
+.profile-section {
+  padding: var(--spacing-md) var(--spacing-xl) var(--spacing-xs);
+}
 
 .profile-section .section-title {
-  font-size: 0.9rem;
+  font-size: var(--font-md);
   font-weight: 700;
   color: #1d364f;
-  margin-bottom: 0.7rem;
+  margin-bottom: var(--spacing-md);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
 }
 
 .profile-row {
   display: flex;
   justify-content: space-between;
-  padding: 0.5rem 0;
-  border-bottom: 1px solid var(--border);
-  font-size: 0.9rem;
+  padding: var(--spacing-sm) 0;
+  border-bottom: 1px solid var(--border-light);
+  font-size: var(--font-md);
   transition: var(--transition);
 }
 
 .profile-row:hover {
   background: #f8faff;
-  padding-left: 8px;
-  padding-right: 8px;
-  border-radius: 8px;
+  padding-left: var(--spacing-sm);
+  padding-right: var(--spacing-sm);
+  border-radius: var(--radius-xs);
 }
 
-.profile-row .label { color: #4a637f; font-weight: 500; }
-.profile-row .value { color: var(--primary); font-weight: 600; }
+.profile-row:last-child {
+  border-bottom: none;
+}
+
+.profile-row .label {
+  color: #4a637f;
+  font-weight: 500;
+}
+
+.profile-row .value {
+  color: var(--primary);
+  font-weight: 600;
+  text-align: right;
+}

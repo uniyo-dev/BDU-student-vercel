@@ -1,3 +1,4 @@
+/* Navigation */
 .bottom-nav {
   position: fixed;
   bottom: 0;
@@ -7,11 +8,11 @@
   width: 100%;
   display: flex;
   justify-content: space-around;
-  padding: 10px 12px 14px;
+  padding: var(--spacing-md) var(--spacing-sm) 14px;
   background: #fafcff;
   border-top: 1px solid var(--border);
-  z-index: 1000;
-  box-shadow: 0 -4px 12px rgba(0,0,0,0.05);
+  z-index: var(--z-nav);
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
 }
 
 .bottom-nav span {
@@ -24,19 +25,31 @@
   gap: 3px;
   cursor: pointer;
   transition: var(--transition);
-  padding: 4px 8px;
+  padding: var(--spacing-xs) var(--spacing-md);
+  border-radius: var(--radius-sm);
 }
 
 .bottom-nav span:hover {
   color: var(--primary);
+  background: #f0f4fa;
   transform: translateY(-2px);
 }
 
 .bottom-nav span i {
-  font-size: 18px;
+  font-size: 20px;
   color: #3f5b7a;
   transition: var(--transition);
 }
 
-.bottom-nav .active i { color: var(--primary); }
-.bottom-nav .active { color: var(--primary); }
+.bottom-nav span:hover i {
+  transform: scale(1.2);
+}
+
+.bottom-nav .active {
+  color: var(--primary);
+  background: #eff6ff;
+}
+
+.bottom-nav .active i {
+  color: var(--primary);
+}

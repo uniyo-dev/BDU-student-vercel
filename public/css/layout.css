@@ -1,55 +1,87 @@
+/* Layout */
 .app-container {
   max-width: 420px;
   width: 100%;
-  background: var(--card-bg);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  overflow: hidden;
   min-height: 100vh;
+  background: var(--card-bg);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+  overflow: hidden;
   position: relative;
+  margin: 0 auto;
+}
+
+.page {
+  display: none;
+}
+
+.page.active {
+  display: block;
+  animation: fadeInUp 0.3s ease;
 }
 
 .portal-header {
-  padding: 1.25rem 1.5rem 0.75rem;
+  padding: var(--spacing-lg) var(--spacing-xl);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid rgba(0,0,0,0.04);
+  border-bottom: 1px solid var(--border-light);
+  background: #fafcff;
 }
 
 .portal-header h1 {
-  font-size: 1.1rem;
+  font-size: var(--font-lg);
   font-weight: 700;
   letter-spacing: -0.3px;
   color: var(--primary);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
 }
 
-.portal-header h1 i { color: var(--primary-light); margin-right: 6px; }
+.portal-header h1 i {
+  color: var(--primary-light);
+}
 
 .portal-header .sub {
-  font-size: 0.75rem;
+  font-size: var(--font-xs);
   color: #4a5b6e;
   background: #f0f4fa;
-  padding: 0.3rem 0.9rem;
-  border-radius: 40px;
+  padding: var(--spacing-xs) var(--spacing-md);
+  border-radius: var(--radius-full);
   font-weight: 500;
   cursor: pointer;
   transition: var(--transition);
 }
 
-.portal-header .sub:hover { background: #e0e8f0; }
-
-.page { display: none; }
-.page.active { display: block; animation: fadeInUp 0.3s ease; }
-
-/* Add bottom padding to main content for fixed nav */
-.app-container {
-  padding-bottom: 70px;
+.portal-header .sub:hover {
+  background: #e0e8f0;
 }
 
+/* Screen padding for fixed nav */
 .dashboard-screen,
 .results-screen,
 .placement-screen,
 .profile-screen {
-  padding-bottom: 70px;
+  padding-bottom: 80px;
+}
+
+/* Container */
+.container {
+  padding: 0 var(--spacing-xl);
+}
+
+/* Section */
+.section {
+  margin-bottom: var(--spacing-xl);
+}
+
+.section-title {
+  font-size: var(--font-md);
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: var(--spacing-md);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
 }

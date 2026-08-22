@@ -1,35 +1,112 @@
 :root {
+  /* Primary Colors */
   --primary: #0b1e33;
+  --primary-dark: #060f1a;
   --primary-light: #1a5f9c;
-  --accent: #3498db;
+  --primary-lighter: #3498db;
+  
+  /* Success */
   --success: #1f8b4c;
   --success-bg: #d4edda;
+  --success-border: #c3e6cb;
+  
+  /* Warning */
   --warning: #e67e22;
   --warning-bg: #fff3cd;
+  --warning-border: #ffeeba;
+  
+  /* Danger */
   --danger: #c0392b;
   --danger-bg: #f8d7da;
+  --danger-border: #f5c6cb;
+  
+  /* Info */
   --info: #17a2b8;
   --info-bg: #d1ecf1;
+  --info-border: #bee5eb;
   
+  /* Semester Colors */
   --sem1-color: #1a5f9c;
   --sem1-bg: #dbeafe;
+  --sem1-border: #93c5fd;
   --sem2-color: #7c3aed;
   --sem2-bg: #ede9fe;
+  --sem2-border: #c4b5fd;
   --sem3-color: #059669;
   --sem3-bg: #d1fae5;
+  --sem3-border: #6ee7b7;
   --sem4-color: #d97706;
   --sem4-bg: #fef3c7;
+  --sem4-border: #fcd34d;
   
+  /* GPA Colors */
   --gpa-color: #059669;
   --gpa-bg: #d1fae5;
+  --gpa-border: #6ee7b7;
   --cgpa-color: #2563eb;
   --cgpa-bg: #dbeafe;
+  --cgpa-border: #93c5fd;
   
+  /* Grading Colors */
+  --grade-A-bg: #d1fae5;
+  --grade-A-color: #065f46;
+  --grade-B-bg: #dbeafe;
+  --grade-B-color: #1e40af;
+  --grade-C-bg: #fef3c7;
+  --grade-C-color: #92400e;
+  --grade-D-bg: #ffedd5;
+  --grade-D-color: #9a3412;
+  --grade-F-bg: #fee2e2;
+  --grade-F-color: #991b1b;
+  --grade-P-bg: #f1f5f9;
+  --grade-P-color: #475569;
+  
+  /* Layout */
   --card-bg: #ffffff;
   --body-bg: #eef2f7;
   --border: #e3eaf2;
-  --shadow: 0 20px 40px -12px rgba(0, 20, 40, 0.25);
-  --radius: 32px;
-  --radius-sm: 16px;
+  --border-light: #edf2f9;
+  
+  /* Shadows */
+  --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 8px rgba(0,0,0,0.08);
+  --shadow-lg: 0 8px 16px rgba(0,0,0,0.1);
+  --shadow-xl: 0 20px 40px -12px rgba(0, 20, 40, 0.25);
+  
+  /* Radius */
+  --radius-xs: 8px;
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-full: 60px;
+  
+  /* Spacing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 12px;
+  --spacing-lg: 16px;
+  --spacing-xl: 20px;
+  --spacing-2xl: 24px;
+  --spacing-3xl: 32px;
+  
+  /* Font Sizes */
+  --font-xs: 10px;
+  --font-sm: 11px;
+  --font-md: 13px;
+  --font-lg: 16px;
+  --font-xl: 20px;
+  --font-2xl: 24px;
+  --font-3xl: 28px;
+  
+  /* Transitions */
+  --transition-fast: 0.15s ease;
   --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 0.5s ease;
+  
+  /* Z-index */
+  --z-nav: 1000;
+  --z-overlay: 2000;
+  --z-splash: 3000;
+  --z-toast: 4000;
 }

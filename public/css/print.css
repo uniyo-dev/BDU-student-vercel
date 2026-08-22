@@ -1,17 +1,18 @@
+/* Print */
 .print-btn {
-  margin: 0.5rem 1.5rem 1rem;
-  padding: 0.8rem;
+  margin: var(--spacing-md) var(--spacing-xl);
+  padding: 14px;
   background: var(--primary-light);
   color: white;
   border: none;
-  border-radius: 50px;
+  border-radius: var(--radius-full);
   font-weight: 700;
-  font-size: 0.9rem;
+  font-size: var(--font-md);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: var(--spacing-sm);
   transition: var(--transition);
   position: relative;
   overflow: hidden;
@@ -37,5 +38,11 @@
 
 .print-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(26, 95, 156, 0.3);
+  box-shadow: var(--shadow-lg);
+}
+
+@media print {
+  .no-print { display: none !important; }
+  body { background: white; }
+  .app-container { box-shadow: none; }
 }
