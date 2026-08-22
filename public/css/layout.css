@@ -41,3 +41,15 @@
 
 .page { display: none; }
 .page.active { display: block; animation: fadeInUp 0.3s ease; }
+
+/* Add bottom padding to main content for fixed nav */
+.app-container {
+  padding-bottom: 70px;
+}
+
+.dashboard-screen,
+.results-screen,
+.placement-screen,
+.profile-screen {
+  padding-bottom: 70px;
+}

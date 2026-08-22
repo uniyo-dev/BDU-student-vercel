@@ -6,13 +6,8 @@
   <title>BDU - Grade Report</title>
   
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <link rel="stylesheet" href="/css/variables.css">
-  <link rel="stylesheet" href="/css/reset.css">
-  <link rel="stylesheet" href="/css/print.css">
-  <link rel="stylesheet" href="/css/utilities.css">
   
   <style>
-    /* A4 EXACT FIT */
     @page {
       size: A4;
       margin: 0;
@@ -22,89 +17,69 @@
       margin: 0;
       padding: 0;
       box-sizing: border-box;
+      font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
     }
     
     body {
       background: #eef2f7;
       display: flex;
       justify-content: center;
-      align-items: center;
       min-height: 100vh;
-      font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
     }
     
-    .a4-page {
+    .a4-sheet {
       width: 210mm;
       min-height: 297mm;
       background: white;
       margin: 0 auto;
-      padding: 15mm 12mm 10mm 12mm;
+      padding: 10mm 8mm;
+      position: relative;
       box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-      display: flex;
-      flex-direction: column;
     }
     
-    /* Print - exact A4 */
     @media print {
-      body {
-        background: white;
-        padding: 0;
-        margin: 0;
-      }
-      
-      .a4-page {
+      body { background: white; }
+      .a4-sheet {
         width: 100%;
         min-height: 100vh;
         box-shadow: none;
         margin: 0;
         padding: 0;
       }
-      
-      .no-print {
-        display: none !important;
-      }
+      .no-print { display: none !important; }
     }
     
-    /* Screen */
-    @media screen {
-      .a4-page {
-        margin: 20px auto;
-      }
-    }
-    
-    /* Header */
     .report-header {
       text-align: center;
       border-bottom: 2px solid #0b1e33;
-      padding-bottom: 8px;
-      margin-bottom: 10px;
+      padding-bottom: 5px;
+      margin-bottom: 8px;
     }
     
     .logo-row {
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 10px;
-      margin-bottom: 4px;
+      gap: 8px;
+      margin-bottom: 3px;
     }
     
     .logo-row img {
-      width: 45px;
-      height: 45px;
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
       object-fit: cover;
     }
     
     .uni-name {
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 800;
-      color: #0b1e33;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
     
     .report-title {
-      font-size: 10px;
+      font-size: 9px;
       font-weight: 700;
       color: #1a4b78;
       margin-top: 2px;
@@ -112,115 +87,103 @@
       letter-spacing: 1px;
     }
     
-    /* Student Info */
     .student-info {
       width: 100%;
-      font-size: 9px;
+      font-size: 8px;
       border-collapse: collapse;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
     
     .student-info td {
-      padding: 2px 4px;
-      vertical-align: top;
+      padding: 1px 3px;
     }
     
-    /* Semester */
     .semester-header {
       background: #1a4b78;
       color: white;
-      padding: 4px 8px;
+      padding: 3px 6px;
       font-weight: 700;
-      font-size: 9px;
+      font-size: 8px;
       border-radius: 3px 3px 0 0;
-      margin-top: 6px;
+      margin-top: 4px;
     }
     
-    /* Grade Table */
     .grade-table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 8px;
+      font-size: 7px;
     }
     
     .grade-table th {
       background: #0b1e33;
       color: white;
-      padding: 3px 4px;
-      font-size: 7px;
+      padding: 2px 3px;
+      font-size: 6px;
       text-align: left;
-      font-weight: 600;
-      text-transform: uppercase;
     }
     
     .grade-table td {
-      padding: 2px 4px;
+      padding: 1px 3px;
       border-bottom: 1px solid #e2e8f0;
     }
     
-    .grade-table tr:nth-child(even) {
-      background: #f8fafc;
-    }
-    
-    /* Signature */
     .signature-area {
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
-      margin-top: auto;
-      padding-top: 10px;
-      page-break-inside: avoid;
+      position: absolute;
+      bottom: 8mm;
+      left: 8mm;
+      right: 8mm;
     }
     
     .signature-box {
       text-align: center;
-      font-size: 7px;
+      font-size: 6px;
     }
     
     .signature-box img {
-      width: 55px;
-      height: 40px;
+      width: 45px;
+      height: 35px;
       object-fit: contain;
-      margin-bottom: 2px;
     }
     
     .stamp-box img {
-      width: 55px;
-      height: 55px;
+      width: 45px;
+      height: 45px;
       object-fit: contain;
     }
     
-    /* Footer */
     .report-footer {
+      position: absolute;
+      bottom: 2mm;
+      left: 8mm;
+      right: 8mm;
       text-align: center;
-      font-size: 6px;
+      font-size: 5px;
       color: #4f647c;
-      margin-top: 6px;
-      padding-top: 4px;
       border-top: 1px solid #e2e8f0;
+      padding-top: 2px;
     }
   </style>
 </head>
 <body>
 
-  <!-- A4 Page -->
-  <div class="a4-page" id="print-area">
-    <!-- Header -->
+  <div class="a4-sheet">
     <div class="report-header">
       <div class="logo-row">
-        <img src="/images/logo.jpg" alt="BDU Logo">
-        <img src="/images/ethiopian_emblem.jpg" alt="Emblem" style="width:40px;height:40px;">
+        <img src="/images/logo.jpg" alt="Logo">
+        <img src="/images/ethiopian_emblem.jpg" alt="Emblem" style="width:35px;height:35px;">
       </div>
       <div class="uni-name">Bahir Dar University</div>
       <div class="report-title">Official Grade Report</div>
     </div>
     
-    <!-- Student Info -->
     <table class="student-info">
       <tr>
-        <td style="width:18%;"><strong>Student:</strong></td>
-        <td style="width:32%;" id="report-name"></td>
-        <td style="width:12%;"><strong>ID:</strong></td>
+        <td style="width:15%;"><strong>Student:</strong></td>
+        <td style="width:35%;" id="report-name"></td>
+        <td style="width:10%;"><strong>ID:</strong></td>
         <td id="report-id"></td>
       </tr>
       <tr>
@@ -228,7 +191,7 @@
         <td colspan="3" id="report-program"></td>
       </tr>
       <tr>
-        <td><strong>Ac. Year:</strong></td>
+        <td><strong>Year:</strong></td>
         <td id="report-year"></td>
         <td><strong>Credits:</strong></td>
         <td id="report-total-credits"></td>
@@ -241,10 +204,8 @@
       </tr>
     </table>
     
-    <!-- Content -->
     <div id="report-content"></div>
     
-    <!-- Signature -->
     <div class="signature-area">
       <div class="signature-box">
         <img src="/images/Signature.png" alt="Signature">
@@ -260,18 +221,16 @@
       </div>
     </div>
     
-    <!-- Footer -->
     <div class="report-footer">
-      Official document issued by Bahir Dar University. Verify at studentportal.bdu.edu.et
+      Official document issued by Bahir Dar University
     </div>
   </div>
   
-  <!-- Print Buttons (not printed) -->
   <div class="no-print" style="text-align:center;padding:16px;">
-    <button class="print-btn" onclick="window.print()">
+    <button onclick="window.print()" style="padding:12px 24px;background:#1a5f9c;color:white;border:none;border-radius:50px;font-weight:700;font-size:14px;cursor:pointer;">
       <i class="fas fa-print"></i> Print / Save as PDF
     </button>
-    <button class="print-btn" style="background:#64748b;margin-left:8px;" onclick="location.href='/pages/results.html'">
+    <button onclick="location.href='/pages/results.html'" style="padding:12px 24px;background:#64748b;color:white;border:none;border-radius:50px;font-weight:700;font-size:14px;cursor:pointer;margin-left:8px;">
       <i class="fas fa-arrow-left"></i> Back
     </button>
   </div>
