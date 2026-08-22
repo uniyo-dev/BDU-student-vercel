@@ -1,144 +1,137 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BDU Portal - Dashboard</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <link rel="stylesheet" href="/css/style.css">
-  <style>
-    .banner-header {
-      width: 100%;
-      height: 140px;
-      overflow: hidden;
-      position: relative;
-    }
-    
-    .banner-header img.banner-img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center;
-      display: block;
-    }
-    
-    .banner-overlay {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      padding: 25px 16px 10px;
-      background: linear-gradient(transparent, rgba(11,30,51,0.9));
-      color: white;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    
-    .banner-overlay img {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 2px solid white;
-    }
-    
-    .banner-overlay .uni-name {
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.3px;
-    }
-    
-    .banner-overlay .uni-sub {
-      font-size: 10px;
-      opacity: 0.8;
-    }
-    
-    .banner-overlay .logout-btn {
-      margin-left: auto;
-      color: white;
-      font-size: 16px;
-      cursor: pointer;
-      background: rgba(255,255,255,0.15);
-      border: 1px solid rgba(255,255,255,0.3);
-      border-radius: 50%;
-      width: 32px;
-      height: 32px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BDU Portal - Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .dashboard-container {
+            max-width: 420px;
+            width: 100%;
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 20px 40px -12px rgba(0, 20, 40, 0.25);
+            overflow: hidden;
+            min-height: 100vh;
+        }
+        .banner-header {
+            width: 100%;
+            height: 140px;
+            overflow: hidden;
+            position: relative;
+        }
+        .banner-header img.banner-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+        .banner-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 25px 16px 10px;
+            background: linear-gradient(transparent, rgba(11,30,51,0.9));
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .banner-overlay img {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid white;
+        }
+        .banner-overlay .uni-name { font-size: 12px; font-weight: 700; }
+        .banner-overlay .uni-sub { font-size: 10px; opacity: 0.8; }
+        .banner-overlay .logout-btn {
+            margin-left: auto;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
 </head>
 <body>
 
-<div class="app-container">
-  <div class="page active">
+<div class="dashboard-container">
     <div class="banner-header">
-      <img src="/images/banner.jpeg" alt="BDU Banner" class="banner-img">
-      <div class="banner-overlay">
-        <img src="/images/logo.jpg" alt="BDU Logo">
-        <div>
-          <div class="uni-name">Bahir Dar University</div>
-          <div class="uni-sub">Student Portal</div>
+        <img src="/images/banner.jpeg" alt="BDU Banner" class="banner-img">
+        <div class="banner-overlay">
+            <img src="/images/logo.jpg" alt="BDU Logo">
+            <div>
+                <div class="uni-name">Bahir Dar University</div>
+                <div class="uni-sub">Student Portal</div>
+            </div>
+            <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i></button>
         </div>
-        <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i></button>
-      </div>
     </div>
 
     <div class="dashboard-screen">
-      <div class="welcome-area">
-        <div class="greeting">Welcome back,</div>
-        <div class="name" id="dash-name">Student</div>
-        <div class="info-chip" id="dash-program"><i class="fas fa-book-open"></i> Loading...</div>
-        <div style="font-size:0.7rem; color:#2f4b6a; margin-top:4px;" id="dash-id"></div>
-      </div>
+        <div class="welcome-area">
+            <div class="greeting">Welcome back,</div>
+            <div class="name" id="dash-name">Student</div>
+            <div class="info-chip" id="dash-program"><i class="fas fa-book-open"></i> Loading...</div>
+            <div style="font-size:0.7rem; color:#2f4b6a; margin-top:4px;" id="dash-id"></div>
+        </div>
 
-      <div class="stats-grid">
-        <div class="stat-box">
-          <div class="num" id="dash-gpa">—</div>
-          <div class="label">Cumulative GPA</div>
+        <div class="stats-grid">
+            <div class="stat-box">
+                <div class="num" id="dash-gpa">—</div>
+                <div class="label">Cumulative GPA</div>
+            </div>
+            <div class="stat-box">
+                <div class="num" id="dash-credits">0</div>
+                <div class="label">Earned Credits</div>
+            </div>
         </div>
-        <div class="stat-box">
-          <div class="num" id="dash-credits">0</div>
-          <div class="label">Earned Credits</div>
-        </div>
-      </div>
 
-      <div class="student-id"><i class="far fa-id-card" style="margin-right:6px;"></i> <span id="dash-semesters">0</span> Semesters</div>
+        <div class="student-id"><i class="far fa-id-card" style="margin-right:6px;"></i> <span id="dash-semesters">0</span> Semesters</div>
 
-      <div class="quick-links">
-        <div class="ql-title">Quick Links</div>
-        <div class="link-card" onclick="location.href='/pages/results.html'">
-          <i class="fas fa-chart-simple"></i>
-          <span class="ltext">Semester Results</span>
-          <span class="ldesc">View grades</span>
+        <div class="quick-links">
+            <div class="ql-title">Quick Links</div>
+            <div class="link-card" onclick="location.href='/pages/results.html'">
+                <i class="fas fa-chart-simple"></i>
+                <span class="ltext">Semester Results</span>
+                <span class="ldesc">View grades</span>
+            </div>
+            <div class="link-card" onclick="location.href='/pages/placement.html'">
+                <i class="fas fa-building-columns"></i>
+                <span class="ltext">Department Placement</span>
+                <span class="ldesc">Check status</span>
+            </div>
+            <div class="link-card" onclick="location.href='/pages/profile.html'">
+                <i class="fas fa-user"></i>
+                <span class="ltext">My Profile</span>
+                <span class="ldesc">Personal info</span>
+            </div>
+            <div class="link-card" onclick="location.href='/pages/grade-report.html'">
+                <i class="fas fa-print"></i>
+                <span class="ltext">Grade Report</span>
+                <span class="ldesc">Print A4</span>
+            </div>
         </div>
-        <div class="link-card" onclick="location.href='/pages/placement.html'">
-          <i class="fas fa-building-columns"></i>
-          <span class="ltext">Department Placement</span>
-          <span class="ldesc">Check status</span>
-        </div>
-        <div class="link-card" onclick="location.href='/pages/profile.html'">
-          <i class="fas fa-user"></i>
-          <span class="ltext">My Profile</span>
-          <span class="ldesc">Personal info</span>
-        </div>
-        <div class="link-card" onclick="location.href='/pages/grade-report.html'">
-          <i class="fas fa-print"></i>
-          <span class="ltext">Grade Report</span>
-          <span class="ldesc">Print A4</span>
-        </div>
-      </div>
 
-      <div class="bottom-nav">
-        <span class="active"><i class="fas fa-chart-pie"></i> Dashboard</span>
-        <span onclick="location.href='/pages/results.html'"><i class="fas fa-list-ul"></i> Results</span>
-        <span onclick="location.href='/pages/placement.html'"><i class="fas fa-sitemap"></i> Placement</span>
-        <span onclick="location.href='/pages/profile.html'"><i class="fas fa-user"></i> Profile</span>
-      </div>
+        <div class="bottom-nav">
+            <span class="active"><i class="fas fa-chart-pie"></i> Dashboard</span>
+            <span onclick="location.href='/pages/results.html'"><i class="fas fa-list-ul"></i> Results</span>
+            <span onclick="location.href='/pages/placement.html'"><i class="fas fa-sitemap"></i> Placement</span>
+            <span onclick="location.href='/pages/profile.html'"><i class="fas fa-user"></i> Profile</span>
+        </div>
     </div>
-  </div>
 </div>
 
 <script src="/js/api.js"></script>
