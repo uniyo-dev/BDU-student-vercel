@@ -1,14 +1,5 @@
 let currentSemesterIndex = 0;
 
-function gradeClass(g) {
-  if (g === 'P') return 'letter';
-  if (g.startsWith('A')) return 'letter';
-  if (g.startsWith('B')) return 'letter';
-  if (g.startsWith('C')) return 'letter';
-  if (g.startsWith('D')) return 'letter';
-  return 'letter';
-}
-
 function renderSemesterToggle() {
   const data = getStudentData();
   if (!data?.registrations?.length) return;
@@ -17,9 +8,12 @@ function renderSemesterToggle() {
   let html = '';
   
   data.registrations.forEach((reg, i) => {
-    html += `<span class="sem ${i === currentSemesterIndex ? 'active' : ''}" onclick="switchSemester(${i})">
-      <i class="fas ${i === currentSemesterIndex ? 'fa-circle-check' : 'fa-circle'}"></i> Semester ${reg.semester}
-    </span>`;
+    html += `
+      <span class="sem ${i === currentSemesterIndex ? 'active' : ''}" onclick="switchSemester(${i})">
+        <i class="fas ${i === currentSemesterIndex ? 'fa-circle-check' : 'fa-circle'}"></i> Semester ${reg.semester}
+        ${reg.status !== 'Pass' ? '<span class="live-badge">Live</span>' : ''}
+      </span>
+    `;
   });
   
   toggle.innerHTML = html;
@@ -33,57 +27,54 @@ function switchSemester(index) {
 
 function renderSemesterDetails() {
   const data = getStudentData();
-  const container = document.getElementById('results-content');
+  const reg = data?.registrations?.[currentSemesterIndex];
   
-  if (!data?.registrations?.length) {
-    container.innerHTML = '<div style="text-align:center;color:#5a708b;padding:40px;">No results available</div>';
+  if (!reg) {
+    document.getElementById('semesterGpa').textContent = '—';
+    document.getElementById('cgpaDisplay').textContent = '—';
+    document.getElementById('statusBadge').textContent = '—';
+    document.getElementById('courseList').innerHTML = '<div style="text-align:center;color:#4a637f;padding:20px;">Please login first</div>';
     return;
   }
   
-  const reg = data.registrations[currentSemesterIndex];
-  const semCourses = data.courses?.find(c => c.semester === reg.semester);
+  document.getElementById('semesterGpa').textContent = reg.sgpa;
+  document.getElementById('cgpaDisplay').textContent = reg.cgpa;
+  document.getElementById('statusBadge').textContent = reg.status?.toUpperCase() || 'PASS';
+  document.getElementById('sub-year').textContent = reg.acYear || '';
   
-  let html = `
-    <div class="gpa-box">
-      <div class="gpa-item">
-        <div class="big">${reg.sgpa}</div>
-        <div class="sm">Semester GPA</div>
-      </div>
-      <div class="gpa-item" style="text-align:center;">
-        <span class="badge">${reg.status || 'PASS'}</span>
-      </div>
-      <div class="gpa-item" style="text-align:right;">
-        <div class="big">${reg.cgpa}</div>
-        <div class="sm">CGPA</div>
-      </div>
-    </div>
-  `;
+  const semCourses = data.courses?.find(c => c.semester === reg.semester);
+  const courseList = document.getElementById('courseList');
   
   if (semCourses?.courses?.length) {
-    html += '<div style="padding:0 1.5rem 0.2rem; font-weight:700; color:#0b1e33; font-size:0.9rem;">Course Results</div>';
-    html += '<div class="course-list">';
+    let html = '';
     
     semCourses.courses.forEach(c => {
+      const isIncomplete = !c.grade || c.grade === '—';
+      
       html += `
         <div class="course-row">
           <div class="course-info">
             <div class="cname">${c.title}</div>
-            <div><span class="ccode">${c.code}</span> <span class="cred"><i class="far fa-clock"></i> ${c.credit} Cr</span></div>
+            <div>
+              <span class="ccode">${c.code}</span>
+              <span class="cred"><i class="far fa-clock"></i> ${c.credit} Cr</span>
+            </div>
           </div>
           <div class="course-grade">
-            <div><span class="score">${c.percentage || '—'}</span> <span class="letter" style="background:${c.grade === 'F' ? '#dc2626' : '#1f8b4c'};">${c.grade}</span></div>
-            <div class="pts">${c.points} pts</div>
+            <div>
+              <span class="score">${c.percentage || '—'}</span>
+              <span class="letter ${isIncomplete ? 'incomplete' : ''}">${c.grade}</span>
+            </div>
+            <div class="pts">${c.points ? c.points + ' pts' : ''}</div>
           </div>
         </div>
       `;
     });
     
-    html += '</div>';
+    courseList.innerHTML = html;
   } else {
-    html += '<div style="text-align:center;color:#5a708b;padding:30px;">No courses found for this semester</div>';
+    courseList.innerHTML = '<div style="text-align:center;color:#4a637f;padding:20px;">No courses found</div>';
   }
-  
-  container.innerHTML = html;
 }
 
 function renderResults() {
@@ -91,8 +82,9 @@ function renderResults() {
   renderSemesterDetails();
 }
 
-if (sessionStorage.getItem('bdu_logged_in') === 'true') {
-  renderResults();
-} else {
+// Check if logged in, if not redirect to login
+if (sessionStorage.getItem('bdu_logged_in') !== 'true') {
   window.location.href = '/';
+} else {
+  renderResults();
 }
