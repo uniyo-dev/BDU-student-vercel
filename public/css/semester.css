@@ -1,10 +1,10 @@
-/* Semester Blocks */
+/* ===== SEMESTER BLOCKS - ULTRA COMPREHENSIVE ===== */
+
 .semester-block {
-  border-radius: var(--radius-lg);
-  padding: var(--spacing-xl);
-  margin-bottom: var(--spacing-lg);
-  transition: var(--transition);
-  animation: fadeInUp 0.5s ease;
+  border-radius: 20px;
+  padding: 20px;
+  margin: 0 20px 16px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
 }
@@ -15,70 +15,377 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 4px;
+  height: 5px;
   background: currentColor;
+  opacity: 0.8;
 }
 
+.semester-block::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 50%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.semester-block:hover::after { opacity: 1; }
+
+.semester-block:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+}
+
+/* Semester Color Variants */
 .semester-1 {
-  background: linear-gradient(135deg, var(--sem1-bg), #eff6ff);
-  border: 2px solid var(--sem1-border);
-  color: var(--sem1-color);
+  background: linear-gradient(135deg, #dbeafe, #eff6ff, #dbeafe);
+  background-size: 200% 200%;
+  border: 2px solid #93c5fd;
+  color: #1a5f9c;
+  animation: gradientShift 4s ease infinite;
 }
 
 .semester-2 {
-  background: linear-gradient(135deg, var(--sem2-bg), #faf5ff);
-  border: 2px solid var(--sem2-border);
-  color: var(--sem2-color);
+  background: linear-gradient(135deg, #ede9fe, #faf5ff, #ede9fe);
+  background-size: 200% 200%;
+  border: 2px solid #c4b5fd;
+  color: #7c3aed;
+  animation: gradientShift 4s ease infinite;
 }
 
 .semester-3 {
-  background: linear-gradient(135deg, var(--sem3-bg), #ecfdf5);
-  border: 2px solid var(--sem3-border);
-  color: var(--sem3-color);
+  background: linear-gradient(135deg, #d1fae5, #ecfdf5, #d1fae5);
+  background-size: 200% 200%;
+  border: 2px solid #6ee7b7;
+  color: #059669;
+  animation: gradientShift 4s ease infinite;
 }
 
 .semester-4 {
-  background: linear-gradient(135deg, var(--sem4-bg), #fffbeb);
-  border: 2px solid var(--sem4-border);
-  color: var(--sem4-color);
+  background: linear-gradient(135deg, #fef3c7, #fffbeb, #fef3c7);
+  background-size: 200% 200%;
+  border: 2px solid #fcd34d;
+  color: #d97706;
+  animation: gradientShift 4s ease infinite;
 }
 
 .semester-title {
-  font-size: var(--font-lg);
+  font-size: 16px;
   font-weight: 800;
-  margin-bottom: var(--spacing-md);
+  margin-bottom: 16px;
   display: flex;
   align-items: center;
-  gap: var(--spacing-sm);
+  gap: 8px;
+  letter-spacing: -0.3px;
 }
 
+.semester-title i {
+  font-size: 18px;
+  animation: bounce 2s ease infinite;
+}
+
+/* Semester Toggle */
 .semester-toggle {
   display: flex;
-  gap: var(--spacing-xl);
-  padding: var(--spacing-md) var(--spacing-xl);
+  gap: 20px;
+  padding: 8px 20px;
   font-weight: 600;
-  font-size: var(--font-md);
+  font-size: 14px;
   flex-wrap: wrap;
 }
 
 .sem {
   color: #6e86a1;
   cursor: pointer;
-  padding-bottom: 4px;
-  border-bottom: 3px solid transparent;
-  transition: var(--transition);
+  padding: 8px 16px;
+  border-radius: 40px;
+  border: 2px solid transparent;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
+  background: white;
 }
 
 .sem:hover {
   color: var(--primary);
+  border-color: var(--border);
   transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
 .sem.active {
   color: var(--primary);
-  border-bottom: 3px solid var(--primary);
+  border-color: var(--primary-light);
+  background: #eff6ff;
   animation: pulse 2s ease infinite;
+}
+
+/* Semester Status Badge */
+.semester-status {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 40px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  margin-left: auto;
+  transition: all 0.3s ease;
+}
+
+.semester-status:hover {
+  transform: scale(1.1);
+}
+
+.semester-status.pass { background: #d4edda; color: #155724; }
+.semester-status.in-progress { background: #fff3cd; color: #856404; }
+.semester-status.fail { background: #f8d7da; color: #721c24; }
+
+/* Semester Info */
+.semester-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.semester-info-item {
+  background: rgba(255,255,255,0.7);
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 11px;
+  transition: all 0.3s ease;
+}
+
+.semester-info-item:hover {
+  background: rgba(255,255,255,0.9);
+  transform: translateY(-2px);
+}
+
+.semester-info-label {
+  font-weight: 600;
+  color: #4a637f;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.semester-info-value {
+  font-weight: 700;
+  color: var(--primary);
+  font-size: 13px;
+  margin-top: 2px;
+}
+
+/* Semester Divider */
+.semester-divider {
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(0,0,0,0.1), transparent);
+  margin: 12px 0;
+}
+
+/* ===== ADDITIONAL SEMESTER STYLES ===== */
+
+/* Semester Card Container */
+.semester-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 0 20px;
+}
+
+/* Semester Header Banner */
+.semester-header-banner {
+  background: linear-gradient(135deg, #1a5f9c, #0b1e33);
+  border-radius: 16px;
+  padding: 16px 20px;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.semester-header-banner::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 50%);
+}
+
+.semester-header-banner:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(26, 95, 156, 0.3);
+}
+
+.semester-header-title {
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+}
+
+.semester-header-subtitle {
+  font-size: 11px;
+  opacity: 0.8;
+  margin-top: 2px;
+}
+
+/* Semester Grid Stats */
+.semester-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.semester-stat {
+  background: rgba(255,255,255,0.15);
+  border-radius: 10px;
+  padding: 10px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.semester-stat:hover {
+  background: rgba(255,255,255,0.25);
+  transform: translateY(-2px);
+}
+
+.semester-stat-value {
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.semester-stat-label {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  opacity: 0.8;
+  margin-top: 2px;
+}
+
+/* Semester Progress */
+.semester-progress {
+  width: 100%;
+  height: 6px;
+  background: rgba(255,255,255,0.3);
+  border-radius: 40px;
+  margin-top: 10px;
+  overflow: hidden;
+}
+
+.semester-progress-fill {
+  height: 100%;
+  border-radius: 40px;
+  background: white;
+  transition: width 0.8s ease;
+}
+
+/* Semester Accordion */
+.semester-accordion {
+  border-radius: 16px;
+  border: 2px solid var(--border);
+  overflow: hidden;
+  margin-bottom: 12px;
+  transition: all 0.3s ease;
+}
+
+.semester-accordion:hover {
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.semester-accordion-header {
+  padding: 14px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  background: #f8faff;
+  transition: all 0.3s ease;
+}
+
+.semester-accordion-header:hover {
+  background: #eff6ff;
+}
+
+.semester-accordion-body {
+  padding: 16px;
+  display: none;
+}
+
+.semester-accordion.open .semester-accordion-body {
+  display: block;
+  animation: fadeInUp 0.3s ease;
+}
+
+/* Semester Badge */
+.semester-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 40px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+}
+
+.semester-badge:hover {
+  transform: scale(1.1);
+}
+
+.semester-badge.active { background: #d1fae5; color: #065f46; }
+.semester-badge.completed { background: #dbeafe; color: #1e40af; }
+.semester-badge.current { background: #fef3c7; color: #92400e; }
+.semester-badge.upcoming { background: #f1f5f9; color: #475569; }
+
+/* Semester Timeline */
+.semester-timeline {
+  position: relative;
+  padding-left: 30px;
+}
+
+.semester-timeline::before {
+  content: '';
+  position: absolute;
+  left: 10px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--border);
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: -25px;
+  top: 5px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--primary-light);
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.timeline-item.completed::before {
+  background: var(--success);
+}
+
+.timeline-item.current::before {
+  background: var(--warning);
+  animation: pulse 2s infinite;
 }
