@@ -1,0 +1,12 @@
+{
+  "name": "bdu-student-portal",
+  "version": "3.0.0",
+  "description": "BDU Student Portal - Render Version",
+  "private": true,
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

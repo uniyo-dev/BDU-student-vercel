@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BDU Student Portal</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .banner-container {
+      width: 100%;
+      height: 180px;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    .banner-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+    }
+    
+    .banner-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 30px 16px 12px;
+      background: linear-gradient(transparent, rgba(11,30,51,0.85));
+      color: white;
+      text-align: center;
+    }
+    
+    .banner-overlay .uni-title {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    
+    .banner-overlay .uni-sub {
+      font-size: 11px;
+      opacity: 0.8;
+      margin-top: 2px;
+    }
+    
+    .login-content {
+      padding: 1.2rem 1.8rem 1.5rem;
+      text-align: center;
+    }
+    
+    .login-content .logo-large {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin: -35px auto 12px;
+      border: 3px solid white;
+      box-shadow: 0 4px 12px rgba(0,20,40,0.2);
+      display: block;
+      position: relative;
+      z-index: 1;
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-container">
+  <div class="page active">
+    <!-- Banner with proper cropping -->
+    <div class="banner-container">
+      <img src="/images/banner.jpeg" alt="Bahir Dar University Banner">
+      <div class="banner-overlay">
+        <div class="uni-title">Bahir Dar University</div>
+        <div class="uni-sub">Student Portal</div>
+      </div>
+    </div>
+    
+    <div class="login-content">
+      <img src="/images/logo.jpg" alt="BDU Logo" class="logo-large">
+      
+      <div id="login-error" class="login-error"></div>
+
+      <form id="login-form">
+        <label for="username" style="text-align:left; display:block;">Portal Username</label>
+        <input type="text" id="login-username" placeholder="e.g. bdu1801401 (lowercase with bdu prefix)" autocomplete="username" required>
+
+        <label for="password" style="text-align:left; display:block;">Password</label>
+        <input type="password" id="login-password" placeholder="Enter your password" autocomplete="current-password" required>
+
+        <button class="login-btn" type="submit" id="login-btn">
+          <i class="fas fa-arrow-right-to-bracket"></i> 
+          <span id="login-btn-text">Login to Portal</span>
+          <span id="login-btn-spinner" class="spinner hidden"></span>
+        </button>
+      </form>
+
+      <div class="secure-note">
+        <i class="fas fa-lock"></i> Securely connects to studentportal.bdu.edu.et
+        <span>·</span>
+        <i class="fas fa-database"></i> We do not store your password.
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="loading-overlay" class="loading-overlay hidden"><div class="loading-spinner"></div></div>
+
+<script src="/js/api.js"></script>
+<script>
+document.getElementById('login-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const username = document.getElementById('login-username').value.trim();
+  const password = document.getElementById('login-password').value;
+  const errorDiv = document.getElementById('login-error');
+  errorDiv.classList.remove('show');
+  
+  const btn = document.getElementById('login-btn');
+  const btnText = document.getElementById('login-btn-text');
+  const btnSpinner = document.getElementById('login-btn-spinner');
+  btn.disabled = true; btnText.textContent = 'Logging in...'; btnSpinner.classList.remove('hidden');
+  
+  try {
+    const response = await loginAndGetData(username, password);
+    if (response.success) {
+      window.location.href = '/pages/dashboard.html';
+    } else {
+      errorDiv.textContent = response.error || 'Login failed';
+      errorDiv.classList.add('show');
+    }
+  } catch (error) {
+    errorDiv.textContent = error.message;
+    errorDiv.classList.add('show');
+  } finally {
+    btn.disabled = false; btnText.textContent = 'Login to Portal'; btnSpinner.classList.add('hidden');
+  }
+});
+</script>
+</body>
+</html>

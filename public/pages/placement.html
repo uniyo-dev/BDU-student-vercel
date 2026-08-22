@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BDU Portal - Placement</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .placement-card {
+      background: white;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 12px;
+      border: 1px solid #e7eef7;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .placement-card.selected { border-color: #1f8b4c; background: #f0fdf4; }
+    .placement-card.not-selected { border-color: #fca5a5; background: #fef2f2; }
+    .priority-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 40px;
+      font-size: 11px;
+      font-weight: 700;
+      margin-left: 8px;
+    }
+    .priority-1st { background: #dbeafe; color: #1e40af; }
+    .priority-2nd { background: #fef3c7; color: #92400e; }
+    .score-bar {
+      width: 100%;
+      height: 8px;
+      background: #e2e8f0;
+      border-radius: 40px;
+      margin: 8px 0;
+      overflow: hidden;
+    }
+    .score-fill {
+      height: 100%;
+      border-radius: 40px;
+      transition: width 0.5s ease;
+    }
+    .criteria-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .criteria-item:last-child { border-bottom: none; }
+  </style>
+</head>
+<body>
+
+<div class="app-container">
+  <div class="page active">
+    <div class="portal-header">
+      <h1><i class="fas fa-graduation-cap"></i> BDU Student Portal</h1>
+      <span class="sub" onclick="location.href='/pages/dashboard.html'" style="cursor:pointer;"><i class="fas fa-arrow-left"></i> Back</span>
+    </div>
+    
+    <div class="results-header">
+      <div class="main-title">Department Placement</div>
+      <div class="sub-year">Your placement status & priorities</div>
+    </div>
+    
+    <div id="placement-content" style="padding: 0 1.5rem 1rem;">
+      <div style="text-align:center;color:#5a708b;padding:40px;">Loading placement info...</div>
+    </div>
+    
+    <div class="bottom-nav">
+      <span onclick="location.href='/pages/dashboard.html'"><i class="fas fa-chart-pie"></i> Dashboard</span>
+      <span onclick="location.href='/pages/results.html'"><i class="fas fa-list-ul"></i> Results</span>
+      <span class="active"><i class="fas fa-sitemap"></i> Placement</span>
+      <span onclick="location.href='/pages/profile.html'"><i class="fas fa-user"></i> Profile</span>
+    </div>
+  </div>
+</div>
+
+<script src="/js/api.js"></script>
+<script src="/js/placement.js"></script>
+</body>
+</html>

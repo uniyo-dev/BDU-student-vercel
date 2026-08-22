@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BDU - Grade Report</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    /* A4 Print Styles */
+    @media print {
+      body { background: white; }
+      .app-container { box-shadow: none; max-width: 100%; border-radius: 0; }
+      .no-print { display: none !important; }
+      .print-area { padding: 40px; }
+    }
+    
+    .report-header {
+      text-align: center;
+      padding: 20px;
+      border-bottom: 3px double #0b1e33;
+      margin-bottom: 20px;
+    }
+    
+    .report-header img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 10px;
+    }
+    
+    .report-header .uni-name {
+      font-size: 18px;
+      font-weight: 800;
+      color: #0b1e33;
+    }
+    
+    .report-header .report-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #1a4b78;
+      margin-top: 4px;
+    }
+    
+    .report-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+    }
+    
+    .report-table th {
+      background: #0b1e33;
+      color: white;
+      padding: 10px;
+      font-size: 11px;
+      text-align: left;
+      font-weight: 600;
+    }
+    
+    .report-table td {
+      padding: 8px 10px;
+      font-size: 11px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    
+    .report-table tr:nth-child(even) { background: #f8fafc; }
+    
+    .signature-area {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 40px;
+      padding: 0 20px;
+    }
+    
+    .signature-box {
+      text-align: center;
+      font-size: 11px;
+    }
+    
+    .signature-box img {
+      width: 120px;
+      height: auto;
+      margin-bottom: 4px;
+    }
+    
+    .stamp-area {
+      text-align: center;
+      margin-top: 20px;
+    }
+    
+    .stamp-area img {
+      width: 120px;
+      height: 120px;
+      object-fit: contain;
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-container">
+  <div class="page active print-area">
+    <div class="report-header">
+      <img src="/images/logo.jpg" alt="BDU Logo">
+      <div class="uni-name">BAHIR DAR UNIVERSITY</div>
+      <div class="report-title">OFFICIAL GRADE REPORT</div>
+      <div style="font-size:11px; color:#4f647c; margin-top:4px;">Academic Year: <span id="report-year"></span></div>
+    </div>
+    
+    <div style="padding: 0 20px;">
+      <table style="width:100%; font-size:11px; margin-bottom:16px;">
+        <tr>
+          <td style="padding:4px 0;"><strong>Student Name:</strong></td>
+          <td id="report-name"></td>
+          <td style="padding:4px 0;"><strong>Student ID:</strong></td>
+          <td id="report-id"></td>
+        </tr>
+        <tr>
+          <td style="padding:4px 0;"><strong>Program:</strong></td>
+          <td id="report-program" colspan="3"></td>
+        </tr>
+      </table>
+      
+      <div id="report-content"></div>
+      
+      <div class="signature-area">
+        <div class="signature-box">
+          <img src="/images/Signature.png" alt="Signature">
+          <div>Registrar</div>
+        </div>
+        <div class="signature-box">
+          <div class="stamp-area">
+            <img src="/images/stamp.jpg" alt="Official Stamp">
+          </div>
+        </div>
+        <div class="signature-box">
+          <img src="/images/Signature.png" alt="Signature">
+          <div>Dean</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div style="padding: 16px;" class="no-print">
+    <button class="print-btn" onclick="window.print()">
+      <i class="fas fa-print"></i> Print Grade Report
+    </button>
+    <button class="print-btn" style="background:#64748b;" onclick="location.href='/pages/results.html'">
+      <i class="fas fa-arrow-left"></i> Back to Results
+    </button>
+  </div>
+</div>
+
+<script src="/js/api.js"></script>
+<script>
+function renderReport() {
+  const data = getStudentData();
+  if (!data) {
+    window.location.href = '/';
+    return;
+  }
+  
+  const bio = data.biography || {};
+  const summary = data.summary || {};
+  
+  document.getElementById('report-name').textContent = bio.fullName || '';
+  document.getElementById('report-id').textContent = bio.studentId || '';
+  document.getElementById('report-program').textContent = data.program || '';
+  document.getElementById('report-year').textContent = data.registrations?.[0]?.acYear || '';
+  
+  let html = '';
+  
+  data.registrations.forEach(reg => {
+    const semCourses = data.courses?.find(c => c.semester === reg.semester);
+    
+    html += `
+      <div style="margin-bottom:20px;">
+        <div style="background:#0b1e33; color:white; padding:8px 12px; font-weight:700; font-size:12px; border-radius:6px 6px 0 0;">
+          Semester ${reg.semester} — SGPA: ${reg.sgpa} | CGPA: ${reg.cgpa} | Status: ${reg.status}
+        </div>
+        <table class="report-table">
+          <thead>
+            <tr>
+              <th>Course Code</th>
+              <th>Course Title</th>
+              <th>Credit</th>
+              <th>Grade</th>
+              <th>Points</th>
+              <th>Percentage</th>
+            </tr>
+          </thead>
+          <tbody>
+    `;
+    
+    if (semCourses?.courses?.length) {
+      semCourses.courses.forEach(c => {
+        html += `
+          <tr>
+            <td>${c.code}</td>
+            <td>${c.title}</td>
+            <td>${c.credit}</td>
+            <td><strong>${c.grade}</strong></td>
+            <td>${c.points}</td>
+            <td>${c.percentage || '—'}</td>
+          </tr>
+        `;
+      });
+    }
+    
+    html += '</tbody></table></div>';
+  });
+  
+  document.getElementById('report-content').innerHTML = html;
+}
+
+if (sessionStorage.getItem('bdu_logged_in') === 'true') {
+  renderReport();
+} else {
+  window.location.href = '/';
+}
+</script>
+</body>
+</html>
