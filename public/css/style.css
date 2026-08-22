@@ -407,3 +407,56 @@ body {
 .hidden { display: none !important; }
 .login-error { display: none; background: #fee2e2; color: #991b1b; padding: 10px 14px; border-radius: 12px; font-size: 0.8rem; margin-bottom: 12px; }
 .login-error.show { display: block; }
+
+/* Banner Header */
+.banner-header {
+  width: 100%;
+  height: 140px;
+  overflow: hidden;
+  position: relative;
+}
+
+.banner-header img.banner-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.banner-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 25px 16px 10px;
+  background: linear-gradient(transparent, rgba(11,30,51,0.9));
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.banner-overlay img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid white;
+}
+
+.banner-overlay .uni-name { font-size: 12px; font-weight: 700; }
+.banner-overlay .uni-sub { font-size: 10px; opacity: 0.8; }
+.banner-overlay .logout-btn {
+  margin-left: auto;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

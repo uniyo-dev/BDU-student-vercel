@@ -3,81 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDU Student Portal - Department Placement</title>
+    <title>BDU Student Portal - Placement</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="/css/style.css">
     <style>
-        .placement-container {
-            max-width: 420px;
-            width: 100%;
-            background: white;
-            border-radius: 32px;
-            box-shadow: 0 20px 40px -12px rgba(0, 20, 40, 0.25);
-            overflow: hidden;
-            min-height: 100vh;
-        }
+        .placement-container { max-width: 420px; width: 100%; background: white; border-radius: 32px; box-shadow: 0 20px 40px -12px rgba(0,20,40,0.25); overflow: hidden; min-height: 100vh; }
         .placement-screen { padding: 0 0 0.8rem 0; }
         .placement-header { padding: 1.2rem 1.5rem 0.5rem; }
         .placement-header .main-title { font-size: 1.5rem; font-weight: 700; color: #0b1e33; }
         .placement-header .sub-title { color: #3e5772; font-weight: 500; font-size: 0.9rem; margin-top: 0.2rem; }
-        
-        .status-card {
-            background: #f2f8ff;
-            margin: 0.8rem 1.5rem 1.2rem;
-            border-radius: 28px;
-            padding: 1.5rem 1.2rem;
-            text-align: center;
-            border: 2px solid #e3eaf2;
-        }
+        .status-card { background: #f2f8ff; margin: 0.8rem 1.5rem 1.2rem; border-radius: 28px; padding: 1.5rem 1.2rem; text-align: center; border: 2px solid #e3eaf2; }
         .status-card .status-icon { font-size: 3rem; color: #1a5f9c; margin-bottom: 0.5rem; }
         .status-card .status-title { font-size: 1.3rem; font-weight: 700; color: #0b1e33; margin-bottom: 0.3rem; }
         .status-card .status-subtitle { font-size: 0.85rem; color: #4a637f; font-weight: 500; }
-        .status-card .status-badge {
-            display: inline-block;
-            background: #1f8b4c;
-            color: white;
-            padding: 0.3rem 1.5rem;
-            border-radius: 40px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            margin-top: 0.8rem;
-            letter-spacing: 0.5px;
-        }
-        .status-badge.pending { background: #e67e22; }
-        .status-badge.review { background: #3498db; }
-        
+        .status-card .status-badge { display: inline-block; background: #1f8b4c; color: white; padding: 0.3rem 1.5rem; border-radius: 40px; font-size: 0.8rem; font-weight: 700; margin-top: 0.8rem; letter-spacing: 0.5px; }
         .details-section { padding: 0 1.5rem 1rem; }
-        .details-section .section-title {
-            font-weight: 700;
-            color: #0b1e33;
-            font-size: 0.9rem;
-            margin-bottom: 0.8rem;
-            padding-bottom: 0.3rem;
-            border-bottom: 2px solid #eef3f8;
-        }
-        .detail-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.7rem 0;
-            border-bottom: 1px solid #edf2f9;
-        }
+        .details-section .section-title { font-weight: 700; color: #0b1e33; font-size: 0.9rem; margin-bottom: 0.8rem; padding-bottom: 0.3rem; border-bottom: 2px solid #eef3f8; }
+        .detail-row { display: flex; justify-content: space-between; padding: 0.7rem 0; border-bottom: 1px solid #edf2f9; }
         .detail-row:last-child { border-bottom: none; }
         .detail-row .label { color: #4a637f; font-weight: 500; font-size: 0.9rem; }
         .detail-row .value { color: #0b1e33; font-weight: 600; font-size: 0.9rem; text-align: right; }
-        .detail-row .value .highlight { color: #1a5f9c; font-weight: 700; }
-        
         .preference-list { padding: 0 1.5rem 1rem; }
-        .preference-item {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            background: #f7faff;
-            padding: 0.8rem 1.2rem;
-            border-radius: 16px;
-            margin-bottom: 0.6rem;
-            border: 1px solid #e7eef7;
-            transition: 0.15s;
-        }
+        .preference-item { display: flex; align-items: center; gap: 1rem; background: #f7faff; padding: 0.8rem 1.2rem; border-radius: 16px; margin-bottom: 0.6rem; border: 1px solid #e7eef7; transition: 0.15s; }
         .preference-item .rank { font-weight: 700; color: #1a5f9c; font-size: 0.9rem; min-width: 2rem; }
         .preference-item .dept-name { font-weight: 600; color: #0b1e33; flex: 1; }
         .preference-item .dept-code { font-size: 0.75rem; color: #4f6885; font-weight: 500; }
@@ -85,28 +32,12 @@
         .status-indicator.confirmed { background: #d4edda; color: #155724; }
         .status-indicator.pending { background: #fff3cd; color: #856404; }
         .status-indicator.review { background: #cce5ff; color: #004085; }
-        
-        .toast-message {
-            position: fixed;
-            bottom: 2rem;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #0b1e33;
-            color: white;
-            padding: 0.6rem 1.5rem;
-            border-radius: 60px;
-            font-size: 0.85rem;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            pointer-events: none;
-            z-index: 1000;
-        }
-        .toast-message.show { opacity: 1; }
     </style>
 </head>
 <body>
 
 <div class="placement-container">
+    <!-- Banner with logo -->
     <div class="banner-header" style="height:100px;">
         <img src="/images/banner.jpeg" alt="BDU Banner" class="banner-img">
         <div class="banner-overlay">
@@ -117,18 +48,20 @@
             </div>
         </div>
     </div>
+
     <div class="portal-header">
         <h1><i class="fas fa-graduation-cap"></i> BDU Student Portal</h1>
         <span class="sub" onclick="location.href='/pages/dashboard.html'" style="cursor:pointer;"><i class="fas fa-arrow-left"></i> Back</span>
     </div>
+
     <div class="placement-screen">
         <div class="placement-header">
             <div class="main-title">Department Placement</div>
-            <div class="sub-title" id="placement-year">2025/2026 Academic Year</div>
+            <div class="sub-title">2025/2026 Academic Year</div>
         </div>
 
-        <div class="status-card" id="statusCard">
-            <div class="status-icon"><i class="fas fa-check-circle"></i></div>
+        <div class="status-card">
+            <div class="status-icon" id="status-icon"><i class="fas fa-check-circle"></i></div>
             <div class="status-title" id="status-title">Placement Status</div>
             <div class="status-subtitle" id="status-subtitle">Loading...</div>
             <div class="status-badge" id="statusBadge">—</div>
@@ -148,18 +81,12 @@
                 <span class="label">Total Score</span>
                 <span class="value" id="totalScore">—</span>
             </div>
-            <div class="detail-row">
-                <span class="label">Status</span>
-                <span class="value" id="detailStatus">—</span>
-            </div>
         </div>
 
         <div class="details-section">
-            <div class="section-title"><i class="fas fa-list" style="margin-right:8px;"></i> Your Placement Results</div>
+            <div class="section-title"><i class="fas fa-list" style="margin-right:8px;"></i> Your Priorities</div>
         </div>
-        <div class="preference-list" id="preferenceList">
-            <!-- Populated by JavaScript -->
-        </div>
+        <div class="preference-list" id="preferenceList"></div>
 
         <div class="bottom-nav">
             <span onclick="location.href='/pages/dashboard.html'"><i class="fas fa-chart-pie"></i> Dashboard</span>
