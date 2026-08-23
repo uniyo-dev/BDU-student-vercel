@@ -1,15 +1,19 @@
 {
+  "id": "/",
   "name": "BDU Student Portal",
   "short_name": "BDU Portal",
   "description": "Bahir Dar University Student Portal - Check your academic results, GPA, and department placement",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
+  "display_override": ["standalone", "fullscreen"],
   "orientation": "portrait",
   "background_color": "#0b1e33",
   "theme_color": "#0b1e33",
   "lang": "en",
   "dir": "ltr",
+  "categories": ["education", "productivity"],
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "/images/logo.jpg",
@@ -29,6 +33,28 @@
       "type": "image/jpeg",
       "purpose": "maskable"
     }
+  ],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "description": "View your dashboard",
+      "url": "/pages/dashboard.html",
+      "icons": [{ "src": "/images/logo.jpg", "sizes": "192x192" }]
+    },
+    {
+      "name": "Results",
+      "short_name": "Results",
+      "description": "View your results",
+      "url": "/pages/results.html",
+      "icons": [{ "src": "/images/logo.jpg", "sizes": "192x192" }]
+    },
+    {
+      "name": "Placement",
+      "short_name": "Placement",
+      "description": "Check placement",
+      "url": "/pages/placement.html",
+      "icons": [{ "src": "/images/logo.jpg", "sizes": "192x192" }]
+    }
   ]
 }
-
