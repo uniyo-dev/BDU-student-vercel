@@ -34,6 +34,29 @@
       "purpose": "maskable"
     }
   ],
+  "screenshots": [
+    {
+      "src": "/images/screenshot-login.jpg",
+      "sizes": "1080x2400",
+      "type": "image/jpeg",
+      "form_factor": "narrow",
+      "label": "Login Screen"
+    },
+    {
+      "src": "/images/screenshot-dashboard.jpg",
+      "sizes": "1080x2400",
+      "type": "image/jpeg",
+      "form_factor": "narrow",
+      "label": "Dashboard"
+    },
+    {
+      "src": "/images/screenshot-results.jpg",
+      "sizes": "1080x2400",
+      "type": "image/jpeg",
+      "form_factor": "narrow",
+      "label": "Results"
+    }
+  ],
   "shortcuts": [
     {
       "name": "Dashboard",
