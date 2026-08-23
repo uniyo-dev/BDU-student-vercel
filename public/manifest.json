@@ -18,19 +18,19 @@
     {
       "src": "/images/logo.jpg",
       "sizes": "192x192",
-      "type": "image/jpeg",
+      "type": "image/png",
       "purpose": "any"
     },
     {
       "src": "/images/logo.jpg",
       "sizes": "512x512",
-      "type": "image/jpeg",
+      "type": "image/png",
       "purpose": "any"
     },
     {
       "src": "/images/logo.jpg",
       "sizes": "512x512",
-      "type": "image/jpeg",
+      "type": "image/png",
       "purpose": "maskable"
     }
   ],
@@ -40,22 +40,21 @@
       "short_name": "Dashboard",
       "description": "View your dashboard",
       "url": "/pages/dashboard.html",
-      "icons": [{ "src": "/images/logo.jpg", "sizes": "192x192" }]
+      "icons": [{ "src": "/images/logo.jpg", "sizes": "192x192", "type": "image/png" }]
     },
     {
       "name": "Results",
       "short_name": "Results",
       "description": "View your results",
       "url": "/pages/results.html",
-      "icons": [{ "src": "/images/logo.jpg", "sizes": "192x192" }]
+      "icons": [{ "src": "/images/logo.jpg", "sizes": "192x192", "type": "image/png" }]
     },
     {
       "name": "Placement",
       "short_name": "Placement",
       "description": "Check placement",
       "url": "/pages/placement.html",
-      "icons": [{ "src": "/images/logo.jpg", "sizes": "192x192" }]
+      "icons": [{ "src": "/images/logo.jpg", "sizes": "192x192", "type": "image/png" }]
     }
   ]
 }
-
