@@ -2,44 +2,47 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Bahir Dar University Student Portal - Check your academic results, GPA, and department placement">
-  <title>BDU Student Portal - Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Bahir Dar University Student Portal">
+  <title>BDU Student Portal</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link rel="manifest" href="/manifest.json">
-  <link rel="stylesheet" href="/css/login.css">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, Arial, sans-serif; }
+    
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
     
     body {
-      background: #eef2f7;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 1rem;
-    }
-    
-    .login-container {
-      max-width: 420px;
-      width: 100%;
       background: white;
-      border-radius: 32px;
-      box-shadow: 0 20px 40px -12px rgba(0, 20, 40, 0.25);
-      overflow: hidden;
     }
     
-    .banner-header {
+    .app {
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      background: white;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .banner {
       width: 100%;
-      height: 140px;
-      overflow: hidden;
+      height: 180px;
       position: relative;
+      flex-shrink: 0;
     }
     
-    .banner-img {
+    .banner img {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      display: block;
     }
     
     .banner-overlay {
@@ -47,47 +50,50 @@
       bottom: 0;
       left: 0;
       right: 0;
-      padding: 25px 16px 12px;
+      padding: 30px 20px 15px;
       background: linear-gradient(transparent, rgba(11,30,51,0.9));
       color: white;
       text-align: center;
     }
     
-    .uni-title { font-size: 16px; font-weight: 700; }
-    .uni-sub { font-size: 11px; opacity: 0.8; margin-top: 2px; }
+    .banner-title { font-size: 18px; font-weight: 700; }
+    .banner-sub { font-size: 12px; opacity: 0.8; margin-top: 3px; }
     
-    .login-screen {
-      padding: 1.2rem 1.8rem 2rem;
-      text-align: center;
+    .login-area {
+      flex: 1;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
     }
     
-    .logo-large {
-      width: 70px;
-      height: 70px;
+    .logo {
+      width: 80px;
+      height: 80px;
       border-radius: 50%;
       object-fit: cover;
-      margin: -35px auto 12px;
-      border: 3px solid white;
-      box-shadow: 0 4px 12px rgba(0,20,40,0.2);
+      margin: 0 auto 20px;
+      border: 3px solid #e0e8f0;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.12);
       display: block;
     }
     
-    .form-group { text-align: left; margin-top: 16px; }
+    .form-group { margin-bottom: 16px; }
     
     .form-label {
       display: block;
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 600;
       color: #1f334a;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
     }
     
     .form-input {
       width: 100%;
-      padding: 14px 18px;
-      border: 1px solid #d9e0e9;
+      padding: 15px 18px;
+      border: 2px solid #d9e0e9;
       border-radius: 60px;
-      font-size: 15px;
+      font-size: 16px;
       background: #f9fbfd;
       transition: 0.2s;
     }
@@ -101,8 +107,7 @@
     
     .login-btn {
       width: 100%;
-      margin-top: 24px;
-      padding: 14px;
+      padding: 15px;
       background: #0b1e33;
       color: white;
       font-weight: 700;
@@ -114,6 +119,7 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
+      margin-top: 8px;
     }
     
     .login-btn:active { transform: scale(0.98); }
@@ -123,18 +129,14 @@
       margin-top: 16px;
       font-size: 12px;
       color: #4f647c;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      flex-wrap: wrap;
+      text-align: center;
     }
     
     .login-error {
       display: none;
       background: #fee2e2;
       color: #991b1b;
-      padding: 10px 14px;
+      padding: 12px 16px;
       border-radius: 12px;
       font-size: 13px;
       margin-bottom: 12px;
@@ -146,17 +148,17 @@
 </head>
 <body>
 
-<div class="login-container">
-  <div class="banner-header">
-    <img src="/images/banner.jpeg" alt="BDU Banner" class="banner-img">
+<div class="app">
+  <div class="banner">
+    <img src="/images/banner.jpeg" alt="Banner">
     <div class="banner-overlay">
-      <div class="uni-title">Bahir Dar University</div>
-      <div class="uni-sub">Student Portal (26/27)</div>
+      <div class="banner-title">Bahir Dar University</div>
+      <div class="banner-sub">Student Portal</div>
     </div>
   </div>
   
-  <div class="login-screen">
-    <img src="/images/logo.jpg" alt="BDU Logo" class="logo-large">
+  <div class="login-area">
+    <img src="/images/logo.jpg" alt="Logo" class="logo">
     
     <div id="login-error" class="login-error"></div>
 
@@ -178,32 +180,31 @@
     </form>
 
     <div class="secure-note">
-      <i class="fas fa-lock" style="color:#1f8b4c;"></i> Securely connects to studentportal.bdu.edu.et
-      <span>·</span>
-      <i class="fas fa-database"></i> We do not store your password.
+      Securely connects to studentportal.bdu.edu.et
     </div>
   </div>
 </div>
 
 <script>
-document.getElementById('loginForm').addEventListener('submit', async (e) => {
+document.getElementById('loginForm').addEventListener('submit', async function(e) {
   e.preventDefault();
-  const username = document.getElementById('login-username').value.trim();
-  const password = document.getElementById('login-password').value;
-  const errorDiv = document.getElementById('login-error');
+  var username = document.getElementById('login-username').value.trim();
+  var password = document.getElementById('login-password').value;
+  var errorDiv = document.getElementById('login-error');
   errorDiv.classList.remove('show');
   
-  const btn = document.getElementById('login-btn');
-  const btnText = document.getElementById('login-btn-text');
-  btn.disabled = true; btnText.textContent = 'Logging in...';
+  var btn = document.getElementById('login-btn');
+  var btnText = document.getElementById('login-btn-text');
+  btn.disabled = true;
+  btnText.textContent = 'Logging in...';
   
   try {
-    const response = await fetch('/api/login', {
+    var response = await fetch('/api/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password }),
+      body: JSON.stringify({ username: username, password: password })
     });
-    const data = await response.json();
+    var data = await response.json();
     
     if (data.success) {
       sessionStorage.setItem('bdu_logged_in', 'true');
@@ -215,10 +216,11 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
       errorDiv.classList.add('show');
     }
   } catch (error) {
-    errorDiv.textContent = 'Login failed. Please try again.';
+    errorDiv.textContent = 'Login failed';
     errorDiv.classList.add('show');
   } finally {
-    btn.disabled = false; btnText.textContent = 'Login to Portal';
+    btn.disabled = false;
+    btnText.textContent = 'Login to Portal';
   }
 });
 </script>
