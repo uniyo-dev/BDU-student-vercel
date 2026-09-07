@@ -46,6 +46,45 @@
     .value { font-size: 13px; font-weight: 600; color: #0b1e33; text-align: right; }
     
     .chips { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-top: 8px; }
+    
+    /* Avatar with Initials */
+    .avatar {
+      width: 80px; height: 80px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 32px; font-weight: 800; color: white;
+      margin: 0 auto 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      border: 3px solid white;
+    }
+    .avatar.blue { background: linear-gradient(135deg, #1a5f9c, #0b1e33); }
+    .avatar.green { background: linear-gradient(135deg, #059669, #065f46); }
+    .avatar.purple { background: linear-gradient(135deg, #7c3aed, #5b21b6); }
+    .avatar.orange { background: linear-gradient(135deg, #d97706, #b45309); }
+    
+    /* Achievement Badges */
+    .badges {
+      display: flex; gap: 8px; flex-wrap: wrap;
+      justify-content: center; margin-top: 12px;
+    }
+    .badge-item {
+      display: flex; align-items: center; gap: 6px;
+      background: linear-gradient(135deg, #fef3c7, #fbbf24);
+      border: 2px solid #fcd34d; border-radius: 40px;
+      padding: 6px 14px; font-size: 11px; font-weight: 700;
+      color: #92400e; animation: popIn 0.5s ease;
+    }
+    .badge-item.gold {
+      background: linear-gradient(135deg, #fef3c7, #fbbf24);
+      border-color: #f59e0b;
+    }
+    .badge-item.green {
+      background: linear-gradient(135deg, #d1fae5, #6ee7b7);
+      border-color: #10b981; color: #065f46;
+    }
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.5); }
+      to { opacity: 1; transform: scale(1); }
+    }
     .chip { background: #d1fae5; color: #065f46; padding: 4px 14px; border-radius: 40px; font-size: 12px; font-weight: 600; }
     .chip.blue { background: #dbeafe; color: #1e40af; }
     
@@ -94,9 +133,41 @@
   var bio = data.biography || {};
   
   var html = '';
+  
+  // Generate avatar with initials
+  var initials = (bio.fullName || 'S').split(' ').map(function(n) { return n[0]; }).join('').slice(0, 2).toUpperCase();
+  var avatarColors = ['blue', 'green', 'purple', 'orange'];
+  var colorIndex = (bio.studentId || '').length % 4;
+  var avatarColor = avatarColors[colorIndex];
+  
+  html += '<div class="avatar ' + avatarColor + '">' + initials + '</div>';
   html += '<div class="card"><div class="card-title">' + (bio.fullName || 'Student') + '</div>';
   html += '<div class="chips"><span class="chip">' + (bio.gender || '—') + '</span>';
-  html += '<span class="chip blue">' + (bio.nationality || '—') + '</span></div></div>';
+  html += '<span class="chip blue">' + (bio.nationality || '—') + '</span></div>';
+  
+  // Achievement badges
+  var summary = data.summary || {};
+  var gpa = parseFloat(summary.cumulativeGPA) || 0;
+  var totalCourses = data.courses ? data.courses.reduce(function(sum, sem) { return sum + sem.courses.length; }, 0) : 0;
+  var allA = true;
+  
+  data.courses?.forEach(function(sem) {
+    sem.courses.forEach(function(c) {
+      if (c.grade && !c.grade.startsWith('A') && c.grade !== 'P') {
+        allA = false;
+      }
+    });
+  });
+  
+  html += '<div class="badges">';
+  if (gpa === 4.00) {
+    html += '<span class="badge-item gold">🏆 DEAN'S LIST</span>';
+  }
+  if (allA && totalCourses > 0) {
+    html += '<span class="badge-item green">⭐ ALL A's</span>';
+  }
+  html += '<span class="badge-item green">📚 ' + totalCourses + ' Courses</span>';
+  html += '</div></div>';
   
   html += '<div class="card"><div class="card-title">Academic Biography</div>';
   html += row('Program', data.program);
