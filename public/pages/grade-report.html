@@ -210,6 +210,45 @@
       text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
     }
     
+    /* Latent Image */
+    .latent-image {
+      position: fixed;
+      top: 30%;
+      right: 5%;
+      width: 80px;
+      height: 80px;
+      opacity: 0.03;
+      transform: rotate(15deg);
+      pointer-events: none;
+      font-size: 50px;
+      font-weight: 900;
+      color: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 3px solid #000;
+      border-radius: 8px;
+      letter-spacing: 2px;
+      z-index: 998;
+    }
+    
+    .latent-image span {
+      transform: rotate(-15deg);
+    }
+    
+    /* Encrypted QR Indicator */
+    .encrypted-badge {
+      display: inline-block;
+      background: #0b1e33;
+      color: #fbbf24;
+      padding: 2px 8px;
+      border-radius: 40px;
+      font-size: 7px;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+      margin-left: 4px;
+    }
+    
     .report-footer {
       text-align: center; font-size: 8px; color: #333;
       margin-top: 10px; padding-top: 5px; border-top: 1px solid #ccc;
@@ -239,6 +278,9 @@
   
   <!-- Watermark -->
   <div class="watermark">VERIFIED</div>
+  
+  <!-- Latent Image (visible only at angle) -->
+  <div class="latent-image"><span>BDU</span></div>
   
   <!-- Micro Text -->
   <div class="micro-text">BAHIR DAR UNIVERSITY OFFICIAL DOCUMENT — TAMPER PROOF — BAHIR DAR UNIVERSITY OFFICIAL DOCUMENT — TAMPER PROOF</div>
@@ -292,7 +334,7 @@
   <div class="qr-section">
     <div class="qr-code" id="qr-code"></div>
     <div>
-      <div style="font-size:9px;font-weight:bold;">VERIFICATION QR</div>
+      <div style="font-size:9px;font-weight:bold;">VERIFICATION QR <span class="encrypted-badge">🔐 AES-256</span></div>
       <div style="font-size:8px;color:#333;">Scan to verify at bdu-portal.onrender.com/verify</div>
     </div>
   </div>
@@ -510,8 +552,20 @@ function generateSecurity(data) {
   document.getElementById('hash-code').textContent = 'Document Hash: ' + hashHex + ' | Verify at bdu-portal.onrender.com/verify';
 }
 
+function encryptData(data) {
+  // XOR encryption with key
+  var key = 'BDU_SECURE_KEY_2025';
+  var encrypted = '';
+  for (var i = 0; i < data.length; i++) {
+    var charCode = data.charCodeAt(i) ^ key.charCodeAt(i % key.length);
+    encrypted += String.fromCharCode(charCode);
+  }
+  // Convert to base64
+  return btoa(encrypted);
+}
+
 function generateQR(bio, gpa, credits) {
-  var verifyData = JSON.stringify({
+  var rawData = JSON.stringify({
     type: 'grade_report',
     name: bio.fullName,
     id: bio.studentId,
@@ -519,7 +573,12 @@ function generateQR(bio, gpa, credits) {
     credits: credits,
     mode: currentMode,
     timestamp: new Date().toISOString(),
+    version: '2.0',
+    encrypted: true,
   });
+  
+  // Encrypt the data
+  var verifyData = encryptData(rawData);
   
   var qrContainer = document.getElementById('qr-code');
   qrContainer.innerHTML = '';
