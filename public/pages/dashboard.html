@@ -35,8 +35,45 @@
       background: linear-gradient(135deg, #dbeafe, #eff6ff);
       border: 2px solid #93c5fd; border-radius: 16px;
       padding: 16px; text-align: center;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+    }
+    .stat-box.green {
+      background: linear-gradient(135deg, #d1fae5, #ecfdf5);
+      border: 2px solid #6ee7b7;
+      box-shadow: 0 4px 12px rgba(5, 150, 105, 0.15);
     }
     .stat-num { font-size: 28px; font-weight: 800; color: #2563eb; }
+    
+    /* Skeleton Loading */
+    .skeleton {
+      background: linear-gradient(90deg, #f0f4fa 25%, #e0e8f0 50%, #f0f4fa 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: 8px;
+    }
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+    .skeleton-text { height: 16px; margin: 4px 0; }
+    .skeleton-num { height: 28px; width: 60px; margin: 0 auto; }
+    
+    /* Dean's List Ribbon */
+    .ribbon {
+      display: inline-block; padding: 6px 16px;
+      background: linear-gradient(135deg, #fbbf24, #d97706);
+      color: white; border-radius: 40px;
+      font-size: 11px; font-weight: 800;
+      letter-spacing: 0.5px; margin-top: 4px;
+      box-shadow: 0 4px 12px rgba(217, 119, 6, 0.3);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    .ribbon.gold { background: linear-gradient(135deg, #fbbf24, #b45309); }
+    .ribbon.silver { background: linear-gradient(135deg, #e2e8f0, #94a3b8); }
     .stat-label { font-size: 10px; color: #2563eb; text-transform: uppercase; font-weight: 700; margin-top: 4px; }
     
     .links { display: flex; flex-direction: column; gap: 10px; }
@@ -87,15 +124,16 @@
       <div class="greeting">Welcome back,</div>
       <div class="student-name" id="dash-name">Student</div>
       <div class="student-id" id="dash-id"></div>
+    <div id="dash-ribbon"></div>
     </div>
     
     <div class="stats">
       <div class="stat-box">
-        <div class="stat-num" id="dash-gpa">—</div>
+        <div class="stat-num" id="dash-gpa"><div class="skeleton skeleton-num"></div></div>
         <div class="stat-label">GPA</div>
       </div>
-      <div class="stat-box">
-        <div class="stat-num" id="dash-credits">0</div>
+      <div class="stat-box green">
+        <div class="stat-num" id="dash-credits" style="color: #059669;"><div class="skeleton skeleton-num"></div></div>
         <div class="stat-label">Credits</div>
       </div>
     </div>
@@ -133,8 +171,17 @@
   var summary = data.summary || {};
   document.getElementById('dash-name').textContent = bio.fullName || 'Student';
   document.getElementById('dash-id').textContent = bio.studentId ? 'ID: ' + bio.studentId : '';
-  document.getElementById('dash-gpa').textContent = summary.cumulativeGPA || '—';
+  var gpa = summary.cumulativeGPA || '—';
+  document.getElementById('dash-gpa').textContent = gpa;
   document.getElementById('dash-credits').textContent = summary.totalCredits || '0';
+  
+  // Add Dean's List ribbon if GPA is 4.00
+  var ribbon = document.getElementById('dash-ribbon');
+  if (gpa === '4.00') {
+    ribbon.innerHTML = '<span class="ribbon gold">🏆 DEAN'S LIST - PERFECT 4.00</span>';
+  } else if (parseFloat(gpa) >= 3.75) {
+    ribbon.innerHTML = '<span class="ribbon silver">⭐ EXCELLENT PERFORMANCE</span>';
+  }
 })();
 </script>
 </body>

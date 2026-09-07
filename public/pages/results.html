@@ -65,6 +65,19 @@
     .gpa-label { font-size: 9px; text-transform: uppercase; font-weight: 700; }
     
     .course-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #edf2f9; }
+    
+    /* Skeleton */
+    .skeleton {
+      background: linear-gradient(90deg, #f0f4fa 25%, #e0e8f0 50%, #f0f4fa 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: 8px;
+    }
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+    .skeleton-block { height: 80px; margin-bottom: 16px; border-radius: 16px; }
     .course-name { font-weight: 600; font-size: 13px; color: #0b1e33; }
     .course-code { font-size: 11px; color: #4f6885; }
     .course-grade { text-align: right; }
@@ -101,7 +114,10 @@
   <!-- Semester Toggle -->
   <div class="toggle-wrap" id="toggle-wrap"></div>
   
-  <div class="content" id="results-content"></div>
+  <div class="content" id="results-content">
+    <div class="skeleton skeleton-block"></div>
+    <div class="skeleton skeleton-block"></div>
+  </div>
   
   <div class="bottom-nav">
     <button class="nav-item" onclick="location.href='/pages/dashboard.html'"><i class="fas fa-chart-pie"></i> Dashboard</button>
