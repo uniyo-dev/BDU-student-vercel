@@ -334,7 +334,7 @@
   <div class="qr-section">
     <div class="qr-code" id="qr-code"></div>
     <div>
-      <div style="font-size:9px;font-weight:bold;">VERIFICATION QR <span class="encrypted-badge">🔐 AES-256</span></div>
+      <div style="font-size:9px;font-weight:bold;">VERIFICATION QR</div>
       <div style="font-size:8px;color:#333;">Scan to verify at bdu-portal.onrender.com/verify</div>
     </div>
   </div>
@@ -552,39 +552,69 @@ function generateSecurity(data) {
   document.getElementById('hash-code').textContent = 'Document Hash: ' + hashHex + ' | Verify at bdu-portal.onrender.com/verify';
 }
 
-function encryptData(data) {
-  // XOR encryption with key
-  var key = 'BDU_SECURE_KEY_2025';
-  var encrypted = '';
-  for (var i = 0; i < data.length; i++) {
-    var charCode = data.charCodeAt(i) ^ key.charCodeAt(i % key.length);
-    encrypted += String.fromCharCode(charCode);
+function getVerifyUrl() {
+  var studentId = window.reportData?.biography?.studentId || 'UNKNOWN';
+  var studentName = window.reportData?.biography?.fullName || 'Student';
+  var token = 'BDU-' + studentId + '-' + studentName.replace(/\s+/g, '-').toUpperCase();
+  return 'https://bdu-portal.onrender.com/verify/' + encodeURIComponent(token);
+}
+
+function getStableSerial() {
+  var studentId = window.reportData?.biography?.studentId || 'UNKNOWN';
+  var storedKey = 'bdu_report_serial_' + studentId;
+  var serial = localStorage.getItem(storedKey);
+  
+  if (!serial) {
+    var studentDigits = studentId.replace(/\D/g, '') || '000000';
+    serial = 'BDU-GR-' + studentDigits + '-' + Date.now().toString(36).toUpperCase().slice(-6);
+    localStorage.setItem(storedKey, serial);
   }
-  // Convert to base64
-  return btoa(encrypted);
+  
+  return serial;
+}
+
+function renderSecurityFields() {
+  var serial = getStableSerial();
+  var verifyUrl = getVerifyUrl();
+  
+  document.getElementById('serial-number').textContent = 'Serial: ' + serial;
+  document.getElementById('hash-code').textContent = 'Verify at: ' + verifyUrl;
 }
 
 function generateQR(bio, gpa, credits) {
-  var rawData = JSON.stringify({
-    type: 'grade_report',
-    name: bio.fullName,
-    id: bio.studentId,
-    gpa: gpa,
-    credits: credits,
-    mode: currentMode,
-    timestamp: new Date().toISOString(),
-    version: '2.0',
-    encrypted: true,
-  });
-  
-  // Encrypt the data
-  var verifyData = encryptData(rawData);
-  
+  var verifyUrl = getVerifyUrl();
   var qrContainer = document.getElementById('qr-code');
+  
   qrContainer.innerHTML = '';
-  QRCode.toCanvas(qrContainer, verifyData, { width: 60, height: 60 }, function(err) {
-    if (err) console.error('QR error:', err);
-  });
+  
+  var canvas = document.createElement('canvas');
+  canvas.width = 60;
+  canvas.height = 60;
+  canvas.className = 'qr-canvas';
+  
+  qrContainer.appendChild(canvas);
+  
+  QRCode.toCanvas(
+    canvas,
+    verifyUrl,
+    {
+      width: 60,
+      margin: 1,
+      errorCorrectionLevel: 'H',
+      color: {
+        dark: '#000000',
+        light: '#FFFFFF'
+      }
+    },
+    function(err) {
+      if (err) {
+        console.error('QR error:', err);
+        qrContainer.textContent = 'QR unavailable';
+      }
+    }
+  );
+  
+  renderSecurityFields();
 }
 </script>
 </body>
