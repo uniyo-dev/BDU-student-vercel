@@ -6,242 +6,160 @@
   <title>BDU - Grade Report</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
-    @page {
-      size: A4;
-      margin: 10mm;
-    }
-    
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: Arial, Helvetica, sans-serif;
-    }
-    
-    body {
-      background: #eef2f7;
-      color: #000;
-    }
+    @page { size: A4; margin: 10mm; }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; }
+    body { background: #eef2f7; color: #000; }
     
     .a4-sheet {
-      width: 190mm;
-      min-height: 277mm;
-      background: white;
-      margin: 0 auto;
-      padding: 10mm;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      width: 190mm; min-height: 277mm; background: white;
+      margin: 0 auto; padding: 10mm;
     }
     
     @media print {
       body { background: white; }
-      .a4-sheet {
-        width: 100%;
-        min-height: auto;
-        box-shadow: none;
-        margin: 0;
-        padding: 0;
-      }
+      .a4-sheet { width: 100%; min-height: auto; box-shadow: none; margin: 0; padding: 0; }
       .no-print { display: none !important; }
     }
     
     .report-header {
-      text-align: center;
-      border-bottom: 2px solid #000;
-      padding-bottom: 5px;
-      margin-bottom: 8px;
+      text-align: center; border-bottom: 2px solid #000;
+      padding-bottom: 5px; margin-bottom: 8px;
     }
+    .logo-row { display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 5px; }
+    .logo-row img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; }
+    .uni-name { font-size: 14px; font-weight: bold; text-transform: uppercase; color: #000; }
+    .report-title { font-size: 12px; font-weight: bold; color: #000; margin-top: 2px; text-transform: uppercase; }
     
-    .logo-row {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 5px;
-    }
-    
-    .logo-row img {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      object-fit: cover;
-    }
-    
-    .uni-name {
-      font-size: 14px;
-      font-weight: bold;
-      text-transform: uppercase;
-      color: #000;
-    }
-    
-    .report-title {
-      font-size: 12px;
-      font-weight: bold;
-      color: #000;
-      margin-top: 2px;
-      text-transform: uppercase;
-    }
-    
-    .student-info {
-      width: 100%;
-      font-size: 11px;
-      border-collapse: collapse;
-      margin-bottom: 8px;
-      color: #000;
-    }
-    
-    .student-info td {
-      padding: 3px 5px;
-      color: #000;
-    }
+    .student-info { width: 100%; font-size: 11px; border-collapse: collapse; margin-bottom: 8px; color: #000; }
+    .student-info td { padding: 3px 5px; color: #000; }
     
     .semester-header {
-      background: #333;
-      color: white;
-      padding: 5px 8px;
-      font-weight: bold;
-      font-size: 11px;
-      border-radius: 3px 3px 0 0;
-      margin-top: 6px;
+      background: #333; color: white; padding: 5px 8px;
+      font-weight: bold; font-size: 11px; border-radius: 3px 3px 0 0; margin-top: 6px;
     }
     
-    .grade-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 10px;
-      color: #000;
-    }
+    .grade-table { width: 100%; border-collapse: collapse; font-size: 10px; color: #000; }
+    .grade-table th { background: #333; color: white; padding: 4px 5px; font-size: 9px; text-align: left; }
+    .grade-table td { padding: 3px 5px; border-bottom: 1px solid #ccc; color: #000; }
     
-    .grade-table th {
-      background: #333;
-      color: white;
-      padding: 4px 5px;
-      font-size: 9px;
-      text-align: left;
+    /* QR Code Section */
+    .qr-section {
+      display: flex; align-items: center; gap: 10px;
+      margin-top: 10px; padding: 8px;
+      border: 1px dashed #ccc; border-radius: 8px;
     }
-    
-    .grade-table td {
-      padding: 3px 5px;
-      border-bottom: 1px solid #ccc;
-      color: #000;
-    }
+    .qr-code { width: 60px; height: 60px; }
+    .qr-text { font-size: 8px; color: #333; }
+    .qr-verify { font-size: 9px; font-weight: bold; color: #000; }
     
     .signature-area {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
+      display: flex; justify-content: space-between; align-items: flex-end;
       margin-top: 20px;
     }
-    
-    .signature-box {
-      text-align: center;
-      font-size: 9px;
-      color: #000;
-    }
-    
-    .signature-box img {
-      width: 60px;
-      height: 45px;
-      object-fit: contain;
-      margin-bottom: 3px;
-    }
-    
-    .stamp-box img {
-      width: 60px;
-      height: 60px;
-      object-fit: contain;
-    }
+    .signature-box { text-align: center; font-size: 9px; color: #000; }
+    .signature-box img { width: 60px; height: 45px; object-fit: contain; margin-bottom: 3px; }
+    .stamp-box img { width: 60px; height: 60px; object-fit: contain; }
     
     .report-footer {
-      text-align: center;
-      font-size: 8px;
-      color: #333;
-      margin-top: 10px;
-      padding-top: 5px;
-      border-top: 1px solid #ccc;
+      text-align: center; font-size: 8px; color: #333;
+      margin-top: 10px; padding-top: 5px; border-top: 1px solid #ccc;
     }
   </style>
 </head>
 <body>
 
-  <div class="a4-sheet">
-    <div class="report-header">
-      <div class="logo-row">
-        <img src="/images/logo.jpg" alt="Logo">
-        <img src="/images/ethiopian_emblem.jpg" alt="Emblem">
-      </div>
-      <div class="uni-name">BAHIR DAR UNIVERSITY</div>
-      <div class="report-title">OFFICIAL GRADE REPORT</div>
+<div class="a4-sheet">
+  <div class="report-header">
+    <div class="logo-row">
+      <img src="/images/logo.jpg" alt="Logo">
+      <img src="/images/ethiopian_emblem.jpg" alt="Emblem">
     </div>
-    
-    <table class="student-info">
-      <tr>
-        <td style="width:15%;"><strong>Student:</strong></td>
-        <td style="width:35%;" id="report-name"></td>
-        <td style="width:10%;"><strong>ID:</strong></td>
-        <td id="report-id"></td>
-      </tr>
-      <tr>
-        <td><strong>Program:</strong></td>
-        <td colspan="3" id="report-program"></td>
-      </tr>
-      <tr>
-        <td><strong>Year:</strong></td>
-        <td id="report-year"></td>
-        <td><strong>Credits:</strong></td>
-        <td id="report-total-credits"></td>
-      </tr>
-      <tr>
-        <td><strong>CGPA:</strong></td>
-        <td id="report-cgpa"></td>
-        <td><strong>Status:</strong></td>
-        <td id="report-status"></td>
-      </tr>
-    </table>
-    
-    <div id="report-content"></div>
-    
-    <div class="signature-area">
-      <div class="signature-box">
-        <img src="/images/Signature.png" alt="Signature">
-        <div><strong>Registrar</strong></div>
-      </div>
-      <div class="signature-box stamp-box">
-        <img src="/images/stamp.jpg" alt="Stamp">
-        <div><strong>OFFICIAL STAMP</strong></div>
-      </div>
-      <div class="signature-box">
-        <img src="/images/Signature.png" alt="Signature">
-        <div><strong>Dean</strong></div>
-      </div>
-    </div>
-    
-    <div class="report-footer">
-      Official document issued by Bahir Dar University
+    <div class="uni-name">BAHIR DAR UNIVERSITY</div>
+    <div class="report-title">OFFICIAL GRADE REPORT</div>
+  </div>
+  
+  <table class="student-info">
+    <tr>
+      <td style="width:15%;"><strong>Student:</strong></td>
+      <td style="width:35%;" id="report-name"></td>
+      <td style="width:10%;"><strong>ID:</strong></td>
+      <td id="report-id"></td>
+    </tr>
+    <tr>
+      <td><strong>Program:</strong></td>
+      <td colspan="3" id="report-program"></td>
+    </tr>
+    <tr>
+      <td><strong>Year:</strong></td>
+      <td id="report-year"></td>
+      <td><strong>Credits:</strong></td>
+      <td id="report-total-credits"></td>
+    </tr>
+    <tr>
+      <td><strong>CGPA:</strong></td>
+      <td id="report-cgpa"></td>
+      <td><strong>Status:</strong></td>
+      <td id="report-status"></td>
+    </tr>
+  </table>
+  
+  <div id="report-content"></div>
+  
+  <!-- QR Code for verification -->
+  <div class="qr-section">
+    <div class="qr-code" id="qr-code"></div>
+    <div>
+      <div class="qr-verify">🔒 VERIFICATION QR CODE</div>
+      <div class="qr-text">Scan to verify authenticity at:<br>https://bdu-portal.onrender.com/verify</div>
     </div>
   </div>
   
-  <div class="no-print" style="text-align:center;padding:16px;">
-    <button onclick="window.print()" style="padding:14px 28px;background:#1a5f9c;color:white;border:none;border-radius:50px;font-weight:bold;font-size:16px;cursor:pointer;margin-right:8px;">
-      Print / Save PDF
-    </button>
-    <button onclick="location.href='/pages/results.html'" style="padding:14px 28px;background:#64748b;color:white;border:none;border-radius:50px;font-weight:bold;font-size:16px;cursor:pointer;">
-      Back
-    </button>
+  <div class="signature-area">
+    <div class="signature-box">
+      <img src="/images/Signature.png" alt="Signature">
+      <div><strong>Registrar</strong></div>
+    </div>
+    <div class="signature-box stamp-box">
+      <img src="/images/stamp.jpg" alt="Stamp">
+      <div><strong>OFFICIAL STAMP</strong></div>
+    </div>
+    <div class="signature-box">
+      <img src="/images/Signature.png" alt="Signature">
+      <div><strong>Dean</strong></div>
+    </div>
   </div>
+  
+  <div class="report-footer">
+    Official document issued by Bahir Dar University. Verify at bdu-portal.onrender.com/verify
+  </div>
+</div>
+
+<div class="no-print" style="text-align:center;padding:16px;">
+  <button onclick="window.print()" style="padding:14px 28px;background:#1a5f9c;color:white;border:none;border-radius:50px;font-weight:bold;font-size:16px;cursor:pointer;margin-right:8px;">
+    Print / Save PDF
+  </button>
+  <button onclick="exportCSV()" style="padding:14px 28px;background:#059669;color:white;border:none;border-radius:50px;font-weight:bold;font-size:16px;cursor:pointer;margin-right:8px;">
+    Export CSV
+  </button>
+  <button onclick="location.href='/pages/results.html'" style="padding:14px 28px;background:#64748b;color:white;border:none;border-radius:50px;font-weight:bold;font-size:16px;cursor:pointer;">
+    Back
+  </button>
+</div>
+
+<!-- QR Code Generator -->
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 
 <script>
 (function() {
-  const saved = sessionStorage.getItem('bdu_student_data');
-  
+  var saved = sessionStorage.getItem('bdu_student_data');
   if (!saved) {
     document.getElementById('report-content').innerHTML = '<div style="text-align:center;padding:20px;font-size:12px;color:#000;">Please login first</div>';
     return;
   }
-  
-  const data = JSON.parse(saved);
-  const bio = data.biography || {};
-  const summary = data.summary || {};
-  const registrations = data.registrations || [];
+  var data = JSON.parse(saved);
+  var bio = data.biography || {};
+  var summary = data.summary || {};
+  var registrations = data.registrations || [];
   
   document.getElementById('report-name').textContent = bio.fullName || '';
   document.getElementById('report-id').textContent = bio.studentId || '';
@@ -251,42 +169,67 @@
   document.getElementById('report-cgpa').textContent = summary.cumulativeGPA || '—';
   document.getElementById('report-status').textContent = registrations[registrations.length - 1]?.status || 'Pass';
   
-  let html = '';
+  // Generate QR Code
+  var verifyData = JSON.stringify({
+    name: bio.fullName,
+    id: bio.studentId,
+    cgpa: summary.cumulativeGPA,
+    credits: summary.totalCredits,
+    year: registrations[0]?.acYear,
+  });
   
-  registrations.forEach((reg, index) => {
-    const semCourses = data.courses?.find(c => c.semester === reg.semester);
-    
-    html += '<div class="semester-header">';
-    html += 'Semester ' + reg.semester + ' — SGPA: ' + reg.sgpa + ' | CGPA: ' + reg.cgpa + ' | ' + reg.status;
-    html += '</div>';
-    html += '<table class="grade-table">';
-    html += '<thead><tr>';
-    html += '<th style="width:12%;">Code</th>';
-    html += '<th style="width:43%;">Course Title</th>';
-    html += '<th style="width:7%;">Cr</th>';
-    html += '<th style="width:10%;">Grade</th>';
-    html += '<th style="width:10%;">Points</th>';
-    html += '<th style="width:18%;">%</th>';
+  var qrContainer = document.getElementById('qr-code');
+  QRCode.toCanvas(qrContainer, verifyData, { width: 60, height: 60 }, function(err) {
+    if (err) console.error('QR error:', err);
+  });
+  
+  var html = '';
+  registrations.forEach(function(reg, index) {
+    var semCourses = data.courses?.find(function(c) { return c.semester === reg.semester; });
+    html += '<div class="semester-header">Semester ' + reg.semester + ' — SGPA: ' + reg.sgpa + ' | CGPA: ' + reg.cgpa + ' | ' + reg.status + '</div>';
+    html += '<table class="grade-table"><thead><tr>';
+    html += '<th style="width:12%;">Code</th><th style="width:43%;">Course Title</th><th style="width:7%;">Cr</th><th style="width:10%;">Grade</th><th style="width:10%;">Points</th><th style="width:18%;">%</th>';
     html += '</tr></thead><tbody>';
     
     if (semCourses && semCourses.courses) {
       semCourses.courses.forEach(function(c) {
-        html += '<tr>';
-        html += '<td>' + c.code + '</td>';
-        html += '<td>' + c.title + '</td>';
-        html += '<td>' + c.credit + '</td>';
-        html += '<td><strong>' + c.grade + '</strong></td>';
-        html += '<td>' + c.points + '</td>';
-        html += '<td>' + (c.percentage || '—') + '</td>';
-        html += '</tr>';
+        html += '<tr><td>' + c.code + '</td><td>' + c.title + '</td><td>' + c.credit + '</td>';
+        html += '<td><strong>' + c.grade + '</strong></td><td>' + c.points + '</td><td>' + (c.percentage || '—') + '</td></tr>';
       });
     }
-    
     html += '</tbody></table>';
   });
-  
   document.getElementById('report-content').innerHTML = html;
+  
+  // Store data for CSV export
+  window.reportData = data;
 })();
+
+// CSV Export
+function exportCSV() {
+  var data = window.reportData;
+  if (!data) return;
+  
+  var csv = 'BDU Grade Report\n';
+  csv += 'Student Name,' + (data.biography?.fullName || '') + '\n';
+  csv += 'Student ID,' + (data.biography?.studentId || '') + '\n';
+  csv += 'Program,' + (data.program || '') + '\n';
+  csv += 'CGPA,' + (data.summary?.cumulativeGPA || '') + '\n';
+  csv += 'Total Credits,' + (data.summary?.totalCredits || '') + '\n\n';
+  csv += 'Code,Course Title,Credits,Grade,Points,Percentage\n';
+  
+  data.courses.forEach(function(sem) {
+    sem.courses.forEach(function(c) {
+      csv += c.code + ',' + c.title + ',' + c.credit + ',' + c.grade + ',' + c.points + ',' + (c.percentage || '') + '\n';
+    });
+  });
+  
+  var blob = new Blob([csv], { type: 'text/csv' });
+  var link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'BDU_Grade_Report.csv';
+  link.click();
+}
 </script>
 </body>
 </html>
