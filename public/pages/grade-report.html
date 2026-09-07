@@ -19,6 +19,11 @@
       body { background: white; }
       .a4-sheet { width: 100%; min-height: auto; box-shadow: none; margin: 0; padding: 0; }
       .no-print { display: none !important; }
+      .page-break { page-break-before: always; }
+    .semester-section { page-break-inside: avoid; }
+    .summary-page { page-break-before: always; }
+    .grading-key { font-size: 9px; color: #000; }
+    .grading-key td { padding: 2px 6px; }
     }
     
     .report-header {
@@ -42,15 +47,33 @@
     .grade-table th { background: #333; color: white; padding: 4px 5px; font-size: 9px; text-align: left; }
     .grade-table td { padding: 3px 5px; border-bottom: 1px solid #ccc; color: #000; }
     
-    /* QR Code Section */
-    .qr-section {
-      display: flex; align-items: center; gap: 10px;
-      margin-top: 10px; padding: 8px;
-      border: 1px dashed #ccc; border-radius: 8px;
+    /* Options Selector */
+    .options-bar {
+      display: flex; gap: 10px; justify-content: center;
+      padding: 12px; flex-wrap: wrap;
     }
-    .qr-code { width: 60px; height: 60px; }
-    .qr-text { font-size: 8px; color: #333; }
-    .qr-verify { font-size: 9px; font-weight: bold; color: #000; }
+    .option-btn {
+      padding: 12px 24px; border-radius: 40px; border: 2px solid #e3eaf2;
+      background: white; font-weight: 700; font-size: 13px; cursor: pointer;
+      color: #5b718b; transition: all 0.2s;
+    }
+    .option-btn.active {
+      border-color: #1a5f9c; background: #eff6ff; color: #1a5f9c;
+      box-shadow: 0 2px 8px rgba(26,95,156,0.15);
+    }
+    
+    .semester-selector {
+      display: flex; gap: 8px; justify-content: center;
+      padding: 8px; flex-wrap: wrap;
+    }
+    .sem-btn {
+      padding: 8px 16px; border-radius: 40px; border: 2px solid #e3eaf2;
+      background: white; font-weight: 700; font-size: 12px; cursor: pointer;
+      color: #5b718b;
+    }
+    .sem-btn.active {
+      border-color: #059669; background: #d1fae5; color: #065f46;
+    }
     
     .signature-area {
       display: flex; justify-content: space-between; align-items: flex-end;
@@ -60,6 +83,133 @@
     .signature-box img { width: 60px; height: 45px; object-fit: contain; margin-bottom: 3px; }
     .stamp-box img { width: 60px; height: 60px; object-fit: contain; }
     
+    .qr-section {
+      display: flex; align-items: center; gap: 10px;
+      margin-top: 10px; padding: 8px;
+      border: 1px dashed #ccc; border-radius: 8px;
+    }
+    .qr-code { width: 60px; height: 60px; }
+    
+    /* Security Features */
+    .watermark {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-45deg);
+      font-size: 80px;
+      font-weight: bold;
+      color: rgba(0,0,0,0.04);
+      pointer-events: none;
+      z-index: 1000;
+      letter-spacing: 10px;
+    }
+    
+    .security-badge {
+      display: inline-block;
+      background: #d1fae5;
+      color: #065f46;
+      padding: 3px 10px;
+      border-radius: 40px;
+      font-size: 8px;
+      font-weight: bold;
+      margin-left: 4px;
+    }
+    
+    .serial-number {
+      font-family: 'Courier New', monospace;
+      font-size: 8px;
+      color: #333;
+      text-align: right;
+      margin-top: 4px;
+    }
+    
+    .hash-code {
+      font-family: 'Courier New', monospace;
+      font-size: 6px;
+      color: #666;
+      word-break: break-all;
+      margin-top: 2px;
+    }
+    
+    /* Banknote Security Features */
+    .guilloche-pattern {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      pointer-events: none;
+      opacity: 0.05;
+      background-image: 
+        repeating-linear-gradient(0deg, transparent, transparent 2px, #1a5f9c 2px, #1a5f9c 3px),
+        repeating-linear-gradient(45deg, transparent, transparent 20px, #1a5f9c 20px, #1a5f9c 21px),
+        repeating-linear-gradient(135deg, transparent, transparent 20px, #1a5f9c 20px, #1a5f9c 21px);
+    }
+    
+    .micro-text {
+      font-size: 3px;
+      color: #999;
+      letter-spacing: 0.5px;
+      text-align: center;
+      margin-top: 2px;
+    }
+    
+    .barcode-section {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+      padding: 6px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    
+    .barcode {
+      height: 40px;
+      background: repeating-linear-gradient(
+        90deg,
+        #000 0px, #000 2px,
+        #fff 2px, #fff 4px,
+        #000 4px, #000 5px,
+        #fff 5px, #fff 8px,
+        #000 8px, #000 10px,
+        #fff 10px, #fff 11px
+      );
+      flex: 1;
+    }
+    
+    .hologram {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, 
+        rgba(255,215,0,0.8), rgba(255,255,255,0.5), 
+        rgba(192,192,192,0.8), rgba(255,215,0,0.8));
+      background-size: 300% 300%;
+      animation: hologramShift 3s ease infinite;
+      position: relative;
+      border: 2px solid #ccc;
+    }
+    
+    @keyframes hologramShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    
+    .color-shifting-ink {
+      font-size: 10px;
+      font-weight: bold;
+      color: #1a5f9c;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+      transition: all 0.3s;
+    }
+    
+    .color-shifting-ink:hover {
+      color: #059669;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+    
     .report-footer {
       text-align: center; font-size: 8px; color: #333;
       margin-top: 10px; padding-top: 5px; border-top: 1px solid #ccc;
@@ -68,14 +218,42 @@
 </head>
 <body>
 
-<div class="a4-sheet">
+<!-- Options: Individual or Cumulative -->
+<div class="options-bar no-print">
+  <button class="option-btn active" id="option-single" onclick="switchOption('single')">
+    📄 Single Semester
+  </button>
+  <button class="option-btn" id="option-cumulative" onclick="switchOption('cumulative')">
+    📚 Cumulative Report
+  </button>
+</div>
+
+<!-- Semester Selector (for single mode) -->
+<div class="semester-selector no-print" id="semester-selector"></div>
+
+<!-- A4 Report -->
+<div class="a4-sheet" id="a4-sheet">
+  <!-- Watermark -->
+  <!-- Guilloche Pattern -->
+  <div class="guilloche-pattern"></div>
+  
+  <!-- Watermark -->
+  <div class="watermark">VERIFIED</div>
+  
+  <!-- Micro Text -->
+  <div class="micro-text">BAHIR DAR UNIVERSITY OFFICIAL DOCUMENT — TAMPER PROOF — BAHIR DAR UNIVERSITY OFFICIAL DOCUMENT — TAMPER PROOF</div>
+  
+  <!-- Serial Number -->
+  <div class="serial-number" id="serial-number"></div>
   <div class="report-header">
     <div class="logo-row">
       <img src="/images/logo.jpg" alt="Logo">
       <img src="/images/ethiopian_emblem.jpg" alt="Emblem">
     </div>
     <div class="uni-name">BAHIR DAR UNIVERSITY</div>
-    <div class="report-title">OFFICIAL GRADE REPORT</div>
+    <div class="report-title" id="report-mode-title">
+    SEMESTER GRADE REPORT <span class="security-badge">🔒 SECURE</span>
+  </div>
   </div>
   
   <table class="student-info">
@@ -97,7 +275,7 @@
     </tr>
     <tr>
       <td><strong>CGPA:</strong></td>
-      <td id="report-cgpa"></td>
+      <td><span class="color-shifting-ink" id="report-cgpa"></span></td>
       <td><strong>Status:</strong></td>
       <td id="report-status"></td>
     </tr>
@@ -105,12 +283,17 @@
   
   <div id="report-content"></div>
   
-  <!-- QR Code for verification -->
+  <!-- Barcode Section -->
+  <div class="barcode-section">
+    <div class="barcode" id="barcode"></div>
+    <div class="hologram"></div>
+  </div>
+  
   <div class="qr-section">
     <div class="qr-code" id="qr-code"></div>
     <div>
-      <div class="qr-verify">🔒 VERIFICATION QR CODE</div>
-      <div class="qr-text">Scan to verify authenticity at:<br>https://bdu-portal.onrender.com/verify</div>
+      <div style="font-size:9px;font-weight:bold;">VERIFICATION QR</div>
+      <div style="font-size:8px;color:#333;">Scan to verify at bdu-portal.onrender.com/verify</div>
     </div>
   </div>
   
@@ -129,8 +312,9 @@
     </div>
   </div>
   
+  <div class="hash-code" id="hash-code"></div>
   <div class="report-footer">
-    Official document issued by Bahir Dar University. Verify at bdu-portal.onrender.com/verify
+    Official document issued by Bahir Dar University
   </div>
 </div>
 
@@ -138,54 +322,126 @@
   <button onclick="window.print()" style="padding:14px 28px;background:#1a5f9c;color:white;border:none;border-radius:50px;font-weight:bold;font-size:16px;cursor:pointer;margin-right:8px;">
     Print / Save PDF
   </button>
-  <button onclick="exportCSV()" style="padding:14px 28px;background:#059669;color:white;border:none;border-radius:50px;font-weight:bold;font-size:16px;cursor:pointer;margin-right:8px;">
-    Export CSV
-  </button>
   <button onclick="location.href='/pages/results.html'" style="padding:14px 28px;background:#64748b;color:white;border:none;border-radius:50px;font-weight:bold;font-size:16px;cursor:pointer;">
     Back
   </button>
 </div>
 
-<!-- QR Code Generator -->
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
-
 <script>
+var currentMode = 'single';
+var currentSemester = 0;
+
 (function() {
   var saved = sessionStorage.getItem('bdu_student_data');
   if (!saved) {
-    document.getElementById('report-content').innerHTML = '<div style="text-align:center;padding:20px;font-size:12px;color:#000;">Please login first</div>';
+    document.getElementById('report-content').innerHTML = '<div style="text-align:center;padding:20px;font-size:12px;">Please login first</div>';
     return;
   }
-  var data = JSON.parse(saved);
+  window.reportData = JSON.parse(saved);
+  
+  // Render semester selector
+  renderSemesterSelector();
+  
+  // Default: single semester mode
+  renderSingleSemester(0);
+})();
+
+function renderSemesterSelector() {
+  var regs = window.reportData.registrations || [];
+  var html = '';
+  regs.forEach(function(reg, i) {
+    html += '<button class="sem-btn ' + (i === 0 ? 'active' : '') + '" onclick="selectSemester(' + i + ')">Semester ' + reg.semester + '</button>';
+  });
+  document.getElementById('semester-selector').innerHTML = html;
+}
+
+function switchOption(mode) {
+  currentMode = mode;
+  
+  document.getElementById('option-single').className = 'option-btn ' + (mode === 'single' ? 'active' : '');
+  document.getElementById('option-cumulative').className = 'option-btn ' + (mode === 'cumulative' ? 'active' : '');
+  
+  if (mode === 'single') {
+    document.getElementById('semester-selector').style.display = 'flex';
+    document.getElementById('report-mode-title').textContent = 'SEMESTER GRADE REPORT';
+    renderSingleSemester(currentSemester);
+  } else {
+    document.getElementById('semester-selector').style.display = 'none';
+    document.getElementById('report-mode-title').textContent = 'CUMULATIVE GRADE REPORT';
+    renderCumulative();
+  }
+}
+
+function selectSemester(index) {
+  currentSemester = index;
+  
+  var buttons = document.querySelectorAll('.sem-btn');
+  buttons.forEach(function(btn, i) {
+    btn.className = 'sem-btn ' + (i === index ? 'active' : '');
+  });
+  
+  renderSingleSemester(index);
+}
+
+function renderSingleSemester(index) {
+  var data = window.reportData;
   var bio = data.biography || {};
-  var summary = data.summary || {};
-  var registrations = data.registrations || [];
+  var regs = data.registrations || [];
+  var reg = regs[index];
+  var semCourses = data.courses?.find(function(c) { return c.semester === reg.semester; });
   
   document.getElementById('report-name').textContent = bio.fullName || '';
   document.getElementById('report-id').textContent = bio.studentId || '';
   document.getElementById('report-program').textContent = data.program || '';
-  document.getElementById('report-year').textContent = registrations[0]?.acYear || '';
-  document.getElementById('report-total-credits').textContent = summary.totalCredits || '0';
+  document.getElementById('report-year').textContent = reg.acYear || '';
+  document.getElementById('report-cgpa').textContent = reg.cgpa || '—';
+  document.getElementById('report-status').textContent = reg.status || 'Pass';
+  
+  var semCredits = 0;
+  if (semCourses && semCourses.courses) {
+    semCourses.courses.forEach(function(c) { semCredits += c.credit; });
+  }
+  document.getElementById('report-total-credits').textContent = semCredits;
+  
+  var html = '<div class="semester-header">Semester ' + reg.semester + ' — SGPA: ' + reg.sgpa + ' | CGPA: ' + reg.cgpa + ' | ' + reg.status + '</div>';
+  html += '<table class="grade-table"><thead><tr>';
+  html += '<th style="width:12%;">Code</th><th style="width:43%;">Course Title</th><th style="width:7%;">Cr</th><th style="width:10%;">Grade</th><th style="width:10%;">Points</th><th style="width:18%;">%</th>';
+  html += '</tr></thead><tbody>';
+  
+  if (semCourses && semCourses.courses) {
+    semCourses.courses.forEach(function(c) {
+      html += '<tr><td>' + c.code + '</td><td>' + c.title + '</td><td>' + c.credit + '</td>';
+      html += '<td><strong>' + c.grade + '</strong></td><td>' + c.points + '</td><td>' + (c.percentage || '—') + '</td></tr>';
+    });
+  }
+  
+  html += '</tbody></table>';
+  document.getElementById('report-content').innerHTML = html;
+  
+  generateQR(bio, reg.sgpa, semCredits);
+}
+
+function renderCumulative() {
+  var data = window.reportData;
+  var bio = data.biography || {};
+  var summary = data.summary || {};
+  var regs = data.registrations || [];
+  
+  document.getElementById('report-name').textContent = bio.fullName || '';
+  document.getElementById('report-id').textContent = bio.studentId || '';
+  document.getElementById('report-program').textContent = data.program || '';
+  document.getElementById('report-year').textContent = regs[0]?.acYear + ' - ' + regs[regs.length-1]?.acYear || '';
   document.getElementById('report-cgpa').textContent = summary.cumulativeGPA || '—';
-  document.getElementById('report-status').textContent = registrations[registrations.length - 1]?.status || 'Pass';
-  
-  // Generate QR Code
-  var verifyData = JSON.stringify({
-    name: bio.fullName,
-    id: bio.studentId,
-    cgpa: summary.cumulativeGPA,
-    credits: summary.totalCredits,
-    year: registrations[0]?.acYear,
-  });
-  
-  var qrContainer = document.getElementById('qr-code');
-  QRCode.toCanvas(qrContainer, verifyData, { width: 60, height: 60 }, function(err) {
-    if (err) console.error('QR error:', err);
-  });
+  document.getElementById('report-status').textContent = 'Completed ' + summary.totalSemesters + ' Semesters';
+  document.getElementById('report-total-credits').textContent = summary.totalCredits || '0';
   
   var html = '';
-  registrations.forEach(function(reg, index) {
+  
+  regs.forEach(function(reg) {
     var semCourses = data.courses?.find(function(c) { return c.semester === reg.semester; });
+    
+    html += '<div class="semester-section">';
     html += '<div class="semester-header">Semester ' + reg.semester + ' — SGPA: ' + reg.sgpa + ' | CGPA: ' + reg.cgpa + ' | ' + reg.status + '</div>';
     html += '<table class="grade-table"><thead><tr>';
     html += '<th style="width:12%;">Code</th><th style="width:43%;">Course Title</th><th style="width:7%;">Cr</th><th style="width:10%;">Grade</th><th style="width:10%;">Points</th><th style="width:18%;">%</th>';
@@ -197,38 +453,79 @@
         html += '<td><strong>' + c.grade + '</strong></td><td>' + c.points + '</td><td>' + (c.percentage || '—') + '</td></tr>';
       });
     }
+    
     html += '</tbody></table>';
+    html += '</div>';
   });
+  
+  // Add cumulative summary on separate page
+  html += '<div class="summary-page">';
+  html += '<div style="text-align:center;font-size:12px;font-weight:bold;margin-bottom:8px;">CUMULATIVE SUMMARY</div>';
+  html += '<table class="grade-table"><tbody>';
+  html += '<tr><td style="font-weight:bold;">Total Semesters:</td><td>' + summary.totalSemesters + '</td></tr>';
+  html += '<tr><td style="font-weight:bold;">Total Credits:</td><td>' + summary.totalCredits + '</td></tr>';
+  html += '<tr><td style="font-weight:bold;">Final CGPA:</td><td>' + summary.cumulativeGPA + '</td></tr>';
+  html += '<tr><td style="font-weight:bold;">Academic Standing:</td><td>' + (parseFloat(summary.cumulativeGPA) === 4.00 ? 'DEAN\'S LIST' : 'GOOD STANDING') + '</td></tr>';
+  html += '</tbody></table>';
+  html += '</div>';
+  
+  // Add grading key before QR
+  html += '<div style="margin-top:8px;padding:6px;border:1px solid #ccc;border-radius:4px;">';
+  html += '<div style="font-weight:bold;font-size:9px;">GRADING KEY:</div>';
+  html += '<table class="grading-key"><tr>';
+  html += '<td>A+ = 90-100%</td><td>A = 85-89%</td><td>B+ = 75-79%</td><td>B = 70-74%</td>';
+  html += '</tr><tr>';
+  html += '<td>C+ = 60-64%</td><td>C = 50-59%</td><td>D = 40-44%</td><td>F &lt; 40%</td>';
+  html += '</tr></table></div>';
+  
   document.getElementById('report-content').innerHTML = html;
   
-  // Store data for CSV export
-  window.reportData = data;
-})();
+  generateSecurity(data);
+  generateQR(bio, summary.cumulativeGPA, summary.totalCredits);
+}
 
-// CSV Export
-function exportCSV() {
-  var data = window.reportData;
-  if (!data) return;
+function generateSecurity(data) {
+  // Generate serial number
+  var serial = 'BDU-' + (data.studentId || '').replace(/[^0-9]/g, '') + '-' + Date.now().toString(36).toUpperCase();
+  document.getElementById('serial-number').textContent = 'Serial: ' + serial;
   
-  var csv = 'BDU Grade Report\n';
-  csv += 'Student Name,' + (data.biography?.fullName || '') + '\n';
-  csv += 'Student ID,' + (data.biography?.studentId || '') + '\n';
-  csv += 'Program,' + (data.program || '') + '\n';
-  csv += 'CGPA,' + (data.summary?.cumulativeGPA || '') + '\n';
-  csv += 'Total Credits,' + (data.summary?.totalCredits || '') + '\n\n';
-  csv += 'Code,Course Title,Credits,Grade,Points,Percentage\n';
-  
-  data.courses.forEach(function(sem) {
-    sem.courses.forEach(function(c) {
-      csv += c.code + ',' + c.title + ',' + c.credit + ',' + c.grade + ',' + c.points + ',' + (c.percentage || '') + '\n';
-    });
+  // Generate hash code
+  var hashInput = JSON.stringify({
+    name: data.biography?.fullName,
+    id: data.biography?.studentId,
+    gpa: data.summary?.cumulativeGPA,
+    timestamp: Date.now(),
   });
   
-  var blob = new Blob([csv], { type: 'text/csv' });
-  var link = document.createElement('a');
-  link.href = URL.createObjectURL(blob);
-  link.download = 'BDU_Grade_Report.csv';
-  link.click();
+  // Simple hash function
+  var hash = 0;
+  for (var i = 0; i < hashInput.length; i++) {
+    var char = hashInput.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash;
+  }
+  var hashHex = Math.abs(hash).toString(16).toUpperCase();
+  while (hashHex.length < 8) hashHex = '0' + hashHex;
+  
+  document.getElementById('hash-code').textContent = 'Document Hash: ' + hashHex + ' | Verify at bdu-portal.onrender.com/verify';
+}
+
+function generateQR(bio, gpa, credits) {
+  var verifyData = JSON.stringify({
+    type: 'grade_report',
+    name: bio.fullName,
+    id: bio.studentId,
+    gpa: gpa,
+    credits: credits,
+    mode: currentMode,
+    timestamp: new Date().toISOString(),
+  });
+  
+  var qrContainer = document.getElementById('qr-code');
+  qrContainer.innerHTML = '';
+  QRCode.toCanvas(qrContainer, verifyData, { width: 60, height: 60 }, function(err) {
+    if (err) console.error('QR error:', err);
+  });
 }
 </script>
 </body>
