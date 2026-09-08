@@ -29,6 +29,22 @@
     }
     .back-btn svg { width: 20px; height: 20px; }
     .results-content { padding: 20px 16px; }
+    
+    /* Semester Toggle */
+    .semester-toggle {
+      display: flex; gap: 10px; padding: 12px 16px;
+      flex-shrink: 0; flex-wrap: wrap;
+    }
+    .toggle-btn {
+      padding: 10px 20px; border-radius: 40px; border: 2px solid #e3eaf2;
+      background: white; font-weight: 700; font-size: 13px; cursor: pointer;
+      color: #5b718b; transition: all 0.2s;
+    }
+    .toggle-btn.active {
+      border-color: #1a5f9c; background: #eff6ff; color: #1a5f9c;
+      box-shadow: 0 2px 8px rgba(26,95,156,0.15);
+    }
+    .toggle-btn:hover { transform: translateY(-2px); }
     .semester-block { margin-bottom: 28px; }
     .semester-label {
       font-size: 13px; font-weight: 700; color: #475569;
@@ -94,6 +110,9 @@
       </div>
     </div>
   </div>
+  <!-- Semester Toggle -->
+  <div class="semester-toggle" id="semester-toggle"></div>
+  
   <div class="results-content" id="results-content"></div>
 </div>
 
@@ -124,6 +143,6 @@
 <script src="/js/shared/ui.js"></script>
 <!-- Results JS -->
 <script src="/js/results/results.js"></script>
-<script src="/js/results/renderer-results.js"></script>
+
 </body>
 </html>
