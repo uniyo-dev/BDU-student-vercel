@@ -1,3 +1,4 @@
+// BDU Portal Configuration
 const CONFIG = {
   API_BASE: '/api',
   APP_NAME: 'BDU Student Portal',
@@ -5,6 +6,7 @@ const CONFIG = {
   ACADEMIC_YEAR: '2025/2026',
 };
 
+// Global functions used by all pages
 function getStudentData() {
   const saved = sessionStorage.getItem('bdu_student_data');
   if (saved) {
@@ -19,5 +21,6 @@ function isLoggedIn() {
 
 function logout() {
   sessionStorage.clear();
+  localStorage.removeItem('bdu_report_serial_' + (getStudentData()?.biography?.studentId || ''));
   window.location.href = '/';
 }

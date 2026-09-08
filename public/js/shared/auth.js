@@ -19,5 +19,13 @@ const Auth = {
 
   getUsername() {
     return sessionStorage.getItem('bdu_username') || '';
+  },
+
+  getStudentData() {
+    const saved = sessionStorage.getItem('bdu_student_data');
+    if (saved) {
+      try { return JSON.parse(saved); } catch(e) { return null; }
+    }
+    return null;
   }
 };

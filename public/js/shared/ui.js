@@ -10,25 +10,14 @@ const UI = {
     if (el) el.classList.add('hidden');
   },
 
-  showToast(message, type = 'info') {
-    let toast = document.getElementById('toast-message');
-    if (!toast) {
-      toast = document.createElement('div');
-      toast.id = 'toast-message';
-      toast.className = 'toast-message';
-      document.body.appendChild(toast);
-    }
-    
-    toast.textContent = message;
-    toast.className = `toast-message show toast-${type}`;
-    
-    setTimeout(() => {
-      toast.classList.remove('show');
-    }, 2500);
-  },
-
   formatGPA(value) {
     return value ? parseFloat(value).toFixed(2) : '—';
+  },
+
+  redirectIfNotLoggedIn() {
+    if (sessionStorage.getItem('bdu_logged_in') !== 'true') {
+      window.location.href = '/';
+    }
   },
 
   gradeClass(grade) {
@@ -39,11 +28,10 @@ const UI = {
     if (grade.startsWith('D')) return 'grade-D';
     if (grade === 'P') return 'grade-P';
     return 'grade-F';
-  },
-
-  redirectIfNotLoggedIn() {
-    if (!Auth.isLoggedIn()) {
-      window.location.href = '/';
-    }
   }
 };
+
+// Legacy compatibility functions
+function getStudentData() { return Store.getStudentData(); }
+function isLoggedIn() { return Store.isLoggedIn(); }
+function logout() { Auth.logout(); }

@@ -1,56 +1,55 @@
 // Login Handler
-const LoginHandler = {
-  init() {
-    const form = document.getElementById('login-form');
-    if (form) {
-      form.addEventListener('submit', (e) => this.handleSubmit(e));
-    }
-    
-    // Hide splash screen
-    setTimeout(() => {
-      const splash = document.getElementById('splash-screen');
-      if (splash) {
-        splash.style.opacity = '0';
-        setTimeout(() => splash.remove(), 500);
-      }
-    }, 2000);
-  },
-
-  async handleSubmit(e) {
-    e.preventDefault();
-    
-    const username = document.getElementById('login-username').value.trim();
-    const password = document.getElementById('login-password').value;
-    const errorDiv = document.getElementById('login-error');
-    
-    errorDiv.classList.remove('show');
-    
-    const btn = document.getElementById('login-btn');
-    const btnText = document.getElementById('login-btn-text');
-    const btnSpinner = document.getElementById('login-btn-spinner');
-    
-    btn.disabled = true;
-    btnText.textContent = 'Logging in...';
-    btnSpinner.classList.remove('hidden');
-    
-    try {
-      const response = await Auth.login(username, password);
+document.addEventListener('DOMContentLoaded', function() {
+  const form = document.getElementById('login-form');
+  
+  if (form) {
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
       
-      if (response.success) {
-        window.location.href = '/pages/dashboard.html';
-      } else {
-        errorDiv.textContent = response.error || 'Invalid credentials';
-        errorDiv.classList.add('show');
+      const username = document.getElementById('login-username').value.trim();
+      const password = document.getElementById('login-password').value;
+      const errorDiv = document.getElementById('login-error');
+      const errorMsg = document.getElementById('login-error-msg');
+      const btn = document.getElementById('login-btn');
+      const btnText = document.getElementById('login-btn-text');
+      const btnSpinner = document.getElementById('login-btn-spinner');
+      
+      if (errorDiv) errorDiv.classList.remove('show');
+      
+      if (btn) btn.disabled = true;
+      if (btnText) btnText.textContent = 'Signing in...';
+      if (btnSpinner) btnSpinner.classList.remove('hidden');
+      
+      try {
+        const response = await Auth.login(username, password);
+        
+        if (response.success) {
+          window.location.href = '/pages/dashboard.html';
+        } else {
+          if (errorMsg) errorMsg.textContent = response.error || 'Invalid credentials';
+          if (errorDiv) errorDiv.classList.add('show');
+        }
+      } catch (error) {
+        if (errorMsg) errorMsg.textContent = 'Login failed. Please try again.';
+        if (errorDiv) errorDiv.classList.add('show');
+      } finally {
+        if (btn) btn.disabled = false;
+        if (btnText) btnText.textContent = 'Sign In';
+        if (btnSpinner) btnSpinner.classList.add('hidden');
       }
-    } catch (error) {
-      errorDiv.textContent = error.message || 'Login failed';
-      errorDiv.classList.add('show');
-    } finally {
-      btn.disabled = false;
-      btnText.textContent = 'Login to Portal';
-      btnSpinner.classList.add('hidden');
-    }
+    });
   }
-};
+});
 
-document.addEventListener('DOMContentLoaded', () => LoginHandler.init());
+// Toggle password visibility
+function togglePassword() {
+  const input = document.getElementById('login-password');
+  const isText = input.type === 'text';
+  input.type = isText ? 'password' : 'text';
+  
+  const eyeShow = document.getElementById('eye-show');
+  const eyeHide = document.getElementById('eye-hide');
+  
+  if (eyeShow) eyeShow.classList.toggle('hidden', !isText);
+  if (eyeHide) eyeHide.classList.toggle('hidden', isText);
+}

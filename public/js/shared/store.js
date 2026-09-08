@@ -30,5 +30,9 @@ const Store = {
 
   setStudentData(data) {
     this.save('bdu_student_data', data);
+  },
+
+  isLoggedIn() {
+    return sessionStorage.getItem('bdu_logged_in') === 'true';
   }
 };
