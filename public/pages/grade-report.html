@@ -4,223 +4,270 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BDU - Grade Report</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  
+  <!-- Font Awesome & Security Libraries -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+
   <style>
-    @page { size: A4; margin: 10mm; }
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; }
-    body { background: #eef2f7; color: #000; }
-    
+    /* ==========================================================================
+       PAGE SETUP & PRINT MEDIA QUERIES
+       ========================================================================== */
+    @page { 
+      size: A4 portrait; 
+      margin: 10mm; 
+    }
+
+    * { 
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box; 
+      font-family: Arial, Helvetica, sans-serif; 
+    }
+
+    body { 
+      background: #eef2f7; 
+      color: #000; 
+      padding-bottom: 30px;
+    }
+
     .a4-sheet {
-      width: 190mm; min-height: 277mm; background: white;
-      margin: 0 auto; padding: 10mm;
+      width: 190mm; 
+      min-height: 277mm; 
+      background: white;
+      margin: 20px auto; 
+      padding: 10mm;
+      position: relative;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
     }
-    
+
     @media print {
-      body { background: white; }
-      .a4-sheet { width: 100%; min-height: auto; box-shadow: none; margin: 0; padding: 0; }
-      .no-print { display: none !important; }
-      .page-break { page-break-before: always; }
-    .semester-section { page-break-inside: avoid; }
-    .summary-page { page-break-before: always; }
-    .grading-key { font-size: 9px; color: #000; }
-    .grading-key td { padding: 2px 6px; }
+      body { 
+        background: white; 
+        padding: 0;
+      }
+      .a4-sheet { 
+        width: 100%; 
+        min-height: auto; 
+        box-shadow: none; 
+        margin: 0; 
+        padding: 0; 
+      }
+      .no-print { 
+        display: none !important; 
+      }
+      .page-break { 
+        page-break-before: always; 
+      }
+      .semester-section { 
+        page-break-inside: avoid; 
+      }
+      .summary-page { 
+        page-break-before: always; 
+      }
     }
-    
+
+    /* ==========================================================================
+       HEADER & STUDENT INFO
+       ========================================================================== */
     .report-header {
-      text-align: center; border-bottom: 2px solid #000;
-      padding-bottom: 5px; margin-bottom: 8px;
+      text-align: center; 
+      border-bottom: 2px solid #000;
+      padding-bottom: 6px; 
+      margin-bottom: 10px;
     }
-    .logo-row { display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 5px; }
-    .logo-row img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; }
-    .uni-name { font-size: 14px; font-weight: bold; text-transform: uppercase; color: #000; }
-    .report-title { font-size: 12px; font-weight: bold; color: #000; margin-top: 2px; text-transform: uppercase; }
-    
-    .student-info { width: 100%; font-size: 11px; border-collapse: collapse; margin-bottom: 8px; color: #000; }
-    .student-info td { padding: 3px 5px; color: #000; }
-    
+
+    .logo-row { 
+      display: flex; 
+      justify-content: center; 
+      align-items: center; 
+      gap: 12px; 
+      margin-bottom: 6px; 
+    }
+
+    .logo-row img { 
+      width: 48px; 
+      height: 48px; 
+      border-radius: 50%; 
+      object-fit: cover; 
+    }
+
+    .uni-name { 
+      font-size: 14px; 
+      font-weight: bold; 
+      text-transform: uppercase; 
+      color: #000; 
+      letter-spacing: 0.5px;
+    }
+
+    .report-title { 
+      font-size: 12px; 
+      font-weight: bold; 
+      color: #000; 
+      margin-top: 3px; 
+      text-transform: uppercase; 
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .student-info { 
+      width: 100%; 
+      font-size: 11px; 
+      border-collapse: collapse; 
+      margin-bottom: 10px; 
+      color: #000; 
+    }
+
+    .student-info td { 
+      padding: 4px 6px; 
+      color: #000; 
+    }
+
+    /* ==========================================================================
+       TABLES & GRADE DATA
+       ========================================================================== */
     .semester-header {
-      background: #333; color: white; padding: 5px 8px;
-      font-weight: bold; font-size: 11px; border-radius: 3px 3px 0 0; margin-top: 6px;
+      background: #1e293b; 
+      color: white; 
+      padding: 6px 10px;
+      font-weight: bold; 
+      font-size: 11px; 
+      border-radius: 3px 3px 0 0; 
+      margin-top: 10px;
     }
-    
-    .grade-table { width: 100%; border-collapse: collapse; font-size: 10px; color: #000; }
-    .grade-table th { background: #333; color: white; padding: 4px 5px; font-size: 9px; text-align: left; }
-    .grade-table td { padding: 3px 5px; border-bottom: 1px solid #ccc; color: #000; }
-    
-    /* Options Selector */
+
+    .grade-table { 
+      width: 100%; 
+      border-collapse: collapse; 
+      font-size: 10px; 
+      color: #000; 
+      margin-bottom: 10px;
+    }
+
+    .grade-table th { 
+      background: #334155; 
+      color: white; 
+      padding: 5px 6px; 
+      font-size: 9px; 
+      text-align: left; 
+    }
+
+    .grade-table td { 
+      padding: 4px 6px; 
+      border-bottom: 1px solid #e2e8f0; 
+      color: #000; 
+    }
+
+    .grading-key { 
+      font-size: 8.5px; 
+      color: #000; 
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .grading-key td { 
+      padding: 2px 6px; 
+    }
+
+    /* ==========================================================================
+       CONTROLS & BUTTONS
+       ========================================================================== */
     .options-bar {
-      display: flex; gap: 10px; justify-content: center;
-      padding: 12px; flex-wrap: wrap;
+      display: flex; 
+      gap: 10px; 
+      justify-content: center;
+      padding: 14px; 
+      flex-wrap: wrap;
     }
+
     .option-btn {
-      padding: 12px 24px; border-radius: 40px; border: 2px solid #e3eaf2;
-      background: white; font-weight: 700; font-size: 13px; cursor: pointer;
-      color: #5b718b; transition: all 0.2s;
+      padding: 10px 22px; 
+      border-radius: 40px; 
+      border: 2px solid #cbd5e1;
+      background: white; 
+      font-weight: 700; 
+      font-size: 13px; 
+      cursor: pointer;
+      color: #475569; 
+      transition: all 0.2s ease;
     }
+
     .option-btn.active {
-      border-color: #1a5f9c; background: #eff6ff; color: #1a5f9c;
-      box-shadow: 0 2px 8px rgba(26,95,156,0.15);
+      border-color: #1a5f9c; 
+      background: #eff6ff; 
+      color: #1a5f9c;
+      box-shadow: 0 4px 12px rgba(26, 95, 156, 0.15);
     }
-    
+
     .semester-selector {
-      display: flex; gap: 8px; justify-content: center;
-      padding: 8px; flex-wrap: wrap;
+      display: flex; 
+      gap: 8px; 
+      justify-content: center;
+      padding: 4px 14px 14px; 
+      flex-wrap: wrap;
     }
+
     .sem-btn {
-      padding: 8px 16px; border-radius: 40px; border: 2px solid #e3eaf2;
-      background: white; font-weight: 700; font-size: 12px; cursor: pointer;
-      color: #5b718b;
+      padding: 6px 14px; 
+      border-radius: 40px; 
+      border: 1.5px solid #cbd5e1;
+      background: white; 
+      font-weight: 700; 
+      font-size: 11.5px; 
+      cursor: pointer;
+      color: #475569;
+      transition: all 0.2s ease;
     }
+
     .sem-btn.active {
-      border-color: #059669; background: #d1fae5; color: #065f46;
-    }
-    
-    .signature-area {
-      display: flex; justify-content: space-between; align-items: flex-end;
-      margin-top: 20px;
-    }
-    .signature-box { text-align: center; font-size: 9px; color: #000; }
-    .signature-box img { width: 60px; height: 45px; object-fit: contain; margin-bottom: 3px; }
-    .stamp-box img { width: 60px; height: 60px; object-fit: contain; }
-    
-    .qr-section {
-      display: flex; align-items: center; gap: 10px;
-      margin-top: 10px; padding: 8px;
-      border: 1px dashed #ccc; border-radius: 8px;
-    }
-    .qr-code { width: 60px; height: 60px; }
-    
-    /* Security Features */
-    .watermark {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%) rotate(-45deg);
-      font-size: 80px;
-      font-weight: bold;
-      color: rgba(0,0,0,0.04);
-      pointer-events: none;
-      z-index: 1000;
-      letter-spacing: 10px;
-    }
-    
-    .security-badge {
-      display: inline-block;
-      background: #d1fae5;
+      border-color: #059669; 
+      background: #d1fae5; 
       color: #065f46;
-      padding: 3px 10px;
-      border-radius: 40px;
-      font-size: 8px;
-      font-weight: bold;
-      margin-left: 4px;
     }
-    
-    .serial-number {
-      font-family: 'Courier New', monospace;
-      font-size: 8px;
-      color: #333;
-      text-align: right;
-      margin-top: 4px;
-    }
-    
-    .hash-code {
-      font-family: 'Courier New', monospace;
-      font-size: 6px;
-      color: #666;
-      word-break: break-all;
-      margin-top: 2px;
-    }
-    
-    /* Banknote Security Features */
+
+    /* ==========================================================================
+       SECURITY & AUTHENTICITY FEATURES
+       ========================================================================== */
     .guilloche-pattern {
       position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
+      inset: 0;
       pointer-events: none;
-      opacity: 0.05;
+      opacity: 0.035;
       background-image: 
         repeating-linear-gradient(0deg, transparent, transparent 2px, #1a5f9c 2px, #1a5f9c 3px),
         repeating-linear-gradient(45deg, transparent, transparent 20px, #1a5f9c 20px, #1a5f9c 21px),
         repeating-linear-gradient(135deg, transparent, transparent 20px, #1a5f9c 20px, #1a5f9c 21px);
     }
-    
-    .micro-text {
-      font-size: 3px;
-      color: #999;
-      letter-spacing: 0.5px;
-      text-align: center;
-      margin-top: 2px;
-    }
-    
-    .barcode-section {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-top: 8px;
-      padding: 6px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-    
-    .barcode {
-      height: 40px;
-      background: repeating-linear-gradient(
-        90deg,
-        #000 0px, #000 2px,
-        #fff 2px, #fff 4px,
-        #000 4px, #000 5px,
-        #fff 5px, #fff 8px,
-        #000 8px, #000 10px,
-        #fff 10px, #fff 11px
-      );
-      flex: 1;
-    }
-    
-    .hologram {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, 
-        rgba(255,215,0,0.8), rgba(255,255,255,0.5), 
-        rgba(192,192,192,0.8), rgba(255,215,0,0.8));
-      background-size: 300% 300%;
-      animation: hologramShift 3s ease infinite;
-      position: relative;
-      border: 2px solid #ccc;
-    }
-    
-    @keyframes hologramShift {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-    
-    .color-shifting-ink {
-      font-size: 10px;
+
+    .watermark {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-45deg);
+      font-size: 72px;
       font-weight: bold;
-      color: #1a5f9c;
-      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-      transition: all 0.3s;
+      color: rgba(0, 0, 0, 0.035);
+      pointer-events: none;
+      z-index: 10;
+      letter-spacing: 8px;
+      white-space: nowrap;
+      user-select: none;
     }
-    
-    .color-shifting-ink:hover {
-      color: #059669;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-    }
-    
-    /* Latent Image */
+
     .latent-image {
-      position: fixed;
-      top: 30%;
-      right: 5%;
-      width: 80px;
-      height: 80px;
+      position: absolute;
+      top: 25%;
+      right: 4%;
+      width: 70px;
+      height: 70px;
       opacity: 0.03;
       transform: rotate(15deg);
       pointer-events: none;
-      font-size: 50px;
+      font-size: 42px;
       font-weight: 900;
       color: #000;
       display: flex;
@@ -229,35 +276,180 @@
       border: 3px solid #000;
       border-radius: 8px;
       letter-spacing: 2px;
-      z-index: 998;
     }
-    
-    .latent-image span {
-      transform: rotate(-15deg);
+
+    .micro-text {
+      font-size: 4px;
+      color: #94a3b8;
+      letter-spacing: 0.5px;
+      text-align: center;
+      margin-bottom: 4px;
+      text-transform: uppercase;
     }
-    
-    /* Encrypted QR Indicator */
+
+    .serial-number {
+      font-family: 'Courier New', monospace;
+      font-size: 8.5px;
+      font-weight: bold;
+      color: #334155;
+      text-align: right;
+      margin-bottom: 2px;
+    }
+
+    .security-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: #d1fae5;
+      color: #065f46;
+      padding: 2px 8px;
+      border-radius: 40px;
+      font-size: 8px;
+      font-weight: bold;
+    }
+
+    .color-shifting-ink {
+      font-size: 11px;
+      font-weight: bold;
+      color: #1a5f9c;
+      transition: all 0.3s ease;
+    }
+
+    /* Barcode & Hologram Section */
+    .barcode-section {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 10px;
+      padding: 6px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      background: #fafafa;
+    }
+
+    .barcode-container {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+    }
+
+    #barcode-svg {
+      max-height: 40px;
+      width: 100%;
+    }
+
+    .hologram {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, 
+        rgba(255,215,0,0.85), rgba(255,255,255,0.6), 
+        rgba(192,192,192,0.85), rgba(255,215,0,0.85));
+      background-size: 300% 300%;
+      animation: hologramShift 3.5s ease infinite;
+      border: 1.5px solid #cbd5e1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 8px;
+      font-weight: 900;
+      color: #1e293b;
+      box-shadow: inset 0 0 4px rgba(0,0,0,0.15);
+      flex-shrink: 0;
+    }
+
+    @keyframes hologramShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* QR Code Section */
+    .qr-section {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 10px;
+      padding: 8px 12px;
+      border: 1px dashed #cbd5e1;
+      border-radius: 6px;
+      background: #ffffff;
+    }
+
+    .qr-code { 
+      width: 60px; 
+      height: 60px;
+      flex-shrink: 0;
+    }
+
+    .qr-code canvas {
+      width: 100% !important;
+      height: 100% !important;
+    }
+
     .encrypted-badge {
       display: inline-block;
       background: #0b1e33;
       color: #fbbf24;
-      padding: 2px 8px;
-      border-radius: 40px;
+      padding: 2px 6px;
+      border-radius: 20px;
       font-size: 7px;
       font-weight: bold;
       letter-spacing: 0.5px;
       margin-left: 4px;
     }
-    
+
+    /* Signatures & Stamp Area */
+    .signature-area {
+      display: flex; 
+      justify-content: space-between; 
+      align-items: flex-end;
+      margin-top: 16px;
+      padding: 0 10px;
+    }
+
+    .signature-box { 
+      text-align: center; 
+      font-size: 9px; 
+      color: #000; 
+    }
+
+    .signature-box img { 
+      width: 65px; 
+      height: 40px; 
+      object-fit: contain; 
+      margin-bottom: 2px; 
+    }
+
+    .stamp-box img { 
+      width: 60px; 
+      height: 60px; 
+      object-fit: contain; 
+    }
+
+    .hash-code {
+      font-family: 'Courier New', monospace;
+      font-size: 7px;
+      color: #64748b;
+      word-break: break-all;
+      margin-top: 8px;
+      text-align: center;
+    }
+
     .report-footer {
-      text-align: center; font-size: 8px; color: #333;
-      margin-top: 10px; padding-top: 5px; border-top: 1px solid #ccc;
+      text-align: center; 
+      font-size: 8px; 
+      color: #475569;
+      margin-top: 8px; 
+      padding-top: 6px; 
+      border-top: 1px solid #cbd5e1;
     }
   </style>
 </head>
 <body>
 
-<!-- Options: Individual or Cumulative -->
+<!-- Options Selector: Single or Cumulative -->
 <div class="options-bar no-print">
   <button class="option-btn active" id="option-single" onclick="switchOption('single')">
     📄 Single Semester
@@ -267,354 +459,473 @@
   </button>
 </div>
 
-<!-- Semester Selector (for single mode) -->
+<!-- Semester Selector (Single Mode) -->
 <div class="semester-selector no-print" id="semester-selector"></div>
 
-<!-- A4 Report -->
+<!-- Printable A4 Document Sheet -->
 <div class="a4-sheet" id="a4-sheet">
-  <!-- Watermark -->
-  <!-- Guilloche Pattern -->
+  <!-- Security Overlay Patterns -->
   <div class="guilloche-pattern"></div>
-  
-  <!-- Watermark -->
-  <div class="watermark">VERIFIED</div>
-  
-  <!-- Latent Image (visible only at angle) -->
+  <div class="watermark">OFFICIAL VERIFIED</div>
   <div class="latent-image"><span>BDU</span></div>
-  
-  <!-- Micro Text -->
-  <div class="micro-text">BAHIR DAR UNIVERSITY OFFICIAL DOCUMENT — TAMPER PROOF — BAHIR DAR UNIVERSITY OFFICIAL DOCUMENT — TAMPER PROOF</div>
-  
-  <!-- Serial Number -->
-  <div class="serial-number" id="serial-number"></div>
-  <div class="report-header">
+
+  <!-- Micro Text Line -->
+  <div class="micro-text">
+    BAHIR DAR UNIVERSITY OFFICIAL ACADEMIC DOCUMENT — TAMPER PROOF SECURITY FEATURE — BAHIR DAR UNIVERSITY
+  </div>
+
+  <!-- Serial Number Banner -->
+  <div class="serial-number" id="serial-number">Serial: BDU-PENDING</div>
+
+  <!-- Report Header -->
+  <header class="report-header">
     <div class="logo-row">
-      <img src="/images/logo.jpg" alt="Logo">
-      <img src="/images/ethiopian_emblem.jpg" alt="Emblem">
+      <img src="/images/logo.jpg" alt="BDU Logo" onerror="this.src='https://via.placeholder.com/48?text=BDU'">
+      <img src="/images/ethiopian_emblem.jpg" alt="Ethiopian Emblem" onerror="this.style.display='none'">
     </div>
     <div class="uni-name">BAHIR DAR UNIVERSITY</div>
     <div class="report-title" id="report-mode-title">
-    SEMESTER GRADE REPORT <span class="security-badge">🔒 SECURE</span>
-  </div>
-  </div>
-  
+      <span>SEMESTER GRADE REPORT</span>
+      <span class="security-badge">🔒 SECURE</span>
+    </div>
+  </header>
+
+  <!-- Student Metadata Table -->
   <table class="student-info">
     <tr>
       <td style="width:15%;"><strong>Student:</strong></td>
-      <td style="width:35%;" id="report-name"></td>
-      <td style="width:10%;"><strong>ID:</strong></td>
-      <td id="report-id"></td>
+      <td style="width:35%;" id="report-name">—</td>
+      <td style="width:12%;"><strong>Student ID:</strong></td>
+      <td id="report-id">—</td>
     </tr>
     <tr>
       <td><strong>Program:</strong></td>
-      <td colspan="3" id="report-program"></td>
+      <td colspan="3" id="report-program">—</td>
     </tr>
     <tr>
-      <td><strong>Year:</strong></td>
-      <td id="report-year"></td>
-      <td><strong>Credits:</strong></td>
-      <td id="report-total-credits"></td>
+      <td><strong>Academic Year:</strong></td>
+      <td id="report-year">—</td>
+      <td><strong>Total Credits:</strong></td>
+      <td id="report-total-credits">—</td>
     </tr>
     <tr>
-      <td><strong>CGPA:</strong></td>
-      <td><span class="color-shifting-ink" id="report-cgpa"></span></td>
+      <td><strong>Cumulative GPA:</strong></td>
+      <td><span class="color-shifting-ink" id="report-cgpa">—</span></td>
       <td><strong>Status:</strong></td>
-      <td id="report-status"></td>
+      <td id="report-status">—</td>
     </tr>
   </table>
-  
-  <div id="report-content"></div>
-  
-  <!-- Barcode Section -->
+
+  <!-- Main Grade Content Injection Target -->
+  <main id="report-content"></main>
+
+  <!-- Barcode & Hologram Section -->
   <div class="barcode-section">
-    <div class="barcode" id="barcode"></div>
-    <div class="hologram"></div>
+    <div class="barcode-container">
+      <svg id="barcode-svg" aria-label="Official Document Barcode"></svg>
+    </div>
+    <div class="hologram">BDU</div>
   </div>
-  
+
+  <!-- Verification QR Section -->
   <div class="qr-section">
     <div class="qr-code" id="qr-code"></div>
     <div>
-      <div style="font-size:9px;font-weight:bold;">VERIFICATION QR</div>
-      <div style="font-size:8px;color:#333;">Scan to verify at bdu-portal.onrender.com/verify</div>
+      <div style="font-size:9px; font-weight:bold;">
+        VERIFICATION QR <span class="encrypted-badge">🔐 VERIFIED LINK</span>
+      </div>
+      <div style="font-size:8px; color:#334155;" id="verify-subtext">
+        Scan QR to verify document authenticity online
+      </div>
     </div>
   </div>
-  
+
+  <!-- Signature & Official Seal Block -->
   <div class="signature-area">
     <div class="signature-box">
-      <img src="/images/Signature.png" alt="Signature">
-      <div><strong>Registrar</strong></div>
+      <img src="/images/Signature.png" alt="Registrar Signature" onerror="this.style.opacity='0'">
+      <div><strong>University Registrar</strong></div>
     </div>
     <div class="signature-box stamp-box">
-      <img src="/images/stamp.jpg" alt="Stamp">
+      <img src="/images/stamp.jpg" alt="Official Seal" onerror="this.style.opacity='0'">
       <div><strong>OFFICIAL STAMP</strong></div>
     </div>
     <div class="signature-box">
-      <img src="/images/Signature.png" alt="Signature">
-      <div><strong>Dean</strong></div>
+      <img src="/images/Signature.png" alt="Dean Signature" onerror="this.style.opacity='0'">
+      <div><strong>Faculty Dean</strong></div>
     </div>
   </div>
-  
-  <div class="hash-code" id="hash-code"></div>
-  <div class="report-footer">
-    Official document issued by Bahir Dar University
-  </div>
+
+  <!-- Document Hash Footer -->
+  <div class="hash-code" id="hash-code">Loading security signatures...</div>
+
+  <!-- Printable Footer Notice -->
+  <footer class="report-footer">
+    Official Academic Document Issued By Bahir Dar University • Valid Without Manual Alterations
+  </footer>
 </div>
 
-<div class="no-print" style="text-align:center;padding:16px;">
-  <button onclick="window.print()" style="padding:14px 28px;background:#1a5f9c;color:white;border:none;border-radius:50px;font-weight:bold;font-size:16px;cursor:pointer;margin-right:8px;">
-    Print / Save PDF
+<!-- Print & Navigation Controls -->
+<div class="no-print" style="text-align:center; padding:16px;">
+  <button onclick="window.print()" style="padding:12px 28px; background:#1a5f9c; color:white; border:none; border-radius:50px; font-weight:bold; font-size:15px; cursor:pointer; margin-right:8px; box-shadow:0 4px 12px rgba(26,95,156,0.2);">
+    <i class="fas fa-print"></i> Print / Save PDF
   </button>
-  <button onclick="location.href='/pages/results.html'" style="padding:14px 28px;background:#64748b;color:white;border:none;border-radius:50px;font-weight:bold;font-size:16px;cursor:pointer;">
-    Back
+  <button onclick="window.location.href='/pages/results.html'" style="padding:12px 28px; background:#64748b; color:white; border:none; border-radius:50px; font-weight:bold; font-size:15px; cursor:pointer;">
+    <i class="fas fa-arrow-left"></i> Back to Results
   </button>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<!-- ==========================================================================
+     DOCUMENT CONTROLLER & SECURITY SCRIPT
+     ========================================================================== -->
 <script>
-var currentMode = 'single';
-var currentSemester = 0;
+const VERIFY_BASE_URL = 'https://bdu-portal.onrender.com/verify';
 
-(function() {
-  var saved = sessionStorage.getItem('bdu_student_data');
+let currentMode = 'single';
+let currentSemesterIndex = 0;
+let reportData = null;
+
+// Initialize Application Data
+(function initGradeReport() {
+  const saved = sessionStorage.getItem('bdu_student_data');
   if (!saved) {
-    document.getElementById('report-content').innerHTML = '<div style="text-align:center;padding:20px;font-size:12px;">Please login first</div>';
+    document.getElementById('report-content').innerHTML = `
+      <div style="text-align:center; padding:30px; font-size:13px; color:#b91c1c; font-weight:bold;">
+        Session expired. Please log in to view the official grade report.
+      </div>
+    `;
     return;
   }
-  window.reportData = JSON.parse(saved);
-  
-  // Render semester selector
-  renderSemesterSelector();
-  
-  // Default: single semester mode
-  renderSingleSemester(0);
+
+  try {
+    reportData = JSON.parse(saved);
+    renderSemesterSelector();
+    
+    if ((reportData.registrations || []).length > 0) {
+      renderSingleSemester(0);
+    } else {
+      renderEmptyReport('No academic registrations found.');
+    }
+  } catch (err) {
+    console.error('Failed to parse student data:', err);
+    renderEmptyReport('Unable to parse student academic records.');
+  }
 })();
 
-function renderSemesterSelector() {
-  var regs = window.reportData.registrations || [];
-  var html = '';
-  regs.forEach(function(reg, i) {
-    html += '<button class="sem-btn ' + (i === 0 ? 'active' : '') + '" onclick="selectSemester(' + i + ')">Semester ' + reg.semester + '</button>';
-  });
-  document.getElementById('semester-selector').innerHTML = html;
+// Helper Getters
+function getStudentId() {
+  return reportData?.biography?.studentId || 'UNKNOWN';
 }
 
+function getStudentName() {
+  return reportData?.biography?.fullName || 'Student';
+}
+
+function getVerificationToken() {
+  if (reportData?.verification_token) return reportData.verification_token;
+  
+  const cleanId = getStudentId().replace(/[^a-zA-Z0-9]/g, '');
+  const cleanName = getStudentName().replace(/\s+/g, '-').toUpperCase();
+  return `BDU-${cleanId}-${cleanName}`;
+}
+
+function getVerifyUrl() {
+  return `${VERIFY_BASE_URL}/${encodeURIComponent(getVerificationToken())}`;
+}
+
+function getStableSerial() {
+  const studentId = getStudentId();
+  const storedKey = `bdu_report_serial_${studentId}`;
+  let serial = localStorage.getItem(storedKey);
+
+  if (!serial) {
+    const studentDigits = studentId.replace(/\D/g, '') || '000000';
+    const randomSalt = Math.random().toString(36).substring(2, 7).toUpperCase();
+    serial = `BDU-GR-${studentDigits}-${randomSalt}`;
+    localStorage.setItem(storedKey, serial);
+  }
+
+  return serial;
+}
+
+// 1. Render Mode Toggles
 function switchOption(mode) {
   currentMode = mode;
-  
-  document.getElementById('option-single').className = 'option-btn ' + (mode === 'single' ? 'active' : '');
-  document.getElementById('option-cumulative').className = 'option-btn ' + (mode === 'cumulative' ? 'active' : '');
-  
+
+  document.getElementById('option-single').className = `option-btn ${mode === 'single' ? 'active' : ''}`;
+  document.getElementById('option-cumulative').className = `option-btn ${mode === 'cumulative' ? 'active' : ''}`;
+
+  const titleContainer = document.getElementById('report-mode-title');
+  const selector = document.getElementById('semester-selector');
+
   if (mode === 'single') {
-    document.getElementById('semester-selector').style.display = 'flex';
-    document.getElementById('report-mode-title').textContent = 'SEMESTER GRADE REPORT';
-    renderSingleSemester(currentSemester);
+    selector.style.display = 'flex';
+    titleContainer.innerHTML = '<span>SEMESTER GRADE REPORT</span> <span class="security-badge">🔒 SECURE</span>';
+    renderSingleSemester(currentSemesterIndex);
   } else {
-    document.getElementById('semester-selector').style.display = 'none';
-    document.getElementById('report-mode-title').textContent = 'CUMULATIVE GRADE REPORT';
+    selector.style.display = 'none';
+    titleContainer.innerHTML = '<span>CUMULATIVE GRADE REPORT</span> <span class="security-badge">🔒 SECURE</span>';
     renderCumulative();
   }
 }
 
+// 2. Render Semester Selector Buttons
+function renderSemesterSelector() {
+  const regs = reportData?.registrations || [];
+  const selector = document.getElementById('semester-selector');
+  
+  selector.innerHTML = regs.map((reg, i) => `
+    <button class="sem-btn ${i === currentSemesterIndex ? 'active' : ''}" onclick="selectSemester(${i})">
+      Semester ${reg.semester}
+    </button>
+  `).join('');
+}
+
 function selectSemester(index) {
-  currentSemester = index;
-  
-  var buttons = document.querySelectorAll('.sem-btn');
-  buttons.forEach(function(btn, i) {
-    btn.className = 'sem-btn ' + (i === index ? 'active' : '');
+  currentSemesterIndex = index;
+  document.querySelectorAll('.sem-btn').forEach((btn, i) => {
+    btn.className = `sem-btn ${i === index ? 'active' : ''}`;
   });
-  
   renderSingleSemester(index);
 }
 
+// 3. Render Single Semester Mode
 function renderSingleSemester(index) {
-  var data = window.reportData;
-  var bio = data.biography || {};
-  var regs = data.registrations || [];
-  var reg = regs[index];
-  var semCourses = data.courses?.find(function(c) { return c.semester === reg.semester; });
-  
-  document.getElementById('report-name').textContent = bio.fullName || '';
-  document.getElementById('report-id').textContent = bio.studentId || '';
-  document.getElementById('report-program').textContent = data.program || '';
-  document.getElementById('report-year').textContent = reg.acYear || '';
-  document.getElementById('report-cgpa').textContent = reg.cgpa || '—';
+  const bio = reportData?.biography || {};
+  const regs = reportData?.registrations || [];
+  const reg = regs[index];
+
+  if (!reg) {
+    renderEmptyReport('Semester information unavailable.');
+    return;
+  }
+
+  const semCoursesObj = (reportData?.courses || []).find(c => String(c.semester) === String(reg.semester));
+  const coursesList = semCoursesObj?.courses || [];
+
+  // Update Header Metadata
+  document.getElementById('report-name').textContent = bio.fullName || '—';
+  document.getElementById('report-id').textContent = bio.studentId || '—';
+  document.getElementById('report-program').textContent = reportData?.program || 'Undergraduate Degree';
+  document.getElementById('report-year').textContent = reg.acYear || '—';
+  document.getElementById('report-cgpa').textContent = reg.cgpa || '0.00';
   document.getElementById('report-status').textContent = reg.status || 'Pass';
-  
-  var semCredits = 0;
-  if (semCourses && semCourses.courses) {
-    semCourses.courses.forEach(function(c) { semCredits += c.credit; });
-  }
-  document.getElementById('report-total-credits').textContent = semCredits;
-  
-  var html = '<div class="semester-header">Semester ' + reg.semester + ' — SGPA: ' + reg.sgpa + ' | CGPA: ' + reg.cgpa + ' | ' + reg.status + '</div>';
-  html += '<table class="grade-table"><thead><tr>';
-  html += '<th style="width:12%;">Code</th><th style="width:43%;">Course Title</th><th style="width:7%;">Cr</th><th style="width:10%;">Grade</th><th style="width:10%;">Points</th><th style="width:18%;">%</th>';
-  html += '</tr></thead><tbody>';
-  
-  if (semCourses && semCourses.courses) {
-    semCourses.courses.forEach(function(c) {
-      html += '<tr><td>' + c.code + '</td><td>' + c.title + '</td><td>' + c.credit + '</td>';
-      html += '<td><strong>' + c.grade + '</strong></td><td>' + c.points + '</td><td>' + (c.percentage || '—') + '</td></tr>';
+
+  let totalSemCredits = 0;
+  coursesList.forEach(c => { totalSemCredits += Number(c.credit || 0); });
+  document.getElementById('report-total-credits').textContent = totalSemCredits;
+
+  // Build Single Semester Table
+  let html = `
+    <div class="semester-header">
+      Semester ${reg.semester} — SGPA: ${reg.sgpa || '0.00'} | CGPA: ${reg.cgpa || '0.00'} | Status: ${reg.status || 'Pass'}
+    </div>
+    <table class="grade-table">
+      <thead>
+        <tr>
+          <th style="width:12%;">Code</th>
+          <th style="width:45%;">Course Title</th>
+          <th style="width:8%;">Cr</th>
+          <th style="width:10%;">Grade</th>
+          <th style="width:10%;">Points</th>
+          <th style="width:15%;">Score %</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+  if (coursesList.length > 0) {
+    coursesList.forEach(c => {
+      html += `
+        <tr>
+          <td>${c.code || 'CODE'}</td>
+          <td>${c.title || 'Course Title'}</td>
+          <td>${c.credit ?? '0'}</td>
+          <td><strong>${c.grade || '—'}</strong></td>
+          <td>${c.points ?? '0'}</td>
+          <td>${c.percentage ? c.percentage + '%' : '—'}</td>
+        </tr>
+      `;
     });
+  } else {
+    html += `<tr><td colspan="6" style="text-align:center; padding:12px;">No course records registered for this semester.</td></tr>`;
   }
-  
-  html += '</tbody></table>';
+
+  html += `</tbody></table>`;
   document.getElementById('report-content').innerHTML = html;
-  
-  generateQR(bio, reg.sgpa, semCredits);
+
+  renderSecuritySuite(reg.sgpa, totalSemCredits);
 }
 
+// 4. Render Cumulative Report Mode
 function renderCumulative() {
-  var data = window.reportData;
-  var bio = data.biography || {};
-  var summary = data.summary || {};
-  var regs = data.registrations || [];
-  
-  document.getElementById('report-name').textContent = bio.fullName || '';
-  document.getElementById('report-id').textContent = bio.studentId || '';
-  document.getElementById('report-program').textContent = data.program || '';
-  document.getElementById('report-year').textContent = regs[0]?.acYear + ' - ' + regs[regs.length-1]?.acYear || '';
-  document.getElementById('report-cgpa').textContent = summary.cumulativeGPA || '—';
-  document.getElementById('report-status').textContent = 'Completed ' + summary.totalSemesters + ' Semesters';
+  const bio = reportData?.biography || {};
+  const summary = reportData?.summary || {};
+  const regs = reportData?.registrations || [];
+
+  document.getElementById('report-name').textContent = bio.fullName || '—';
+  document.getElementById('report-id').textContent = bio.studentId || '—';
+  document.getElementById('report-program').textContent = reportData?.program || 'Undergraduate Degree';
+  document.getElementById('report-year').textContent = regs.length > 0 ? `${regs[0].acYear} - ${regs[regs.length - 1].acYear}` : '—';
+  document.getElementById('report-cgpa').textContent = summary.cumulativeGPA || '0.00';
+  document.getElementById('report-status').textContent = `Completed ${summary.totalSemesters || 0} Semesters`;
   document.getElementById('report-total-credits').textContent = summary.totalCredits || '0';
-  
-  var html = '';
-  
-  regs.forEach(function(reg) {
-    var semCourses = data.courses?.find(function(c) { return c.semester === reg.semester; });
-    
-    html += '<div class="semester-section">';
-    html += '<div class="semester-header">Semester ' + reg.semester + ' — SGPA: ' + reg.sgpa + ' | CGPA: ' + reg.cgpa + ' | ' + reg.status + '</div>';
-    html += '<table class="grade-table"><thead><tr>';
-    html += '<th style="width:12%;">Code</th><th style="width:43%;">Course Title</th><th style="width:7%;">Cr</th><th style="width:10%;">Grade</th><th style="width:10%;">Points</th><th style="width:18%;">%</th>';
-    html += '</tr></thead><tbody>';
-    
-    if (semCourses && semCourses.courses) {
-      semCourses.courses.forEach(function(c) {
-        html += '<tr><td>' + c.code + '</td><td>' + c.title + '</td><td>' + c.credit + '</td>';
-        html += '<td><strong>' + c.grade + '</strong></td><td>' + c.points + '</td><td>' + (c.percentage || '—') + '</td></tr>';
+
+  let html = '';
+
+  regs.forEach(reg => {
+    const semCoursesObj = (reportData?.courses || []).find(c => String(c.semester) === String(reg.semester));
+    const coursesList = semCoursesObj?.courses || [];
+
+    html += `
+      <div class="semester-section">
+        <div class="semester-header">
+          Semester ${reg.semester} — SGPA: ${reg.sgpa || '0.00'} | CGPA: ${reg.cgpa || '0.00'} | ${reg.status || 'Pass'}
+        </div>
+        <table class="grade-table">
+          <thead>
+            <tr>
+              <th style="width:12%;">Code</th>
+              <th style="width:45%;">Course Title</th>
+              <th style="width:8%;">Cr</th>
+              <th style="width:10%;">Grade</th>
+              <th style="width:10%;">Points</th>
+              <th style="width:15%;">Score %</th>
+            </tr>
+          </thead>
+          <tbody>
+    `;
+
+    if (coursesList.length > 0) {
+      coursesList.forEach(c => {
+        html += `
+          <tr>
+            <td>${c.code || 'CODE'}</td>
+            <td>${c.title || 'Course Title'}</td>
+            <td>${c.credit ?? '0'}</td>
+            <td><strong>${c.grade || '—'}</strong></td>
+            <td>${c.points ?? '0'}</td>
+            <td>${c.percentage ? c.percentage + '%' : '—'}</td>
+          </tr>
+        `;
       });
+    } else {
+      html += `<tr><td colspan="6" style="text-align:center; padding:10px;">No course records available.</td></tr>`;
     }
-    
-    html += '</tbody></table>';
-    html += '</div>';
+
+    html += `</tbody></table></div>`;
   });
-  
-  // Add cumulative summary on separate page
-  html += '<div class="summary-page">';
-  html += '<div style="text-align:center;font-size:12px;font-weight:bold;margin-bottom:8px;">CUMULATIVE SUMMARY</div>';
-  html += '<table class="grade-table"><tbody>';
-  html += '<tr><td style="font-weight:bold;">Total Semesters:</td><td>' + summary.totalSemesters + '</td></tr>';
-  html += '<tr><td style="font-weight:bold;">Total Credits:</td><td>' + summary.totalCredits + '</td></tr>';
-  html += '<tr><td style="font-weight:bold;">Final CGPA:</td><td>' + summary.cumulativeGPA + '</td></tr>';
-  html += '<tr><td style="font-weight:bold;">Academic Standing:</td><td>' + (parseFloat(summary.cumulativeGPA) === 4.00 ? 'DEAN\'S LIST' : 'GOOD STANDING') + '</td></tr>';
-  html += '</tbody></table>';
-  html += '</div>';
-  
-  // Add grading key before QR
-  html += '<div style="margin-top:8px;padding:6px;border:1px solid #ccc;border-radius:4px;">';
-  html += '<div style="font-weight:bold;font-size:9px;">GRADING KEY:</div>';
-  html += '<table class="grading-key"><tr>';
-  html += '<td>A+ = 90-100%</td><td>A = 85-89%</td><td>B+ = 75-79%</td><td>B = 70-74%</td>';
-  html += '</tr><tr>';
-  html += '<td>C+ = 60-64%</td><td>C = 50-59%</td><td>D = 40-44%</td><td>F &lt; 40%</td>';
-  html += '</tr></table></div>';
-  
+
+  // Cumulative Summary Block
+  const cgpaVal = parseFloat(summary.cumulativeGPA || 0);
+  const standing = cgpaVal === 4.00 ? "DEAN'S LIST" : (cgpaVal >= 3.75 ? "EXCELLENT STANDING" : "GOOD STANDING");
+
+  html += `
+    <div class="summary-page" style="margin-top:14px;">
+      <div style="text-align:center; font-size:11px; font-weight:bold; margin-bottom:6px;">CUMULATIVE ACADEMIC SUMMARY</div>
+      <table class="grade-table">
+        <tbody>
+          <tr><td style="font-weight:bold; width:40%;">Total Semesters Completed:</td><td>${summary.totalSemesters || '0'}</td></tr>
+          <tr><td style="font-weight:bold;">Total Credits Earned:</td><td>${summary.totalCredits || '0'}</td></tr>
+          <tr><td style="font-weight:bold;">Final Cumulative GPA:</td><td><strong>${summary.cumulativeGPA || '0.00'}</strong></td></tr>
+          <tr><td style="font-weight:bold;">Academic Standing:</td><td><strong style="color:#065f46;">${standing}</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Grading Key Reference -->
+    <div style="margin-top:10px; padding:6px; border:1px solid #cbd5e1; border-radius:4px;">
+      <div style="font-weight:bold; font-size:8.5px; margin-bottom:2px;">OFFICIAL GRADING SYSTEM KEY:</div>
+      <table class="grading-key">
+        <tr>
+          <td>A+ = 90-100% (4.0)</td>
+          <td>A = 85-89% (4.0)</td>
+          <td>B+ = 75-79% (3.5)</td>
+          <td>B = 70-74% (3.0)</td>
+        </tr>
+        <tr>
+          <td>C+ = 60-64% (2.5)</td>
+          <td>C = 50-59% (2.0)</td>
+          <td>D = 40-44% (1.0)</td>
+          <td>F &lt; 40% (0.0)</td>
+        </tr>
+      </table>
+    </div>
+  `;
+
   document.getElementById('report-content').innerHTML = html;
-  
-  generateSecurity(data);
-  generateQR(bio, summary.cumulativeGPA, summary.totalCredits);
+
+  renderSecuritySuite(summary.cumulativeGPA, summary.totalCredits);
 }
 
-function generateSecurity(data) {
-  // Generate serial number
-  var serial = 'BDU-' + (data.studentId || '').replace(/[^0-9]/g, '') + '-' + Date.now().toString(36).toUpperCase();
-  document.getElementById('serial-number').textContent = 'Serial: ' + serial;
-  
-  // Generate hash code
-  var hashInput = JSON.stringify({
-    name: data.biography?.fullName,
-    id: data.biography?.studentId,
-    gpa: data.summary?.cumulativeGPA,
-    timestamp: Date.now(),
-  });
-  
-  // Simple hash function
-  var hash = 0;
-  for (var i = 0; i < hashInput.length; i++) {
-    var char = hashInput.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash = hash & hash;
-  }
-  var hashHex = Math.abs(hash).toString(16).toUpperCase();
-  while (hashHex.length < 8) hashHex = '0' + hashHex;
-  
-  document.getElementById('hash-code').textContent = 'Document Hash: ' + hashHex + ' | Verify at bdu-portal.onrender.com/verify';
+// 5. Security & Verification Suite Renderer
+function renderSecuritySuite(gpa, credits) {
+  const serial = getStableSerial();
+  const verifyUrl = getVerifyUrl();
+
+  document.getElementById('serial-number').textContent = `Serial: ${serial}`;
+  document.getElementById('hash-code').textContent = `Verify at: ${verifyUrl} | Document Serial: ${serial}`;
+  document.getElementById('verify-subtext').textContent = `Scan to verify: ${verifyUrl}`;
+
+  generateBarcode(serial);
+  generateQR(verifyUrl);
 }
 
-function getVerifyUrl() {
-  var studentId = window.reportData?.biography?.studentId || 'UNKNOWN';
-  var studentName = window.reportData?.biography?.fullName || 'Student';
-  var token = 'BDU-' + studentId + '-' + studentName.replace(/\s+/g, '-').toUpperCase();
-  return 'https://bdu-portal.onrender.com/verify/' + encodeURIComponent(token);
-}
-
-function getStableSerial() {
-  var studentId = window.reportData?.biography?.studentId || 'UNKNOWN';
-  var storedKey = 'bdu_report_serial_' + studentId;
-  var serial = localStorage.getItem(storedKey);
-  
-  if (!serial) {
-    var studentDigits = studentId.replace(/\D/g, '') || '000000';
-    serial = 'BDU-GR-' + studentDigits + '-' + Date.now().toString(36).toUpperCase().slice(-6);
-    localStorage.setItem(storedKey, serial);
-  }
-  
-  return serial;
-}
-
-function renderSecurityFields() {
-  var serial = getStableSerial();
-  var verifyUrl = getVerifyUrl();
-  
-  document.getElementById('serial-number').textContent = 'Serial: ' + serial;
-  document.getElementById('hash-code').textContent = 'Verify at: ' + verifyUrl;
-}
-
-function generateQR(bio, gpa, credits) {
-  var verifyUrl = getVerifyUrl();
-  var qrContainer = document.getElementById('qr-code');
-  
-  qrContainer.innerHTML = '';
-  
-  var canvas = document.createElement('canvas');
-  canvas.width = 60;
-  canvas.height = 60;
-  canvas.className = 'qr-canvas';
-  
-  qrContainer.appendChild(canvas);
-  
-  QRCode.toCanvas(
-    canvas,
-    verifyUrl,
-    {
-      width: 60,
-      margin: 1,
-      errorCorrectionLevel: 'H',
-      color: {
-        dark: '#000000',
-        light: '#FFFFFF'
-      }
-    },
-    function(err) {
-      if (err) {
-        console.error('QR error:', err);
-        qrContainer.textContent = 'QR unavailable';
-      }
+// Code-128 Barcode Generator
+function generateBarcode(serial) {
+  if (typeof JsBarcode !== 'undefined') {
+    try {
+      JsBarcode('#barcode-svg', serial, {
+        format: 'CODE128',
+        width: 1.3,
+        height: 36,
+        displayValue: true,
+        fontSize: 9,
+        margin: 0,
+        background: 'transparent',
+        lineColor: '#0f172a'
+      });
+    } catch (err) {
+      console.error('Barcode generation error:', err);
     }
-  );
-  
-  renderSecurityFields();
+  }
+}
+
+// QR Code Generator
+function generateQR(verifyUrl) {
+  const qrContainer = document.getElementById('qr-code');
+  qrContainer.innerHTML = '';
+
+  const canvas = document.createElement('canvas');
+  qrContainer.appendChild(canvas);
+
+  if (typeof QRCode !== 'undefined') {
+    QRCode.toCanvas(
+      canvas,
+      verifyUrl,
+      {
+        width: 60,
+        margin: 1,
+        errorCorrectionLevel: 'H',
+        color: { dark: '#0b1e33', light: '#ffffff' }
+      },
+      function (err) {
+        if (err) {
+          console.error('QR error:', err);
+          qrContainer.textContent = 'QR Error';
+        }
+      }
+    );
+  }
+}
+
+// Render Empty Report Notice
+function renderEmptyReport(msg) {
+  document.getElementById('report-content').innerHTML = `
+    <div style="text-align:center; padding:30px; font-size:12px; color:#64748b;">
+      ${msg}
+    </div>
+  `;
 }
 </script>
 </body>
