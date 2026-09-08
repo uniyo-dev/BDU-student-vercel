@@ -208,7 +208,33 @@ document.addEventListener('DOMContentLoaded', function() {
     render();
   };
   
+  // Add real placement criteria
+  function renderCriteria() {
+    const criteria = placement.criteria || [];
+    
+    if (criteria.length > 0) {
+      let criteriaHtml = '<div style="margin-top:20px;padding:16px;background:white;border-radius:14px;border:2px solid #e3eaf2;">';
+      criteriaHtml += '<div style="font-weight:800;font-size:15px;color:#d97706;margin-bottom:12px;">📊 Placement Criteria (Official)</div>';
+      
+      criteria.forEach(function(c) {
+        criteriaHtml += '<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f1f5f9;">';
+        criteriaHtml += '<span style="font-size:12px;color:#4a637f;">' + c.name + '</span>';
+        criteriaHtml += '<span style="font-weight:800;font-size:13px;color:#d97706;">' + c.percent + '%</span>';
+        criteriaHtml += '</div>';
+      });
+      
+      criteriaHtml += '</div>';
+      
+      // Insert after pagination
+      const pagination = document.getElementById('pagination');
+      if (pagination) {
+        pagination.insertAdjacentHTML('afterend', criteriaHtml);
+      }
+    }
+  }
+  
   // Initial render
   renderTabs();
   render();
+  renderCriteria();
 });
