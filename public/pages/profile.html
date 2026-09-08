@@ -1,197 +1,114 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
   <title>BDU Portal - Profile</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/shared/variables.css">
+  <link rel="stylesheet" href="/css/shared/reset.css">
+  <link rel="stylesheet" href="/css/shared/layout.css">
+  <link rel="stylesheet" href="/css/shared/banner.css">
+  <link rel="stylesheet" href="/css/shared/navigation.css">
+  <link rel="stylesheet" href="/css/shared/animations.css">
+  <link rel="stylesheet" href="/css/shared/utilities.css">
+  <link rel="stylesheet" href="/css/profile/profile.css">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, Arial, sans-serif; }
-    html, body { width: 100%; height: 100%; overflow: hidden; background: white; }
-    .app { width: 100vw; height: 100vh; height: 100dvh; background: white; display: flex; flex-direction: column; }
-    
-    .banner { width: 100%; height: 100px; position: relative; flex-shrink: 0; }
-    .banner img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .banner-overlay {
-      position: absolute; bottom: 0; left: 0; right: 0;
-      padding: 25px 16px 10px;
-      background: linear-gradient(transparent, rgba(11,30,51,0.9));
-      color: white; display: flex; align-items: center; gap: 10px;
+    #page-profile { background: #f8fafc; padding-bottom: 96px; }
+    .profile-header {
+      background: linear-gradient(135deg, #334155, #1e293b);
+      color: white; padding: 48px 20px 64px;
     }
-    .banner-overlay img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 2px solid white; }
-    .banner-title { font-size: 13px; font-weight: 700; }
-    .banner-sub { font-size: 10px; opacity: 0.8; }
-    
-    .header { padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e3eaf2; flex-shrink: 0; }
-    .header h1 { font-size: 18px; font-weight: 700; color: #0b1e33; }
-    .back-btn { font-size: 13px; color: #1a5f9c; cursor: pointer; background: #f0f4fa; padding: 6px 14px; border-radius: 40px; border: none; }
-    
-    .content { flex: 1; overflow-y: auto; padding: 16px; padding-bottom: 80px; }
-    
-    .card {
-      border-radius: 16px; padding: 16px; margin-bottom: 16px;
-      background: linear-gradient(135deg, #dbeafe, #eff6ff);
-      border: 2px solid #93c5fd;
+    .back-btn {
+      width: 36px; height: 36px; background: rgba(255,255,255,0.15);
+      border-radius: 12px; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: white;
     }
-    .card.personal {
-      background: linear-gradient(135deg, #ede9fe, #faf5ff);
-      border: 2px solid #c4b5fd;
+    .back-btn svg { width: 20px; height: 20px; }
+    .profile-avatar-wrap { display: flex; flex-direction: column; align-items: center; }
+    .profile-avatar {
+      width: 84px; height: 84px; background: linear-gradient(135deg, #2563eb, #1e40af);
+      border-radius: 22px; display: flex; align-items: center; justify-content: center;
+      font-size: 32px; font-weight: 800; color: white; margin-bottom: 14px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
     }
-    .card-title { font-size: 15px; font-weight: 800; color: #1a5f9c; margin-bottom: 12px; }
-    .card.personal .card-title { color: #7c3aed; }
-    
-    .row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #edf2f9; }
-    .row:last-child { border-bottom: none; }
-    .label { font-size: 13px; color: #64748b; }
-    .value { font-size: 13px; font-weight: 600; color: #0b1e33; text-align: right; }
-    
-    .chips { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-top: 8px; }
-    
-    /* Avatar with Initials */
-    .avatar {
-      width: 80px; height: 80px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 32px; font-weight: 800; color: white;
-      margin: 0 auto 12px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-      border: 3px solid white;
+    .profile-name { font-size: 22px; font-weight: 800; text-align: center; }
+    .profile-id-badge {
+      display: inline-flex; align-items: center; gap: 6px; margin-top: 10px;
+      background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2);
+      padding: 6px 14px; border-radius: 100px; font-size: 13px; font-weight: 500;
     }
-    .avatar.blue { background: linear-gradient(135deg, #1a5f9c, #0b1e33); }
-    .avatar.green { background: linear-gradient(135deg, #059669, #065f46); }
-    .avatar.purple { background: linear-gradient(135deg, #7c3aed, #5b21b6); }
-    .avatar.orange { background: linear-gradient(135deg, #d97706, #b45309); }
-    
-    /* Achievement Badges */
-    .badges {
-      display: flex; gap: 8px; flex-wrap: wrap;
-      justify-content: center; margin-top: 12px;
+    .profile-id-badge svg { width: 16px; height: 16px; }
+    .profile-content { padding: 0 16px; margin-top: -20px; }
+    .profile-section-title { font-size: 18px; font-weight: 700; color: #0f172a; margin-bottom: 12px; padding: 0 4px; }
+    .profile-card {
+      background: white; border-radius: 18px; border: 1px solid #f1f5f9;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06); padding: 4px 0; margin-bottom: 24px;
     }
-    .badge-item {
-      display: flex; align-items: center; gap: 6px;
-      background: linear-gradient(135deg, #fef3c7, #fbbf24);
-      border: 2px solid #fcd34d; border-radius: 40px;
-      padding: 6px 14px; font-size: 11px; font-weight: 700;
-      color: #92400e; animation: popIn 0.5s ease;
+    .profile-row {
+      display: flex; align-items: center; gap: 14px;
+      padding: 16px 20px; border-bottom: 1px solid #f8fafc;
     }
-    .badge-item.gold {
-      background: linear-gradient(135deg, #fef3c7, #fbbf24);
-      border-color: #f59e0b;
+    .profile-row:last-child { border-bottom: none; }
+    .profile-row-icon {
+      width: 36px; height: 36px; background: #f8fafc; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
-    .badge-item.green {
-      background: linear-gradient(135deg, #d1fae5, #6ee7b7);
-      border-color: #10b981; color: #065f46;
-    }
-    @keyframes popIn {
-      from { opacity: 0; transform: scale(0.5); }
-      to { opacity: 1; transform: scale(1); }
-    }
-    .chip { background: #d1fae5; color: #065f46; padding: 4px 14px; border-radius: 40px; font-size: 12px; font-weight: 600; }
-    .chip.blue { background: #dbeafe; color: #1e40af; }
-    
-    .bottom-nav {
-      position: fixed; bottom: 0; left: 0; right: 0; width: 100%;
-      display: flex; justify-content: space-around; padding: 10px 12px 14px;
-      background: #fafcff; border-top: 1px solid #e3eaf2; z-index: 9999;
-    }
-    .nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 10px; font-weight: 600; color: #5b718b; cursor: pointer; border: none; background: none; }
-    .nav-item i { font-size: 20px; }
-    .nav-item.active { color: #0b1e33; }
-    .nav-item.active i { color: #0b1e33; }
+    .profile-row-icon svg { width: 18px; height: 18px; color: #94a3b8; }
+    .profile-row-label { font-size: 11px; color: #94a3b8; font-weight: 600; }
+    .profile-row-value { font-size: 14px; font-weight: 700; color: #0f172a; margin-top: 2px; }
   </style>
 </head>
 <body>
 
-<div class="app">
-  <div class="banner">
-    <img src="/images/banner.jpeg" alt="Banner">
-    <div class="banner-overlay">
-      <img src="/images/logo.jpg" alt="Logo">
-      <div><div class="banner-title">Bahir Dar University</div><div class="banner-sub">Student Portal</div></div>
+<div id="page-profile" class="page active">
+  <div class="profile-header">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+      <button class="back-btn" onclick="location.href='/pages/dashboard.html'">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div style="font-size:20px;font-weight:800;">My Profile</div>
+    </div>
+    <div class="profile-avatar-wrap">
+      <div class="profile-avatar" id="profile-avatar-initials"></div>
+      <div class="profile-name" id="profile-name"></div>
+      <div class="profile-id-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span id="profile-student-id"></span>
+      </div>
     </div>
   </div>
-  
-  <div class="header">
-    <h1>Profile</h1>
-    <button class="back-btn" onclick="location.href='/pages/dashboard.html'">← Back</button>
-  </div>
-  
-  <div class="content" id="profile-content"></div>
-  
-  <div class="bottom-nav">
-    <button class="nav-item" onclick="location.href='/pages/dashboard.html'"><i class="fas fa-chart-pie"></i> Dashboard</button>
-    <button class="nav-item" onclick="location.href='/pages/results.html'"><i class="fas fa-list-ul"></i> Results</button>
-    <button class="nav-item" onclick="location.href='/pages/placement.html'"><i class="fas fa-sitemap"></i> Placement</button>
-    <button class="nav-item active"><i class="fas fa-user"></i> Profile</button>
-  </div>
+  <div class="profile-content" id="profile-content"></div>
 </div>
 
-<script>
-(function() {
-  var saved = sessionStorage.getItem('bdu_student_data');
-  if (!saved) { window.location.href = '/'; return; }
-  var data = JSON.parse(saved);
-  var bio = data.biography || {};
-  
-  var html = '';
-  
-  // Generate avatar with initials
-  var initials = (bio.fullName || 'S').split(' ').map(function(n) { return n[0]; }).join('').slice(0, 2).toUpperCase();
-  var avatarColors = ['blue', 'green', 'purple', 'orange'];
-  var colorIndex = (bio.studentId || '').length % 4;
-  var avatarColor = avatarColors[colorIndex];
-  
-  html += '<div class="avatar ' + avatarColor + '">' + initials + '</div>';
-  html += '<div class="card"><div class="card-title">' + (bio.fullName || 'Student') + '</div>';
-  html += '<div class="chips"><span class="chip">' + (bio.gender || '—') + '</span>';
-  html += '<span class="chip blue">' + (bio.nationality || '—') + '</span></div>';
-  
-  // Achievement badges
-  var summary = data.summary || {};
-  var gpa = parseFloat(summary.cumulativeGPA) || 0;
-  var totalCourses = data.courses ? data.courses.reduce(function(sum, sem) { return sum + sem.courses.length; }, 0) : 0;
-  var allA = true;
-  
-  data.courses?.forEach(function(sem) {
-    sem.courses.forEach(function(c) {
-      if (c.grade && !c.grade.startsWith('A') && c.grade !== 'P') {
-        allA = false;
-      }
-    });
-  });
-  
-  html += '<div class="badges">';
-  if (gpa === 4.00) {
-    html += '<span class="badge-item gold">🏆 DEAN'S LIST</span>';
-  }
-  if (allA && totalCourses > 0) {
-    html += '<span class="badge-item green">⭐ ALL A's</span>';
-  }
-  html += '<span class="badge-item green">📚 ' + totalCourses + ' Courses</span>';
-  html += '</div></div>';
-  
-  html += '<div class="card"><div class="card-title">Academic Biography</div>';
-  html += row('Program', data.program);
-  html += row('Enrollment', bio.enrollmentDate);
-  html += row('Stream', bio.highSchoolStream);
-  html += '</div>';
-  
-  html += '<div class="card personal"><div class="card-title">Personal Biography</div>';
-  html += row('Full Name', bio.fullName);
-  html += row('Student ID', bio.studentId);
-  html += row('Gender', bio.gender);
-  html += row('Birth Date', bio.birthDate);
-  html += row('Nationality', bio.nationality);
-  html += row('Phone', bio.phone);
-  html += row('Email', bio.email || '—');
-  html += '</div>';
-  
-  document.getElementById('profile-content').innerHTML = html;
-  
-  function row(label, value) {
-    if (!value || value === 'null') return '';
-    return '<div class="row"><span class="label">' + label + '</span><span class="value">' + value + '</span></div>';
-  }
-})();
-</script>
+<nav class="bottom-nav">
+  <button class="nav-item" onclick="location.href='/pages/dashboard.html'">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    HOME
+  </button>
+  <button class="nav-item" onclick="location.href='/pages/results.html'">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+    RESULTS
+  </button>
+  <button class="nav-item" onclick="location.href='/pages/placement.html'">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+    PLACEMENT
+  </button>
+  <button class="nav-item active">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    PROFILE
+  </button>
+</nav>
+
+<!-- Shared JS -->
+<script src="/js/shared/config.js"></script>
+<script src="/js/shared/api.js"></script>
+<script src="/js/shared/auth.js"></script>
+<script src="/js/shared/store.js"></script>
+<script src="/js/shared/ui.js"></script>
+<!-- Profile JS -->
+<script src="/js/profile/profile.js"></script>
+<script src="/js/profile/renderer-profile.js"></script>
 </body>
 </html>

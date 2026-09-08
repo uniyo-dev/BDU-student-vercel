@@ -1,195 +1,129 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
   <title>BDU Portal - Results</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/shared/variables.css">
+  <link rel="stylesheet" href="/css/shared/reset.css">
+  <link rel="stylesheet" href="/css/shared/layout.css">
+  <link rel="stylesheet" href="/css/shared/banner.css">
+  <link rel="stylesheet" href="/css/shared/navigation.css">
+  <link rel="stylesheet" href="/css/shared/animations.css">
+  <link rel="stylesheet" href="/css/shared/utilities.css">
+  <link rel="stylesheet" href="/css/results/semester.css">
+  <link rel="stylesheet" href="/css/results/gpa.css">
+  <link rel="stylesheet" href="/css/results/courses.css">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, Arial, sans-serif; }
-    html, body { width: 100%; height: 100%; overflow: hidden; background: white; }
-    .app { width: 100vw; height: 100vh; height: 100dvh; background: white; display: flex; flex-direction: column; }
-    
-    .banner { width: 100%; height: 100px; position: relative; flex-shrink: 0; }
-    .banner img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .banner-overlay {
-      position: absolute; bottom: 0; left: 0; right: 0;
-      padding: 25px 16px 10px;
-      background: linear-gradient(transparent, rgba(11,30,51,0.9));
-      color: white; display: flex; align-items: center; gap: 10px;
+    #page-results { background: #f8fafc; padding-bottom: 96px; }
+    .results-header {
+      background: linear-gradient(135deg, #2563eb, #1e40af);
+      color: white; padding: 48px 20px 24px;
     }
-    .banner-overlay img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 2px solid white; }
-    .banner-title { font-size: 13px; font-weight: 700; }
-    .banner-sub { font-size: 10px; opacity: 0.8; }
-    
-    .header { padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e3eaf2; flex-shrink: 0; }
-    .header h1 { font-size: 18px; font-weight: 700; color: #0b1e33; }
-    .back-btn { font-size: 13px; color: #1a5f9c; cursor: pointer; background: #f0f4fa; padding: 6px 14px; border-radius: 40px; border: none; }
-    
-    /* Semester Toggle */
-    .toggle-wrap {
-      display: flex; gap: 10px; padding: 12px 16px;
-      flex-shrink: 0; flex-wrap: wrap;
+    .back-btn {
+      width: 36px; height: 36px; background: rgba(255,255,255,0.15);
+      border-radius: 12px; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: white;
     }
-    .toggle-btn {
-      padding: 10px 20px; border-radius: 40px; border: 2px solid #e3eaf2;
-      background: white; font-weight: 700; font-size: 13px; cursor: pointer;
-      color: #5b718b; transition: all 0.2s;
+    .back-btn svg { width: 20px; height: 20px; }
+    .results-content { padding: 20px 16px; }
+    .semester-block { margin-bottom: 28px; }
+    .semester-label {
+      font-size: 13px; font-weight: 700; color: #475569;
+      margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
     }
-    .toggle-btn.active {
-      border-color: #1a5f9c; background: #eff6ff; color: #1a5f9c;
-      box-shadow: 0 2px 8px rgba(26,95,156,0.15);
+    .badge-passed {
+      font-size: 10px; background: #f0fdf4; color: #15803d;
+      border: 1px solid #bbf7d0; padding: 2px 8px; border-radius: 100px; font-weight: 700;
     }
-    .toggle-btn:hover { transform: translateY(-2px); }
-    
-    .content { flex: 1; overflow-y: auto; padding: 16px; padding-bottom: 80px; }
-    
-    .semester-block {
-      border-radius: 16px; padding: 16px; margin-bottom: 16px;
-      background: linear-gradient(135deg, #dbeafe, #eff6ff);
-      border: 2px solid #93c5fd;
+    .gpa-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+    .gpa-card-primary {
+      border-radius: 18px; padding: 16px; color: white;
+      background: linear-gradient(135deg, #2563eb, #1e40af);
+      box-shadow: 0 4px 12px rgba(37,99,235,0.2);
     }
-    .semester-block.purple {
-      background: linear-gradient(135deg, #ede9fe, #faf5ff);
-      border: 2px solid #c4b5fd;
+    .gpa-card-primary .gpa-label { font-size: 11px; opacity: 0.8; font-weight: 600; }
+    .gpa-card-primary .gpa-value { font-size: 34px; font-weight: 800; }
+    .gpa-card-primary .gpa-status { font-size: 10px; margin-top: 8px; opacity: 0.75; text-transform: uppercase; }
+    .gpa-card-secondary {
+      background: white; border-radius: 18px; padding: 16px;
+      border: 1px solid #f1f5f9;
     }
-    .sem-title { font-size: 15px; font-weight: 800; color: #1a5f9c; margin-bottom: 12px; }
-    .semester-block.purple .sem-title { color: #7c3aed; }
-    
-    .gpa-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
-    .gpa-card { border-radius: 12px; padding: 14px; text-align: center; background: linear-gradient(135deg, #d1fae5, #ecfdf5); border: 2px solid #6ee7b7; }
-    .gpa-card.cgpa { background: linear-gradient(135deg, #dbeafe, #eff6ff); border: 2px solid #93c5fd; }
-    .gpa-num { font-size: 24px; font-weight: 800; }
-    .gpa-card.sgpa .gpa-num { color: #059669; }
-    .gpa-card.cgpa .gpa-num { color: #2563eb; }
-    .gpa-label { font-size: 9px; text-transform: uppercase; font-weight: 700; }
-    
-    .course-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #edf2f9; }
-    
-    /* Skeleton */
-    .skeleton {
-      background: linear-gradient(90deg, #f0f4fa 25%, #e0e8f0 50%, #f0f4fa 75%);
-      background-size: 200% 100%;
-      animation: shimmer 1.5s infinite;
-      border-radius: 8px;
+    .gpa-card-secondary .gpa-label { font-size: 11px; color: #64748b; font-weight: 600; }
+    .gpa-card-secondary .gpa-value { font-size: 28px; font-weight: 800; }
+    .courses-title { font-size: 14px; font-weight: 700; color: #475569; margin-bottom: 12px; }
+    .course-card {
+      background: white; border-radius: 14px; padding: 14px;
+      border: 1px solid #f1f5f9; display: flex; align-items: center;
+      justify-content: space-between; gap: 12px; margin-bottom: 10px;
     }
-    @keyframes shimmer {
-      0% { background-position: -200% 0; }
-      100% { background-position: 200% 0; }
+    .course-info { flex: 1; min-width: 0; }
+    .course-meta { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+    .course-code {
+      font-size: 10px; font-family: 'Courier New', monospace;
+      font-weight: 700; color: #94a3b8; background: #f8fafc;
+      padding: 2px 8px; border-radius: 6px;
     }
-    .skeleton-block { height: 80px; margin-bottom: 16px; border-radius: 16px; }
-    .course-name { font-weight: 600; font-size: 13px; color: #0b1e33; }
-    .course-code { font-size: 11px; color: #4f6885; }
-    .course-grade { text-align: right; }
-    .grade-letter { background: #1f8b4c; color: white; border-radius: 40px; font-size: 11px; padding: 2px 10px; font-weight: 700; display: inline-block; margin-left: 4px; }
-    .course-pct { font-weight: 700; font-size: 13px; }
-    
-    .bottom-nav {
-      position: fixed; bottom: 0; left: 0; right: 0; width: 100%;
-      display: flex; justify-content: space-around; padding: 10px 12px 14px;
-      background: #fafcff; border-top: 1px solid #e3eaf2; z-index: 9999;
+    .course-credits { font-size: 10px; color: #94a3b8; }
+    .course-name {
+      font-size: 13px; font-weight: 600; color: #0f172a;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
-    .nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 10px; font-weight: 600; color: #5b718b; cursor: pointer; border: none; background: none; }
-    .nav-item i { font-size: 20px; }
-    .nav-item.active { color: #0b1e33; }
-    .nav-item.active i { color: #0b1e33; }
+    .grade-badge { font-size: 13px; font-weight: 700; padding: 6px 14px; border-radius: 10px; flex-shrink: 0; }
+    .grade-A { background: #d1fae5; color: #065f46; }
+    .grade-B { background: #dbeafe; color: #1e40af; }
+    .grade-C { background: #fef3c7; color: #92400e; }
+    .grade-D { background: #ffedd5; color: #9a3412; }
+    .grade-F { background: #fee2e2; color: #991b1b; }
+    .grade-P { background: #f1f5f9; color: #475569; }
   </style>
 </head>
 <body>
 
-<div class="app">
-  <div class="banner">
-    <img src="/images/banner.jpeg" alt="Banner">
-    <div class="banner-overlay">
-      <img src="/images/logo.jpg" alt="Logo">
-      <div><div class="banner-title">Bahir Dar University</div><div class="banner-sub">Student Portal</div></div>
+<div id="page-results" class="page active">
+  <div class="results-header">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+      <button class="back-btn" onclick="location.href='/pages/dashboard.html'">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div>
+        <div style="font-size:20px;font-weight:800;">Academic Results</div>
+        <div style="font-size:12px;opacity:0.7;margin-top:2px;">Your semester performance</div>
+      </div>
     </div>
   </div>
-  
-  <div class="header">
-    <h1>Academic Results</h1>
-    <button class="back-btn" onclick="location.href='/pages/dashboard.html'">← Back</button>
-  </div>
-  
-  <!-- Semester Toggle -->
-  <div class="toggle-wrap" id="toggle-wrap"></div>
-  
-  <div class="content" id="results-content">
-    <div class="skeleton skeleton-block"></div>
-    <div class="skeleton skeleton-block"></div>
-  </div>
-  
-  <div class="bottom-nav">
-    <button class="nav-item" onclick="location.href='/pages/dashboard.html'"><i class="fas fa-chart-pie"></i> Dashboard</button>
-    <button class="nav-item active"><i class="fas fa-list-ul"></i> Results</button>
-    <button class="nav-item" onclick="location.href='/pages/placement.html'"><i class="fas fa-sitemap"></i> Placement</button>
-    <button class="nav-item" onclick="location.href='/pages/profile.html'"><i class="fas fa-user"></i> Profile</button>
-  </div>
+  <div class="results-content" id="results-content"></div>
 </div>
 
-<script>
-var currentSemester = 0;
+<nav class="bottom-nav">
+  <button class="nav-item" onclick="location.href='/pages/dashboard.html'">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    HOME
+  </button>
+  <button class="nav-item active">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+    RESULTS
+  </button>
+  <button class="nav-item" onclick="location.href='/pages/placement.html'">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+    PLACEMENT
+  </button>
+  <button class="nav-item" onclick="location.href='/pages/profile.html'">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    PROFILE
+  </button>
+</nav>
 
-(function() {
-  var saved = sessionStorage.getItem('bdu_student_data');
-  if (!saved) { window.location.href = '/'; return; }
-  var data = JSON.parse(saved);
-  var regs = data.registrations || [];
-  var courses = data.courses || [];
-  
-  // Render toggle buttons
-  var toggleHtml = '';
-  regs.forEach(function(reg, i) {
-    toggleHtml += '<button class="toggle-btn ' + (i === 0 ? 'active' : '') + '" onclick="switchSemester(' + i + ')">' +
-      '<i class="fas ' + (i === 0 ? 'fa-circle-check' : 'fa-circle') + '"></i> Semester ' + reg.semester + '</button>';
-  });
-  document.getElementById('toggle-wrap').innerHTML = toggleHtml;
-  
-  // Render first semester
-  renderSemester(0, regs, courses);
-})();
-
-function switchSemester(index) {
-  currentSemester = index;
-  
-  // Update toggle buttons
-  var buttons = document.querySelectorAll('.toggle-btn');
-  buttons.forEach(function(btn, i) {
-    btn.className = 'toggle-btn ' + (i === index ? 'active' : '');
-    btn.innerHTML = '<i class="fas ' + (i === index ? 'fa-circle-check' : 'fa-circle') + '"></i> Semester ' + 
-      JSON.parse(sessionStorage.getItem('bdu_student_data')).registrations[i].semester;
-  });
-  
-  // Re-render
-  var data = JSON.parse(sessionStorage.getItem('bdu_student_data'));
-  renderSemester(index, data.registrations, data.courses);
-}
-
-function renderSemester(index, regs, courses) {
-  var reg = regs[index];
-  var semCourses = courses.find(function(c) { return c.semester === reg.semester; });
-  var isPurple = index % 2 === 1;
-  
-  var html = '<div class="semester-block ' + (isPurple ? 'purple' : '') + '">';
-  html += '<div class="sem-title">Semester ' + reg.semester + ' (' + reg.acYear + ') — ' + (reg.status || 'Pass') + '</div>';
-  html += '<div class="gpa-grid">';
-  html += '<div class="gpa-card sgpa"><div class="gpa-num">' + reg.sgpa + '</div><div class="gpa-label">SGPA</div></div>';
-  html += '<div class="gpa-card cgpa"><div class="gpa-num">' + reg.cgpa + '</div><div class="gpa-label">CGPA</div></div>';
-  html += '</div>';
-  
-  if (semCourses && semCourses.courses) {
-    semCourses.courses.forEach(function(c) {
-      html += '<div class="course-row"><div><div class="course-name">' + c.title + '</div>';
-      html += '<div class="course-code">' + c.code + ' · ' + c.credit + ' Cr · ' + c.points + ' pts</div></div>';
-      html += '<div class="course-grade"><div class="course-pct">' + (c.percentage || '—') + '</div>';
-      html += '<span class="grade-letter">' + c.grade + '</span></div></div>';
-    });
-  }
-  
-  html += '</div>';
-  document.getElementById('results-content').innerHTML = html;
-}
-</script>
+<!-- Shared JS -->
+<script src="/js/shared/config.js"></script>
+<script src="/js/shared/api.js"></script>
+<script src="/js/shared/auth.js"></script>
+<script src="/js/shared/store.js"></script>
+<script src="/js/shared/ui.js"></script>
+<!-- Results JS -->
+<script src="/js/results/results.js"></script>
+<script src="/js/results/renderer-results.js"></script>
 </body>
 </html>
-
