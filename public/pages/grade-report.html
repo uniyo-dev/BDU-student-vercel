@@ -3,930 +3,150 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BDU - Grade Report</title>
-  
-  <!-- Font Awesome & Security Libraries -->
+  <title>BDU - Official Grade Report</title>
+
+  <!-- External CDNs -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 
-  <style>
-    /* ==========================================================================
-       PAGE SETUP & PRINT MEDIA QUERIES
-       ========================================================================== */
-    @page { 
-      size: A4 portrait; 
-      margin: 10mm; 
-    }
-
-    * { 
-      margin: 0; 
-      padding: 0; 
-      box-sizing: border-box; 
-      font-family: Arial, Helvetica, sans-serif; 
-    }
-
-    body { 
-      background: #eef2f7; 
-      color: #000; 
-      padding-bottom: 30px;
-    }
-
-    .a4-sheet {
-      width: 190mm; 
-      min-height: 277mm; 
-      background: white;
-      margin: 20px auto; 
-      padding: 10mm;
-      position: relative;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-      overflow: hidden;
-    }
-
-    @media print {
-      body { 
-        background: white; 
-        padding: 0;
-      }
-      .a4-sheet { 
-        width: 100%; 
-        min-height: auto; 
-        box-shadow: none; 
-        margin: 0; 
-        padding: 0; 
-      }
-      .no-print { 
-        display: none !important; 
-      }
-      .page-break { 
-        page-break-before: always; 
-      }
-      .semester-section { 
-        page-break-inside: avoid; 
-      }
-      .summary-page { 
-        page-break-before: always; 
-      }
-    }
-
-    /* ==========================================================================
-       HEADER & STUDENT INFO
-       ========================================================================== */
-    .report-header {
-      text-align: center; 
-      border-bottom: 2px solid #000;
-      padding-bottom: 6px; 
-      margin-bottom: 10px;
-    }
-
-    .logo-row { 
-      display: flex; 
-      justify-content: center; 
-      align-items: center; 
-      gap: 12px; 
-      margin-bottom: 6px; 
-    }
-
-    .logo-row img { 
-      width: 48px; 
-      height: 48px; 
-      border-radius: 50%; 
-      object-fit: cover; 
-    }
-
-    .uni-name { 
-      font-size: 14px; 
-      font-weight: bold; 
-      text-transform: uppercase; 
-      color: #000; 
-      letter-spacing: 0.5px;
-    }
-
-    .report-title { 
-      font-size: 12px; 
-      font-weight: bold; 
-      color: #000; 
-      margin-top: 3px; 
-      text-transform: uppercase; 
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-    }
-
-    .student-info { 
-      width: 100%; 
-      font-size: 11px; 
-      border-collapse: collapse; 
-      margin-bottom: 10px; 
-      color: #000; 
-    }
-
-    .student-info td { 
-      padding: 4px 6px; 
-      color: #000; 
-    }
-
-    /* ==========================================================================
-       TABLES & GRADE DATA
-       ========================================================================== */
-    .semester-header {
-      background: #1e293b; 
-      color: white; 
-      padding: 6px 10px;
-      font-weight: bold; 
-      font-size: 11px; 
-      border-radius: 3px 3px 0 0; 
-      margin-top: 10px;
-    }
-
-    .grade-table { 
-      width: 100%; 
-      border-collapse: collapse; 
-      font-size: 10px; 
-      color: #000; 
-      margin-bottom: 10px;
-    }
-
-    .grade-table th { 
-      background: #334155; 
-      color: white; 
-      padding: 5px 6px; 
-      font-size: 9px; 
-      text-align: left; 
-    }
-
-    .grade-table td { 
-      padding: 4px 6px; 
-      border-bottom: 1px solid #e2e8f0; 
-      color: #000; 
-    }
-
-    .grading-key { 
-      font-size: 8.5px; 
-      color: #000; 
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    .grading-key td { 
-      padding: 2px 6px; 
-    }
-
-    /* ==========================================================================
-       CONTROLS & BUTTONS
-       ========================================================================== */
-    .options-bar {
-      display: flex; 
-      gap: 10px; 
-      justify-content: center;
-      padding: 14px; 
-      flex-wrap: wrap;
-    }
-
-    .option-btn {
-      padding: 10px 22px; 
-      border-radius: 40px; 
-      border: 2px solid #cbd5e1;
-      background: white; 
-      font-weight: 700; 
-      font-size: 13px; 
-      cursor: pointer;
-      color: #475569; 
-      transition: all 0.2s ease;
-    }
-
-    .option-btn.active {
-      border-color: #1a5f9c; 
-      background: #eff6ff; 
-      color: #1a5f9c;
-      box-shadow: 0 4px 12px rgba(26, 95, 156, 0.15);
-    }
-
-    .semester-selector {
-      display: flex; 
-      gap: 8px; 
-      justify-content: center;
-      padding: 4px 14px 14px; 
-      flex-wrap: wrap;
-    }
-
-    .sem-btn {
-      padding: 6px 14px; 
-      border-radius: 40px; 
-      border: 1.5px solid #cbd5e1;
-      background: white; 
-      font-weight: 700; 
-      font-size: 11.5px; 
-      cursor: pointer;
-      color: #475569;
-      transition: all 0.2s ease;
-    }
-
-    .sem-btn.active {
-      border-color: #059669; 
-      background: #d1fae5; 
-      color: #065f46;
-    }
-
-    /* ==========================================================================
-       SECURITY & AUTHENTICITY FEATURES
-       ========================================================================== */
-    .guilloche-pattern {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      opacity: 0.035;
-      background-image: 
-        repeating-linear-gradient(0deg, transparent, transparent 2px, #1a5f9c 2px, #1a5f9c 3px),
-        repeating-linear-gradient(45deg, transparent, transparent 20px, #1a5f9c 20px, #1a5f9c 21px),
-        repeating-linear-gradient(135deg, transparent, transparent 20px, #1a5f9c 20px, #1a5f9c 21px);
-    }
-
-    .watermark {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%) rotate(-45deg);
-      font-size: 72px;
-      font-weight: bold;
-      color: rgba(0, 0, 0, 0.035);
-      pointer-events: none;
-      z-index: 10;
-      letter-spacing: 8px;
-      white-space: nowrap;
-      user-select: none;
-    }
-
-    .latent-image {
-      position: absolute;
-      top: 25%;
-      right: 4%;
-      width: 70px;
-      height: 70px;
-      opacity: 0.03;
-      transform: rotate(15deg);
-      pointer-events: none;
-      font-size: 42px;
-      font-weight: 900;
-      color: #000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 3px solid #000;
-      border-radius: 8px;
-      letter-spacing: 2px;
-    }
-
-    .micro-text {
-      font-size: 4px;
-      color: #94a3b8;
-      letter-spacing: 0.5px;
-      text-align: center;
-      margin-bottom: 4px;
-      text-transform: uppercase;
-    }
-
-    .serial-number {
-      font-family: 'Courier New', monospace;
-      font-size: 8.5px;
-      font-weight: bold;
-      color: #334155;
-      text-align: right;
-      margin-bottom: 2px;
-    }
-
-    .security-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      background: #d1fae5;
-      color: #065f46;
-      padding: 2px 8px;
-      border-radius: 40px;
-      font-size: 8px;
-      font-weight: bold;
-    }
-
-    .color-shifting-ink {
-      font-size: 11px;
-      font-weight: bold;
-      color: #1a5f9c;
-      transition: all 0.3s ease;
-    }
-
-    /* Barcode & Hologram Section */
-    .barcode-section {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      margin-top: 10px;
-      padding: 6px 12px;
-      border: 1px solid #cbd5e1;
-      border-radius: 6px;
-      background: #fafafa;
-    }
-
-    .barcode-container {
-      flex: 1;
-      display: flex;
-      justify-content: center;
-    }
-
-    #barcode-svg {
-      max-height: 40px;
-      width: 100%;
-    }
-
-    .hologram {
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, 
-        rgba(255,215,0,0.85), rgba(255,255,255,0.6), 
-        rgba(192,192,192,0.85), rgba(255,215,0,0.85));
-      background-size: 300% 300%;
-      animation: hologramShift 3.5s ease infinite;
-      border: 1.5px solid #cbd5e1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 8px;
-      font-weight: 900;
-      color: #1e293b;
-      box-shadow: inset 0 0 4px rgba(0,0,0,0.15);
-      flex-shrink: 0;
-    }
-
-    @keyframes hologramShift {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-
-    /* QR Code Section */
-    .qr-section {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-top: 10px;
-      padding: 8px 12px;
-      border: 1px dashed #cbd5e1;
-      border-radius: 6px;
-      background: #ffffff;
-    }
-
-    .qr-code { 
-      width: 60px; 
-      height: 60px;
-      flex-shrink: 0;
-    }
-
-    .qr-code canvas {
-      width: 100% !important;
-      height: 100% !important;
-    }
-
-    .encrypted-badge {
-      display: inline-block;
-      background: #0b1e33;
-      color: #fbbf24;
-      padding: 2px 6px;
-      border-radius: 20px;
-      font-size: 7px;
-      font-weight: bold;
-      letter-spacing: 0.5px;
-      margin-left: 4px;
-    }
-
-    /* Signatures & Stamp Area */
-    .signature-area {
-      display: flex; 
-      justify-content: space-between; 
-      align-items: flex-end;
-      margin-top: 16px;
-      padding: 0 10px;
-    }
-
-    .signature-box { 
-      text-align: center; 
-      font-size: 9px; 
-      color: #000; 
-    }
-
-    .signature-box img { 
-      width: 65px; 
-      height: 40px; 
-      object-fit: contain; 
-      margin-bottom: 2px; 
-    }
-
-    .stamp-box img { 
-      width: 60px; 
-      height: 60px; 
-      object-fit: contain; 
-    }
-
-    .hash-code {
-      font-family: 'Courier New', monospace;
-      font-size: 7px;
-      color: #64748b;
-      word-break: break-all;
-      margin-top: 8px;
-      text-align: center;
-    }
-
-    .report-footer {
-      text-align: center; 
-      font-size: 8px; 
-      color: #475569;
-      margin-top: 8px; 
-      padding-top: 6px; 
-      border-top: 1px solid #cbd5e1;
-    }
-  </style>
+  <!-- Application Stylesheets -->
+  <link rel="stylesheet" href="/css/shared/variables.css">
+  <link rel="stylesheet" href="/css/shared/reset.css">
+  <link rel="stylesheet" href="/css/report/grade-report.css">
 </head>
 <body>
 
-<!-- Options Selector: Single or Cumulative -->
-<div class="options-bar no-print">
-  <button class="option-btn active" id="option-single" onclick="switchOption('single')">
-    📄 Single Semester
-  </button>
-  <button class="option-btn" id="option-cumulative" onclick="switchOption('cumulative')">
-    📚 Cumulative Report
-  </button>
-</div>
-
-<!-- Semester Selector (Single Mode) -->
-<div class="semester-selector no-print" id="semester-selector"></div>
-
-<!-- Printable A4 Document Sheet -->
-<div class="a4-sheet" id="a4-sheet">
-  <!-- Security Overlay Patterns -->
-  <div class="guilloche-pattern"></div>
-  <div class="watermark">OFFICIAL VERIFIED</div>
-  <div class="latent-image"><span>BDU</span></div>
-
-  <!-- Micro Text Line -->
-  <div class="micro-text">
-    BAHIR DAR UNIVERSITY OFFICIAL ACADEMIC DOCUMENT — TAMPER PROOF SECURITY FEATURE — BAHIR DAR UNIVERSITY
-  </div>
-
-  <!-- Serial Number Banner -->
-  <div class="serial-number" id="serial-number">Serial: BDU-PENDING</div>
-
-  <!-- Report Header -->
-  <header class="report-header">
-    <div class="logo-row">
-      <img src="/images/logo.jpg" alt="BDU Logo" onerror="this.src='https://via.placeholder.com/48?text=BDU'">
-      <img src="/images/ethiopian_emblem.jpg" alt="Ethiopian Emblem" onerror="this.style.display='none'">
-    </div>
-    <div class="uni-name">BAHIR DAR UNIVERSITY</div>
-    <div class="report-title" id="report-mode-title">
-      <span>SEMESTER GRADE REPORT</span>
-      <span class="security-badge">🔒 SECURE</span>
-    </div>
-  </header>
-
-  <!-- Student Metadata Table -->
-  <table class="student-info">
-    <tr>
-      <td style="width:15%;"><strong>Student:</strong></td>
-      <td style="width:35%;" id="report-name">—</td>
-      <td style="width:12%;"><strong>Student ID:</strong></td>
-      <td id="report-id">—</td>
-    </tr>
-    <tr>
-      <td><strong>Program:</strong></td>
-      <td colspan="3" id="report-program">—</td>
-    </tr>
-    <tr>
-      <td><strong>Academic Year:</strong></td>
-      <td id="report-year">—</td>
-      <td><strong>Total Credits:</strong></td>
-      <td id="report-total-credits">—</td>
-    </tr>
-    <tr>
-      <td><strong>Cumulative GPA:</strong></td>
-      <td><span class="color-shifting-ink" id="report-cgpa">—</span></td>
-      <td><strong>Status:</strong></td>
-      <td id="report-status">—</td>
-    </tr>
-  </table>
-
-  <!-- Main Grade Content Injection Target -->
-  <main id="report-content"></main>
-
-  <!-- Barcode & Hologram Section -->
-  <div class="barcode-section">
-    <div class="barcode-container">
-      <svg id="barcode-svg" aria-label="Official Document Barcode"></svg>
-    </div>
-    <div class="hologram">BDU</div>
-  </div>
-
-  <!-- Verification QR Section -->
-  <div class="qr-section">
-    <div class="qr-code" id="qr-code"></div>
-    <div>
-      <div style="font-size:9px; font-weight:bold;">
-        VERIFICATION QR <span class="encrypted-badge">🔐 VERIFIED LINK</span>
-      </div>
-      <div style="font-size:8px; color:#334155;" id="verify-subtext">
-        Scan QR to verify document authenticity online
-      </div>
-    </div>
-  </div>
-
-  <!-- Signature & Official Seal Block -->
-  <div class="signature-area">
-    <div class="signature-box">
-      <img src="/images/Signature.png" alt="Registrar Signature" onerror="this.style.opacity='0'">
-      <div><strong>University Registrar</strong></div>
-    </div>
-    <div class="signature-box stamp-box">
-      <img src="/images/stamp.jpg" alt="Official Seal" onerror="this.style.opacity='0'">
-      <div><strong>OFFICIAL STAMP</strong></div>
-    </div>
-    <div class="signature-box">
-      <img src="/images/Signature.png" alt="Dean Signature" onerror="this.style.opacity='0'">
-      <div><strong>Faculty Dean</strong></div>
-    </div>
-  </div>
-
-  <!-- Document Hash Footer -->
-  <div class="hash-code" id="hash-code">Loading security signatures...</div>
-
-  <!-- Printable Footer Notice -->
-  <footer class="report-footer">
-    Official Academic Document Issued By Bahir Dar University • Valid Without Manual Alterations
-  </footer>
-</div>
-
-<!-- Print & Navigation Controls -->
-<div class="no-print" style="text-align:center; padding:16px;">
-  <button onclick="window.print()" style="padding:12px 28px; background:#1a5f9c; color:white; border:none; border-radius:50px; font-weight:bold; font-size:15px; cursor:pointer; margin-right:8px; box-shadow:0 4px 12px rgba(26,95,156,0.2);">
-    <i class="fas fa-print"></i> Print / Save PDF
-  </button>
-  <button onclick="window.location.href='/pages/results.html'" style="padding:12px 28px; background:#64748b; color:white; border:none; border-radius:50px; font-weight:bold; font-size:15px; cursor:pointer;">
-    <i class="fas fa-arrow-left"></i> Back to Results
-  </button>
-</div>
-
-<!-- ==========================================================================
-     DOCUMENT CONTROLLER & SECURITY SCRIPT
-     ========================================================================== -->
-<script>
-const VERIFY_BASE_URL = 'https://bdu-portal.onrender.com/verify';
-
-let currentMode = 'single';
-let currentSemesterIndex = 0;
-let reportData = null;
-
-// Initialize Application Data
-(function initGradeReport() {
-  const saved = sessionStorage.getItem('bdu_student_data');
-  if (!saved) {
-    document.getElementById('report-content').innerHTML = `
-      <div style="text-align:center; padding:30px; font-size:13px; color:#b91c1c; font-weight:bold;">
-        Session expired. Please log in to view the official grade report.
-      </div>
-    `;
-    return;
-  }
-
-  try {
-    reportData = JSON.parse(saved);
-    renderSemesterSelector();
-    
-    if ((reportData.registrations || []).length > 0) {
-      renderSingleSemester(0);
-    } else {
-      renderEmptyReport('No academic registrations found.');
-    }
-  } catch (err) {
-    console.error('Failed to parse student data:', err);
-    renderEmptyReport('Unable to parse student academic records.');
-  }
-})();
-
-// Helper Getters
-function getStudentId() {
-  return reportData?.biography?.studentId || 'UNKNOWN';
-}
-
-function getStudentName() {
-  return reportData?.biography?.fullName || 'Student';
-}
-
-function getVerificationToken() {
-  if (reportData?.verification_token) return reportData.verification_token;
-  
-  const cleanId = getStudentId().replace(/[^a-zA-Z0-9]/g, '');
-  const cleanName = getStudentName().replace(/\s+/g, '-').toUpperCase();
-  return `BDU-${cleanId}-${cleanName}`;
-}
-
-function getVerifyUrl() {
-  return `${VERIFY_BASE_URL}/${encodeURIComponent(getVerificationToken())}`;
-}
-
-function getStableSerial() {
-  const studentId = getStudentId();
-  const storedKey = `bdu_report_serial_${studentId}`;
-  let serial = localStorage.getItem(storedKey);
-
-  if (!serial) {
-    const studentDigits = studentId.replace(/\D/g, '') || '000000';
-    const randomSalt = Math.random().toString(36).substring(2, 7).toUpperCase();
-    serial = `BDU-GR-${studentDigits}-${randomSalt}`;
-    localStorage.setItem(storedKey, serial);
-  }
-
-  return serial;
-}
-
-// 1. Render Mode Toggles
-function switchOption(mode) {
-  currentMode = mode;
-
-  document.getElementById('option-single').className = `option-btn ${mode === 'single' ? 'active' : ''}`;
-  document.getElementById('option-cumulative').className = `option-btn ${mode === 'cumulative' ? 'active' : ''}`;
-
-  const titleContainer = document.getElementById('report-mode-title');
-  const selector = document.getElementById('semester-selector');
-
-  if (mode === 'single') {
-    selector.style.display = 'flex';
-    titleContainer.innerHTML = '<span>SEMESTER GRADE REPORT</span> <span class="security-badge">🔒 SECURE</span>';
-    renderSingleSemester(currentSemesterIndex);
-  } else {
-    selector.style.display = 'none';
-    titleContainer.innerHTML = '<span>CUMULATIVE GRADE REPORT</span> <span class="security-badge">🔒 SECURE</span>';
-    renderCumulative();
-  }
-}
-
-// 2. Render Semester Selector Buttons
-function renderSemesterSelector() {
-  const regs = reportData?.registrations || [];
-  const selector = document.getElementById('semester-selector');
-  
-  selector.innerHTML = regs.map((reg, i) => `
-    <button class="sem-btn ${i === currentSemesterIndex ? 'active' : ''}" onclick="selectSemester(${i})">
-      Semester ${reg.semester}
+  <!-- Mode Options Selector (Screen Only) -->
+  <div class="options-bar no-print">
+    <button class="option-btn active" id="option-single" type="button">
+      <i class="fas fa-file-lines"></i> Single Semester
     </button>
-  `).join('');
-}
+    <button class="option-btn" id="option-cumulative" type="button">
+      <i class="fas fa-book-bookmark"></i> Cumulative Report
+    </button>
+  </div>
 
-function selectSemester(index) {
-  currentSemesterIndex = index;
-  document.querySelectorAll('.sem-btn').forEach((btn, i) => {
-    btn.className = `sem-btn ${i === index ? 'active' : ''}`;
-  });
-  renderSingleSemester(index);
-}
+  <!-- Dynamic Semester Buttons (Single Mode Only) -->
+  <div class="semester-selector no-print" id="semester-selector"></div>
 
-// 3. Render Single Semester Mode
-function renderSingleSemester(index) {
-  const bio = reportData?.biography || {};
-  const regs = reportData?.registrations || [];
-  const reg = regs[index];
+  <!-- Printable A4 Grade Report Document Sheet -->
+  <div class="a4-sheet" id="a4-sheet">
+    
+    <!-- Security Watermark & Overlay Features -->
+    <div class="guilloche-pattern"></div>
+    <div class="watermark">OFFICIAL VERIFIED</div>
+    <div class="latent-image"><span>BDU</span></div>
 
-  if (!reg) {
-    renderEmptyReport('Semester information unavailable.');
-    return;
-  }
-
-  const semCoursesObj = (reportData?.courses || []).find(c => String(c.semester) === String(reg.semester));
-  const coursesList = semCoursesObj?.courses || [];
-
-  // Update Header Metadata
-  document.getElementById('report-name').textContent = bio.fullName || '—';
-  document.getElementById('report-id').textContent = bio.studentId || '—';
-  document.getElementById('report-program').textContent = reportData?.program || 'Undergraduate Degree';
-  document.getElementById('report-year').textContent = reg.acYear || '—';
-  document.getElementById('report-cgpa').textContent = reg.cgpa || '0.00';
-  document.getElementById('report-status').textContent = reg.status || 'Pass';
-
-  let totalSemCredits = 0;
-  coursesList.forEach(c => { totalSemCredits += Number(c.credit || 0); });
-  document.getElementById('report-total-credits').textContent = totalSemCredits;
-
-  // Build Single Semester Table
-  let html = `
-    <div class="semester-header">
-      Semester ${reg.semester} — SGPA: ${reg.sgpa || '0.00'} | CGPA: ${reg.cgpa || '0.00'} | Status: ${reg.status || 'Pass'}
+    <!-- Security Micro-Text Line -->
+    <div class="micro-text">
+      BAHIR DAR UNIVERSITY OFFICIAL ACADEMIC DOCUMENT — TAMPER PROOF SECURITY FEATURE — BAHIR DAR UNIVERSITY
     </div>
-    <table class="grade-table">
-      <thead>
-        <tr>
-          <th style="width:12%;">Code</th>
-          <th style="width:45%;">Course Title</th>
-          <th style="width:8%;">Cr</th>
-          <th style="width:10%;">Grade</th>
-          <th style="width:10%;">Points</th>
-          <th style="width:15%;">Score %</th>
-        </tr>
-      </thead>
-      <tbody>
-  `;
 
-  if (coursesList.length > 0) {
-    coursesList.forEach(c => {
-      html += `
-        <tr>
-          <td>${c.code || 'CODE'}</td>
-          <td>${c.title || 'Course Title'}</td>
-          <td>${c.credit ?? '0'}</td>
-          <td><strong>${c.grade || '—'}</strong></td>
-          <td>${c.points ?? '0'}</td>
-          <td>${c.percentage ? c.percentage + '%' : '—'}</td>
-        </tr>
-      `;
-    });
-  } else {
-    html += `<tr><td colspan="6" style="text-align:center; padding:12px;">No course records registered for this semester.</td></tr>`;
-  }
+    <!-- Serial Number Banner -->
+    <div class="serial-number" id="serial-number">Serial: BDU-PENDING</div>
 
-  html += `</tbody></table>`;
-  document.getElementById('report-content').innerHTML = html;
+    <!-- Report Header -->
+    <header class="report-header">
+      <div class="logo-row">
+        <img src="/images/logo.jpg" alt="BDU Emblem" class="bdu-logo" onerror="this.src='https://via.placeholder.com/48?text=BDU'">
+        <img src="/images/ethiopian_emblem.jpg" alt="Ethiopian Emblem" class="emblem-logo" onerror="this.style.display='none'">
+      </div>
+      <div class="uni-name">BAHIR DAR UNIVERSITY</div>
+      <div class="report-title" id="report-mode-title">
+        <span>SEMESTER GRADE REPORT</span>
+        <span class="security-badge"><i class="fas fa-lock"></i> SECURE</span>
+      </div>
+    </header>
 
-  renderSecuritySuite(reg.sgpa, totalSemCredits);
-}
+    <!-- Student Metadata Table -->
+    <table class="student-info">
+      <tr>
+        <td class="col-label-15"><strong>Student:</strong></td>
+        <td class="col-val-35" id="report-name">—</td>
+        <td class="col-label-12"><strong>Student ID:</strong></td>
+        <td id="report-id">—</td>
+      </tr>
+      <tr>
+        <td><strong>Program:</strong></td>
+        <td colspan="3" id="report-program">—</td>
+      </tr>
+      <tr>
+        <td><strong>Academic Year:</strong></td>
+        <td id="report-year">—</td>
+        <td><strong>Total Credits:</strong></td>
+        <td id="report-total-credits">—</td>
+      </tr>
+      <tr>
+        <td><strong>Cumulative GPA:</strong></td>
+        <td><span class="color-shifting-ink" id="report-cgpa">—</span></td>
+        <td><strong>Status:</strong></td>
+        <td id="report-status">—</td>
+      </tr>
+    </table>
 
-// 4. Render Cumulative Report Mode
-function renderCumulative() {
-  const bio = reportData?.biography || {};
-  const summary = reportData?.summary || {};
-  const regs = reportData?.registrations || [];
+    <!-- Main Dynamic Grade Content Target -->
+    <main id="report-content"></main>
 
-  document.getElementById('report-name').textContent = bio.fullName || '—';
-  document.getElementById('report-id').textContent = bio.studentId || '—';
-  document.getElementById('report-program').textContent = reportData?.program || 'Undergraduate Degree';
-  document.getElementById('report-year').textContent = regs.length > 0 ? `${regs[0].acYear} - ${regs[regs.length - 1].acYear}` : '—';
-  document.getElementById('report-cgpa').textContent = summary.cumulativeGPA || '0.00';
-  document.getElementById('report-status').textContent = `Completed ${summary.totalSemesters || 0} Semesters`;
-  document.getElementById('report-total-credits').textContent = summary.totalCredits || '0';
+    <!-- Code-128 Barcode & Hologram -->
+    <div class="barcode-section">
+      <div class="barcode-container">
+        <svg id="barcode-svg" aria-label="Official Document Barcode"></svg>
+      </div>
+      <div class="hologram">BDU</div>
+    </div>
 
-  let html = '';
-
-  regs.forEach(reg => {
-    const semCoursesObj = (reportData?.courses || []).find(c => String(c.semester) === String(reg.semester));
-    const coursesList = semCoursesObj?.courses || [];
-
-    html += `
-      <div class="semester-section">
-        <div class="semester-header">
-          Semester ${reg.semester} — SGPA: ${reg.sgpa || '0.00'} | CGPA: ${reg.cgpa || '0.00'} | ${reg.status || 'Pass'}
+    <!-- Online Verification QR Code Section -->
+    <div class="qr-section">
+      <div class="qr-code" id="qr-code"></div>
+      <div>
+        <div class="qr-title">
+          VERIFICATION QR <span class="encrypted-badge"><i class="fas fa-shield-halved"></i> VERIFIED LINK</span>
         </div>
-        <table class="grade-table">
-          <thead>
-            <tr>
-              <th style="width:12%;">Code</th>
-              <th style="width:45%;">Course Title</th>
-              <th style="width:8%;">Cr</th>
-              <th style="width:10%;">Grade</th>
-              <th style="width:10%;">Points</th>
-              <th style="width:15%;">Score %</th>
-            </tr>
-          </thead>
-          <tbody>
-    `;
-
-    if (coursesList.length > 0) {
-      coursesList.forEach(c => {
-        html += `
-          <tr>
-            <td>${c.code || 'CODE'}</td>
-            <td>${c.title || 'Course Title'}</td>
-            <td>${c.credit ?? '0'}</td>
-            <td><strong>${c.grade || '—'}</strong></td>
-            <td>${c.points ?? '0'}</td>
-            <td>${c.percentage ? c.percentage + '%' : '—'}</td>
-          </tr>
-        `;
-      });
-    } else {
-      html += `<tr><td colspan="6" style="text-align:center; padding:10px;">No course records available.</td></tr>`;
-    }
-
-    html += `</tbody></table></div>`;
-  });
-
-  // Cumulative Summary Block
-  const cgpaVal = parseFloat(summary.cumulativeGPA || 0);
-  const standing = cgpaVal === 4.00 ? "DEAN'S LIST" : (cgpaVal >= 3.75 ? "EXCELLENT STANDING" : "GOOD STANDING");
-
-  html += `
-    <div class="summary-page" style="margin-top:14px;">
-      <div style="text-align:center; font-size:11px; font-weight:bold; margin-bottom:6px;">CUMULATIVE ACADEMIC SUMMARY</div>
-      <table class="grade-table">
-        <tbody>
-          <tr><td style="font-weight:bold; width:40%;">Total Semesters Completed:</td><td>${summary.totalSemesters || '0'}</td></tr>
-          <tr><td style="font-weight:bold;">Total Credits Earned:</td><td>${summary.totalCredits || '0'}</td></tr>
-          <tr><td style="font-weight:bold;">Final Cumulative GPA:</td><td><strong>${summary.cumulativeGPA || '0.00'}</strong></td></tr>
-          <tr><td style="font-weight:bold;">Academic Standing:</td><td><strong style="color:#065f46;">${standing}</strong></td></tr>
-        </tbody>
-      </table>
+        <div class="qr-subtext" id="verify-subtext">
+          Scan QR code to verify document authenticity online
+        </div>
+      </div>
     </div>
 
-    <!-- Grading Key Reference -->
-    <div style="margin-top:10px; padding:6px; border:1px solid #cbd5e1; border-radius:4px;">
-      <div style="font-weight:bold; font-size:8.5px; margin-bottom:2px;">OFFICIAL GRADING SYSTEM KEY:</div>
-      <table class="grading-key">
-        <tr>
-          <td>A+ = 90-100% (4.0)</td>
-          <td>A = 85-89% (4.0)</td>
-          <td>B+ = 75-79% (3.5)</td>
-          <td>B = 70-74% (3.0)</td>
-        </tr>
-        <tr>
-          <td>C+ = 60-64% (2.5)</td>
-          <td>C = 50-59% (2.0)</td>
-          <td>D = 40-44% (1.0)</td>
-          <td>F &lt; 40% (0.0)</td>
-        </tr>
-      </table>
+    <!-- Registrar & Dean Signatures Block -->
+    <div class="signature-area">
+      <div class="signature-box">
+        <img src="/images/Signature.png" alt="Registrar Signature" class="signature-img" onerror="this.style.opacity='0'">
+        <div><strong>University Registrar</strong></div>
+      </div>
+      <div class="signature-box stamp-box">
+        <img src="/images/stamp.jpg" alt="Official Seal" class="stamp-img" onerror="this.style.opacity='0'">
+        <div><strong>OFFICIAL STAMP</strong></div>
+      </div>
+      <div class="signature-box">
+        <img src="/images/Signature.png" alt="Dean Signature" class="signature-img" onerror="this.style.opacity='0'">
+        <div><strong>Faculty Dean</strong></div>
+      </div>
     </div>
-  `;
 
-  document.getElementById('report-content').innerHTML = html;
+    <!-- Cryptographic Hash & Verification Link Footer -->
+    <div class="hash-code" id="hash-code">Loading security signatures...</div>
 
-  renderSecuritySuite(summary.cumulativeGPA, summary.totalCredits);
-}
+    <!-- Footer Disclaimer -->
+    <footer class="report-footer">
+      Official Academic Document Issued By Bahir Dar University • Valid Without Manual Alterations
+    </footer>
+  </div>
 
-// 5. Security & Verification Suite Renderer
-function renderSecuritySuite(gpa, credits) {
-  const serial = getStableSerial();
-  const verifyUrl = getVerifyUrl();
+  <!-- Screen Action Buttons -->
+  <div class="no-print action-bar">
+    <button id="btn-print" class="btn-action btn-print" type="button">
+      <i class="fas fa-print"></i> Print / Save PDF
+    </button>
+    <button id="btn-back" class="btn-action btn-back" type="button">
+      <i class="fas fa-arrow-left"></i> Back to Results
+    </button>
+  </div>
 
-  document.getElementById('serial-number').textContent = `Serial: ${serial}`;
-  document.getElementById('hash-code').textContent = `Verify at: ${verifyUrl} | Document Serial: ${serial}`;
-  document.getElementById('verify-subtext').textContent = `Scan to verify: ${verifyUrl}`;
-
-  generateBarcode(serial);
-  generateQR(verifyUrl);
-}
-
-// Code-128 Barcode Generator
-function generateBarcode(serial) {
-  if (typeof JsBarcode !== 'undefined') {
-    try {
-      JsBarcode('#barcode-svg', serial, {
-        format: 'CODE128',
-        width: 1.3,
-        height: 36,
-        displayValue: true,
-        fontSize: 9,
-        margin: 0,
-        background: 'transparent',
-        lineColor: '#0f172a'
-      });
-    } catch (err) {
-      console.error('Barcode generation error:', err);
-    }
-  }
-}
-
-// QR Code Generator
-function generateQR(verifyUrl) {
-  const qrContainer = document.getElementById('qr-code');
-  qrContainer.innerHTML = '';
-
-  const canvas = document.createElement('canvas');
-  qrContainer.appendChild(canvas);
-
-  if (typeof QRCode !== 'undefined') {
-    QRCode.toCanvas(
-      canvas,
-      verifyUrl,
-      {
-        width: 60,
-        margin: 1,
-        errorCorrectionLevel: 'H',
-        color: { dark: '#0b1e33', light: '#ffffff' }
-      },
-      function (err) {
-        if (err) {
-          console.error('QR error:', err);
-          qrContainer.textContent = 'QR Error';
-        }
-      }
-    );
-  }
-}
-
-// Render Empty Report Notice
-function renderEmptyReport(msg) {
-  document.getElementById('report-content').innerHTML = `
-    <div style="text-align:center; padding:30px; font-size:12px; color:#64748b;">
-      ${msg}
-    </div>
-  `;
-}
-</script>
+  <!-- Shared & Page Logic Scripts -->
+  <script src="/js/shared/store.js"></script>
+  <script src="/js/shared/ui.js"></script>
+  <script src="/js/report/render-grade-report.js"></script>
 </body>
 </html>
