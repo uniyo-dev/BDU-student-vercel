@@ -1,18 +1,19 @@
-// Profile Logic with SVG icons
+// Profile Logic with SVG icons, badges, and breakdown
 document.addEventListener('DOMContentLoaded', function() {
   if (!Auth.isLoggedIn()) {
     window.location.href = '/';
     return;
   }
-  
+
   const data = Auth.getStudentData();
   
   if (!data) {
     window.location.href = '/';
     return;
   }
-  
+
   const bio = data.biography || {};
+  const summary = data.summary || {};
   const container = document.getElementById('profile-content');
   
   if (!container) return;
@@ -38,16 +39,40 @@ document.addEventListener('DOMContentLoaded', function() {
   const phoneIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 9.8 19.79 19.79 0 0 1 1.61 1.18 2 2 0 0 1 3.58 0h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 7.91a16 16 0 0 0 6.08 6.08l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>';
   const mailIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>';
   const globeIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>';
+  const starIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>';
   
   let html = '';
   
-  html += '<div class="profile-section-title" style="margin-top:20px;">Academic Info</div>';
+  // Achievement badges
+  const gpa = parseFloat(summary.cumulativeGPA) || 0;
+  const breakdown = summary.gradeBreakdown || {};
+  const rankScore = summary.rankScore || 0;
+  
+  html += '<div class="profile-section-title" style="margin-top:20px;">Achievements</div>';
+  html += '<div class="profile-card" style="padding:16px;text-align:center;">';
+  
+  if (gpa === 4.00) {
+    html += '<div style="font-size:14px;font-weight:800;color:#d97706;margin-bottom:8px;">🏆 DEAN\'S LIST - PERFECT 4.00</div>';
+  }
+  
+  html += '<div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap;">';
+  html += '<span style="background:#d1fae5;color:#065f46;padding:4px 12px;border-radius:40px;font-size:12px;font-weight:700;">A+: ' + (breakdown.Aplus || 0) + '</span>';
+  html += '<span style="background:#dbeafe;color:#1e40af;padding:4px 12px;border-radius:40px;font-size:12px;font-weight:700;">A: ' + (breakdown.A || 0) + '</span>';
+  html += '<span style="background:#fef3c7;color:#92400e;padding:4px 12px;border-radius:40px;font-size:12px;font-weight:700;">Score: ' + rankScore + ' pts</span>';
+  html += '</div>';
+  html += '</div>';
+  
+  // Academic Info
+  html += '<div class="profile-section-title">Academic Info</div>';
   html += '<div class="profile-card">';
   html += profileRow(graduationIcon, 'Program', data.program);
   html += profileRow(buildingIcon, 'Department', bio.department || 'Freshman (Common Program)');
   html += profileRow(calendarIcon, 'Enrollment', bio.enrollmentDate);
+  html += profileRow(starIcon, 'Total Credits', summary.totalCredits);
+  html += profileRow(starIcon, 'Semesters', summary.totalSemesters);
   html += '</div>';
   
+  // Personal Info
   html += '<div class="profile-section-title">Personal Info</div>';
   html += '<div class="profile-card">';
   html += profileRow(userIcon, 'Gender', bio.gender);
