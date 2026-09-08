@@ -1,0 +1,162 @@
+{
+  "biography": {
+    "fullName": "CHALACHEW AGEGN GETANEH",
+    "studentId": "BDU1804043"
+  },
+  "program": "BA Degree in Other Social Sciences--(Curriculum Type: Harmonized Modular)",
+  "registrations": [
+    {
+      "semester": "I",
+      "acYear": "2025/2026",
+      "sgpa": 4,
+      "cgpa": 4,
+      "status": "Pass"
+    },
+    {
+      "semester": "II",
+      "acYear": "2025/2026",
+      "sgpa": 4,
+      "cgpa": 4,
+      "status": "Pass"
+    }
+  ],
+  "courses": [
+    {
+      "semester": "I",
+      "acYear": "2025/2026",
+      "courses": [
+        {
+          "code": "EmTe1012",
+          "title": "Introduction to Emerging Technologies",
+          "credit": 5,
+          "grade": "A+",
+          "points": 20,
+          "percentage": "92.5%"
+        },
+        {
+          "code": "FLEn1011",
+          "title": "Communicative English Language Skills I",
+          "credit": 5,
+          "grade": "A+",
+          "points": 20,
+          "percentage": "96.5%"
+        },
+        {
+          "code": "Econ1011",
+          "title": "Economics",
+          "credit": 5,
+          "grade": "A+",
+          "points": 20,
+          "percentage": "95.5%"
+        },
+        {
+          "code": "MGMT1012",
+          "title": "Entrepreneurship",
+          "credit": 5,
+          "grade": "A+",
+          "points": 20,
+          "percentage": "95%"
+        },
+        {
+          "code": "GlTr1012",
+          "title": "Global Trends",
+          "credit": 4,
+          "grade": "A",
+          "points": 16,
+          "percentage": "88%"
+        },
+        {
+          "code": "Anth1012",
+          "title": "Social Anthropology",
+          "credit": 4,
+          "grade": "A",
+          "points": 16,
+          "percentage": "88%"
+        },
+        {
+          "code": "Hist1012",
+          "title": "History of Ethiopia and the Horn",
+          "credit": 5,
+          "grade": "A+",
+          "points": 20,
+          "percentage": "98.5%"
+        }
+      ]
+    },
+    {
+      "semester": "II",
+      "acYear": "2025/2026",
+      "courses": [
+        {
+          "code": "GeES1011",
+          "title": "Geography of Ethiopia and the Horn",
+          "credit": 5,
+          "grade": "A+",
+          "points": 20,
+          "percentage": "99%"
+        },
+        {
+          "code": "Math1011",
+          "title": "Mathematics for Social Sciences",
+          "credit": 5,
+          "grade": "A",
+          "points": 20,
+          "percentage": "88%"
+        },
+        {
+          "code": "FLEn1012",
+          "title": "Communicative English Language Skills II",
+          "credit": 5,
+          "grade": "A+",
+          "points": 20,
+          "percentage": "93%"
+        },
+        {
+          "code": "SpSc1011",
+          "title": "Physical Fitness",
+          "credit": 0,
+          "grade": "P",
+          "points": null,
+          "percentage": "95%"
+        },
+        {
+          "code": "LoCT1011",
+          "title": "Critical Thinking",
+          "credit": 5,
+          "grade": "A",
+          "points": 20,
+          "percentage": "85%"
+        },
+        {
+          "code": "Psyc1011",
+          "title": "General Psychology",
+          "credit": 5,
+          "grade": "A+",
+          "points": 20,
+          "percentage": "91.5%"
+        },
+        {
+          "code": "MCiE1012",
+          "title": "Moral and Civic Education",
+          "credit": 4,
+          "grade": "A+",
+          "points": 16,
+          "percentage": "94%"
+        },
+        {
+          "code": "Incl1012",
+          "title": "Inclusiveness",
+          "credit": 4,
+          "grade": "A+",
+          "points": 16,
+          "percentage": "95.5%"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "totalSemesters": 2,
+    "totalCredits": 66,
+    "cumulativeGPA": "4.00"
+  }
+}
