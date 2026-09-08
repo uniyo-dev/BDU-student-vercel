@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', function() {
       coursesHtml +
       '</div>' +
       '<button onclick="location.href=\'/pages/grade-report.html\'" style="width:100%;padding:14px;background:#1a5f9c;color:white;border:none;border-radius:50px;font-weight:700;font-size:14px;cursor:pointer;margin-top:12px;">' +
-      '🖨️ Print Grade Report</button>';
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;vertical-align:middle;"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> Print Grade Report</button>';
     
     container.innerHTML = html;
   }
