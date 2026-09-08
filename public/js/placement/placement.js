@@ -1,4 +1,4 @@
-// Placement Logic with SVG icons
+// Placement Logic with department grouping
 document.addEventListener('DOMContentLoaded', function() {
   if (!Auth.isLoggedIn()) {
     window.location.href = '/';
@@ -13,64 +13,202 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   
   const container = document.getElementById('depts-content');
+  const tabsContainer = document.getElementById('dept-tabs');
+  const statsBar = document.getElementById('stats-bar');
+  const pagination = document.getElementById('pagination');
   
   if (!container) return;
   
   const placement = data.placement || {};
+  const allStudents = placement.allStudents || [];
   const results = placement.results || [];
-  const criteria = placement.criteria || [];
   
-  let html = '';
+  // Build full student list
+  let fullList = allStudents.length > 0 ? allStudents : [];
   
-  const selected = results.find(function(r) { return r.status === 'Selected'; }) || results[0];
-  
-  if (selected) {
-    html += '<div class="placement-assigned">' +
-      '<div class="placement-assigned-icon">' +
-      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>' +
-      '</div>' +
-      '<div>' +
-      '<div class="placement-status-label"><span>Assigned</span><span class="placed-badge">PLACED</span></div>' +
-      '<div class="placement-dept">' + selected.department + '</div>' +
-      '<div class="placement-college">Priority: ' + selected.priority + ' | Score: ' + selected.totalScore + '</div>' +
-      '</div>' +
-      '</div>';
+  if (fullList.length === 0 && results.length > 0) {
+    const bio = data.biography || {};
+    results.forEach(function(r) {
+      fullList.push({
+        fullName: bio.fullName,
+        studentId: bio.studentId,
+        department: r.department,
+        priority: r.priority,
+        totalScore: r.totalScore,
+        status: r.status,
+      });
+    });
   }
   
-  if (results.length > 0) {
-    html += '<div style="font-size:18px;font-weight:700;color:#0f172a;margin-bottom:12px;padding:0 4px;">Your Priorities</div>';
+  // Get unique departments
+  const departments = [];
+  fullList.forEach(function(s) {
+    const dept = s.department || 'Unassigned';
+    if (departments.indexOf(dept) === -1) {
+      departments.push(dept);
+    }
+  });
+  
+  // Common BDU departments to always show
+  const commonDepartments = [
+    'Economics',
+    'Accounting and Finance',
+    'Logistics and Supply Chain Management',
+    'Information Technology',
+    'Software Engineering',
+    'Computer Science',
+    'Management',
+    'Marketing Management',
+    'Other Social Sciences',
+    'Other Natural Sciences',
+    'Law',
+    'Electrical Engineering',
+    'Mechanical Engineering',
+    'Civil Engineering',
+  ];
+  
+  // Combine common + actual departments
+  commonDepartments.forEach(function(dept) {
+    if (departments.indexOf(dept) === -1) {
+      departments.push(dept);
+    }
+  });
+  
+  let currentDept = departments[0] || 'All';
+  let currentPage = 1;
+  let filteredList = [];
+  const pageSize = 20;
+  
+  // Render department tabs
+  function renderTabs() {
+    if (!tabsContainer) return;
     
-    results.forEach(function(r, index) {
-      const isAssigned = r.status === 'Selected';
-      const rankClass = isAssigned ? 'rank-assigned' : (index === 0 ? 'rank-1' : 'rank-other');
-      const checkHtml = isAssigned ? '<div class="priority-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>' : '';
+    let tabsHtml = '<button class="dept-tab ' + (currentDept === 'All' ? 'active' : '') + '" onclick="selectDept(\'All\')">All</button>';
+    
+    departments.forEach(function(dept) {
+      tabsHtml += '<button class="dept-tab ' + (currentDept === dept ? 'active' : '') + '" onclick="selectDept(\'' + dept.replace(/'/g, "\\'") + '\')">' + dept + '</button>';
+    });
+    
+    tabsContainer.innerHTML = tabsHtml;
+  }
+  
+  function filterByDept() {
+    if (currentDept === 'All') {
+      filteredList = fullList;
+    } else {
+      filteredList = fullList.filter(function(s) {
+        return (s.department || 'Unassigned') === currentDept;
+      });
+    }
+    
+    // Sort by score descending
+    filteredList.sort(function(a, b) {
+      return parseFloat(b.totalScore) - parseFloat(a.totalScore);
+    });
+  }
+  
+  function render() {
+    filterByDept();
+    
+    const totalPages = Math.ceil(filteredList.length / pageSize);
+    const start = (currentPage - 1) * pageSize;
+    const end = Math.min(start + pageSize, filteredList.length);
+    const pageStudents = filteredList.slice(start, end);
+    
+    if (statsBar) {
+      statsBar.innerHTML = currentDept + ': ' + filteredList.length + ' students | Page ' + currentPage + ' of ' + Math.max(totalPages, 1);
+    }
+    
+    let html = '';
+    
+    if (pageStudents.length === 0) {
+      html = '<div style="text-align:center;padding:40px;color:#64748b;">No students in this department yet.<br>Results will appear when placement is released.</div>';
+    } else {
+      pageStudents.forEach(function(s, index) {
+        const globalRank = start + index + 1;
+        const isSelected = s.status === 'Selected';
+        
+        let rankClass = 'rank-number';
+        if (globalRank === 1) rankClass += ' top1';
+        else if (globalRank <= 10) rankClass += ' top10';
+        
+        html += '<div class="student-card ' + (isSelected ? 'selected' : '') + '">';
+        html += '<div class="' + rankClass + '">' + globalRank + '</div>';
+        html += '<div class="student-info">';
+        html += '<div class="student-name">' + (s.fullName || 'Student') + '</div>';
+        html += '<div class="student-id">' + (s.studentId || '') + '</div>';
+        html += '<div class="student-dept">' + (s.department || '') + '</div>';
+        html += '</div>';
+        html += '<div class="student-score">';
+        html += '<div class="score-value">' + (s.totalScore || '—') + '</div>';
+        html += '<div class="score-priority">' + (s.priority || '') + '</div>';
+        html += '<span class="score-status ' + (isSelected ? 'status-selected' : 'status-not') + '">' + (s.status || 'Pending') + '</span>';
+        html += '</div>';
+        html += '</div>';
+      });
+    }
+    
+    container.innerHTML = html;
+    
+    // Pagination
+    if (pagination && totalPages > 1) {
+      let pagHtml = '';
+      pagHtml += '<button class="page-btn" onclick="goToPage(' + (currentPage - 1) + ')" ' + (currentPage === 1 ? 'disabled' : '') + '>←</button>';
       
-      html += '<div class="priority-item' + (isAssigned ? ' is-assigned' : '') + '">' +
-        '<div class="priority-rank ' + rankClass + '">' + (index + 1) + '</div>' +
-        '<div style="flex:1;min-width:0;">' +
-        '<div class="priority-name">' + r.department + '</div>' +
-        '<div class="priority-college">' + r.priority + ' · ' + r.totalScore + '</div>' +
-        '</div>' +
-        checkHtml +
-        '</div>';
-    });
+      const maxButtons = 5;
+      let startPage = Math.max(1, currentPage - Math.floor(maxButtons / 2));
+      let endPage = Math.min(totalPages, startPage + maxButtons - 1);
+      startPage = Math.max(1, endPage - maxButtons + 1);
+      
+      for (let i = startPage; i <= endPage; i++) {
+        pagHtml += '<button class="page-btn ' + (i === currentPage ? 'active' : '') + '" onclick="goToPage(' + i + ')">' + i + '</button>';
+      }
+      
+      pagHtml += '<button class="page-btn" onclick="goToPage(' + (currentPage + 1) + ')" ' + (currentPage === totalPages ? 'disabled' : '') + '>→</button>';
+      pagination.innerHTML = pagHtml;
+    } else if (pagination) {
+      pagination.innerHTML = '';
+    }
   }
   
-  if (criteria.length > 0) {
-    html += '<div class="info-box mt-4">' +
-      '<div class="info-box-icon">' +
-      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>' +
-      '</div>' +
-      '<div>' +
-      '<div class="info-box-title">Placement Criteria</div>' +
-      '<ul class="info-box-list">';
+  window.selectDept = function(dept) {
+    currentDept = dept;
+    currentPage = 1;
+    renderTabs();
+    render();
+  };
+  
+  window.goToPage = function(page) {
+    currentPage = page;
+    render();
+  };
+  
+  window.searchStudents = function() {
+    const query = document.getElementById('search-input').value.toLowerCase();
     
-    criteria.forEach(function(c) {
-      html += '<li>• ' + c.name + ': ' + c.percent + '%</li>';
+    let baseList = fullList;
+    if (currentDept !== 'All') {
+      baseList = fullList.filter(function(s) { return (s.department || 'Unassigned') === currentDept; });
+    }
+    
+    if (!query) {
+      filteredList = baseList;
+    } else {
+      filteredList = baseList.filter(function(s) {
+        return (s.fullName || '').toLowerCase().includes(query) ||
+               (s.studentId || '').toLowerCase().includes(query);
+      });
+    }
+    
+    filteredList.sort(function(a, b) {
+      return parseFloat(b.totalScore) - parseFloat(a.totalScore);
     });
     
-    html += '</ul></div></div>';
-  }
+    currentPage = 1;
+    render();
+  };
   
-  container.innerHTML = html;
+  // Initial render
+  renderTabs();
+  render();
 });
