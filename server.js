@@ -194,7 +194,46 @@ async function handleLogin(req, res) {
         registrations,
         courses,
         placement: { results: placementResults, criteria: placementCriteria, allStudents: allStudentsList },
-        summary: { totalSemesters: registrations.length, totalCredits, cumulativeGPA: latestCGPA },
+        summary: { 
+          totalSemesters: registrations.length, 
+          totalCredits, 
+          cumulativeGPA: latestCGPA,
+          gradeBreakdown: (function() {
+            var breakdown = { Aplus: 0, A: 0, Bplus: 0, B: 0, Cplus: 0, C: 0, D: 0, F: 0, P: 0 };
+            courses.forEach(function(sem) {
+              sem.courses.forEach(function(c) {
+                var g = c.grade || '';
+                if (g === 'A+') breakdown.Aplus++;
+                else if (g === 'A') breakdown.A++;
+                else if (g === 'B+') breakdown.Bplus++;
+                else if (g === 'B') breakdown.B++;
+                else if (g === 'C+') breakdown.Cplus++;
+                else if (g === 'C') breakdown.C++;
+                else if (g === 'D') breakdown.D++;
+                else if (g === 'F') breakdown.F++;
+                else if (g === 'P') breakdown.P++;
+              });
+            });
+            return breakdown;
+          })(),
+          rankScore: (function() {
+            var score = 0;
+            courses.forEach(function(sem) {
+              sem.courses.forEach(function(c) {
+                var g = c.grade || '';
+                if (g === 'A+') score += 5;
+                else if (g === 'A') score += 4;
+                else if (g === 'B+') score += 3.5;
+                else if (g === 'B') score += 3;
+                else if (g === 'C+') score += 2.5;
+                else if (g === 'C') score += 2;
+                else if (g === 'D') score += 1;
+                else if (g === 'P') score += 0.5;
+              });
+            });
+            return score;
+          })(),
+        },
       },
     }));
     
