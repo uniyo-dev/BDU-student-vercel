@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <meta name="description" content="BDU Department Placement Guide - How to select your department">
+  <title>BDU Placement Guide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0d47a1;
+      --secondary: #ffb300;
+      --success: #2e7d32;
+      --danger: #c62828;
+      --bg: #f5f5f5;
+      --card: #ffffff;
+      --text: #212121;
+      --text-light: #757575;
+      --border: #e0e0e0;
+    }
+    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: 'Inter', 'Segoe UI', sans-serif; 
+      background: var(--bg); 
+      color: var(--text); 
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 20px 16px 80px;
+    }
+    
+    /* Header */
+    .header {
+      text-align: center;
+      background: linear-gradient(135deg, var(--primary), #1a237e);
+      color: white;
+      padding: 30px 20px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .header::after {
+      content: '';
+      position: absolute;
+      bottom: -50px;
+      left: -50px;
+      right: -50px;
+      height: 100px;
+      background: rgba(255,255,255,0.05);
+      transform: rotate(-5deg);
+    }
+    
+    .university-name {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .guide-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-top: 6px;
+      opacity: 0.9;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .badge-row {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 12px;
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .badge {
+      background: var(--secondary);
+      color: #000;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    /* Alert Banner */
+    .alert-banner {
+      background: #fff3cd;
+      border: 2px solid var(--secondary);
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #856404;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .alert-banner .icon {
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+    
+    /* Section Cards */
+    .section-card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 16px;
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    
+    .section-title {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .section-title .num {
+      width: 28px;
+      height: 28px;
+      background: var(--primary);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    
+    /* Criteria Table */
+    .criteria-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    
+    .criteria-table th {
+      background: var(--primary);
+      color: white;
+      padding: 10px;
+      font-size: 12px;
+      text-align: left;
+    }
+    
+    .criteria-table td {
+      padding: 10px;
+      font-size: 13px;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .criteria-table tr:nth-child(even) {
+      background: #f9f9f9;
+    }
+    
+    .weight {
+      font-weight: 800;
+      color: var(--primary);
+    }
+    
+    /* Steps */
+    .step-item {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+      align-items: flex-start;
+    }
+    
+    .step-num {
+      width: 32px;
+      height: 32px;
+      background: var(--primary);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 14px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    
+    .step-content {
+      flex: 1;
+    }
+    
+    .step-title {
+      font-weight: 700;
+      font-size: 15px;
+      margin-bottom: 4px;
+    }
+    
+    .step-desc {
+      font-size: 13px;
+      color: var(--text-light);
+    }
+    
+    /* Demo Box */
+    .demo-box {
+      background: #e8f0fe;
+      border: 1px solid #b3d7ff;
+      border-radius: 12px;
+      padding: 14px;
+      margin-top: 12px;
+      font-size: 13px;
+    }
+    
+    .demo-box strong {
+      color: var(--primary);
+    }
+    
+    /* CTA Button */
+    .cta-btn {
+      display: block;
+      text-align: center;
+      background: linear-gradient(135deg, var(--primary), #1a237e);
+      color: white;
+      font-weight: 800;
+      font-size: 16px;
+      padding: 16px;
+      border-radius: 60px;
+      text-decoration: none;
+      margin-top: 20px;
+      box-shadow: 0 8px 20px rgba(13, 71, 161, 0.3);
+      transition: all 0.2s;
+    }
+    
+    .cta-btn:active {
+      transform: scale(0.97);
+    }
+    
+    .cta-sub {
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-light);
+      margin-top: 8px;
+    }
+    
+    /* Tips */
+    .tip-box {
+      background: #fff3cd;
+      border-left: 4px solid var(--secondary);
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      color: #856404;
+      margin-top: 12px;
+    }
+    
+    .warning-box {
+      background: #ffebee;
+      border-left: 4px solid var(--danger);
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      color: #b71c1c;
+      margin-top: 12px;
+    }
+    
+    /* Footer */
+    .footer {
+      text-align: center;
+      font-size: 11px;
+      color: var(--text-light);
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Header -->
+  <div class="header">
+    <div class="university-name">BAHIR DAR UNIVERSITY</div>
+    <div class="guide-title">Department Placement Guide</div>
+    <div class="badge-row">
+      <span class="badge">2025/2026</span>
+      <span class="badge">Freshman Placement</span>
+      <span class="badge">Official Guide</span>
+    </div>
+  </div>
+  
+  <!-- Alert -->
+  <div class="alert-banner">
+    <span class="icon">📅</span>
+    <span>Placement results will be released: <strong>Meskerem 5-8, 2019 E.C</strong></span>
+  </div>
+  
+  <!-- Placement Criteria -->
+  <div class="section-card">
+    <div class="section-title">
+      <span class="num">📊</span> Placement Criteria
+    </div>
+    <p style="font-size:13px;color:#757575;margin-bottom:10px;">
+      Your placement score is calculated based on the following criteria:
+    </p>
+    <table class="criteria-table">
+      <thead>
+        <tr>
+          <th>Criteria</th>
+          <th>Weight</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>University Current CGPA</td>
+          <td class="weight">50%</td>
+        </tr>
+        <tr>
+          <td>Program Entrance Exam</td>
+          <td class="weight">30%</td>
+        </tr>
+        <tr>
+          <td>University Entrance Exam</td>
+          <td class="weight">20%</td>
+        </tr>
+        <tr>
+          <td>Gender (Female)</td>
+          <td class="weight">+5% Bonus</td>
+        </tr>
+        <tr>
+          <td>Gender Emerging Region (F)</td>
+          <td class="weight">+5% Bonus</td>
+        </tr>
+        <tr>
+          <td>Handicapped</td>
+          <td class="weight">+5% Bonus</td>
+        </tr>
+        <tr>
+          <td>Handicapped Emerging Region (F)</td>
+          <td class="weight">+5% Bonus</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
+  <!-- How to Select -->
+  <div class="section-card">
+    <div class="section-title">
+      <span class="num">📝</span> How to Select Departments
+    </div>
+    
+    <div class="step-item">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <div class="step-title">Login to Portal</div>
+        <div class="step-desc">Use your BDU username and password</div>
+      </div>
+    </div>
+    
+    <div class="step-item">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <div class="step-title">Go to "Department Placement"</div>
+        <div class="step-desc">Find it in the navigation menu</div>
+      </div>
+    </div>
+    
+    <div class="step-item">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <div class="step-title">Rank Your Choices</div>
+        <div class="step-desc">Select departments in order of preference (1st, 2nd, 3rd...)</div>
+      </div>
+    </div>
+    
+    <div class="step-item">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <div class="step-title">Save & Submit</div>
+        <div class="step-desc">Review carefully before final submission</div>
+      </div>
+    </div>
+    
+    <div class="step-item">
+      <div class="step-num">5</div>
+      <div class="step-content">
+        <div class="step-title">Check Result</div>
+        <div class="step-desc">After Meskerem 5-8, login to see your assigned department</div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Example Priority -->
+  <div class="section-card">
+    <div class="section-title">
+      <span class="num">🎯</span> Example Priority Selection
+    </div>
+    <div class="demo-box">
+      <strong>Example Student Choices:</strong><br><br>
+      1st Choice: Economics<br>
+      2nd Choice: Accounting & Finance<br>
+      3rd Choice: Management<br>
+      4th Choice: Marketing<br>
+      5th Choice: Logistics & Supply Chain<br>
+    </div>
+    <div class="tip-box">
+      <strong>💡 TIP:</strong> Always rank your MOST preferred department as #1. The system tries your 1st choice first, then 2nd, and so on.
+    </div>
+  </div>
+  
+  <!-- Important Rules -->
+  <div class="section-card">
+    <div class="section-title">
+      <span class="num">⚠️</span> Important Rules
+    </div>
+    <ul style="font-size:13px;padding-left:20px;line-height:2;">
+      <li>CGPA is the <strong>dominant factor</strong> (50% weight)</li>
+      <li>Higher CGPA = better chance of first choice</li>
+      <li>Each department has <strong>capacity limits</strong></li>
+      <li>Once deadline passes, <strong>no changes allowed</strong></li>
+      <li>Take a <strong>screenshot</strong> of your confirmation</li>
+    </ul>
+  </div>
+  
+  <!-- Campuses -->
+  <div class="section-card">
+    <div class="section-title">
+      <span class="num">📍</span> Campus Locations
+    </div>
+    <div style="font-size:12px;line-height:2;">
+      <strong>🏛️ Peda Campus (Belay Zeleke) - Central:</strong><br>
+      • College of Business & Economics (All BA programs)<br>
+      • College of Science (Biology, Chemistry, Physics, Math, Statistics, Biotechnology, Geology)<br>
+      • College of Humanities (English, Amharic, History, Geography, Sociology, Social Work, PSIR, Journalism, Civics)<br>
+      • College of Education (Psychology, EdPM, Special Needs, Adult Education, ECCE)<br>
+      • Academy of Sport (Sport Science, Football Coaching)<br><br>
+      
+      <strong>🏛️ Yibab Campus - Southwestern:</strong><br>
+      • Governance and Development Studies<br>
+      • School of Law (LLB)<br>
+      • Institute of Land Administration (Land Admin, Geomatics, Real Estate)<br>
+      • Disaster Risk Management (DRM, Food Security)<br><br>
+      
+      <strong>🏛️ Poly Campus (BiT) - Nile River Outlet:</strong><br>
+      • All Engineering (Civil, Mechanical, Electrical, Chemical, Industrial)<br>
+      • Software Engineering, Computer Science, IT<br>
+      • Water Resources, Hydraulics, Mechatronics, Automotive, Food Engineering<br><br>
+      
+      <strong>🏛️ EiTEX Campus - Adjacent to Poly:</strong><br>
+      • Textile Engineering, Garment Engineering<br>
+      • Fashion Design, Leather Engineering<br><br>
+      
+      <strong>🏛️ Tibebe Ghion Campus - Health Sciences:</strong><br>
+      • Medicine (MD), Pharmacy, Anesthesia, Optometry<br>
+      • Medical Lab, Nursing, Midwifery, Psychiatry Nursing<br>
+      • Pediatric Nursing, Surgical Nursing, Public Health<br>
+      • Medical Radiology, Environmental Health<br><br>
+      
+      <strong>🏛️ Zenzelma Campus - Eastern Outskirts:</strong><br>
+      • Plant Sciences, Animal Sciences, Horticulture<br>
+      • Natural Resources, Soil Management, Forestry<br>
+      • Agricultural Economics, Rural Development, Fisheries & Wildlife
+    </div>
+  </div>
+  
+<!-- CTA -->
+  <a href="/" class="cta-btn">
+    🎓 Login to BDU Portal
+  </a>
+  <div class="cta-sub">
+    Use your BDU credentials to check your placement
+  </div>
+  
+  <!-- Footer -->
+  <div class="footer">
+    Bahir Dar University · Student Portal · All Rights Reserved
+  </div>
+</div>
+
+</body>
+</html>
