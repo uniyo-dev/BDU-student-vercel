@@ -49,22 +49,189 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
   
-  // Common BDU departments to always show
+  // VERIFIED BDU Departments List (from official registrar)
   const commonDepartments = [
-    'Economics',
-    'Accounting and Finance',
-    'Logistics and Supply Chain Management',
-    'Information Technology',
+    // Bahir Dar Institute of Technology (BiT) - 4 Schools
+    // School of Civil & Water Resources Engineering
+    'Civil Engineering',
+    'Water Resources and Irrigation Engineering',
+    'Hydraulics and Environmental Engineering',
+    // School of Mechanical & Industrial Engineering
+    'Mechanical Engineering',
+    'Industrial Engineering',
+    'Automotive Engineering',
+    'Mechatronics Engineering',
+    // School of Computing & Electrical Engineering
+    'Electrical and Computer Engineering',
     'Software Engineering',
     'Computer Science',
+    'Information Technology',
+    // School of Chemical & Food Engineering
+    'Chemical Engineering',
+    'Food Engineering and Process Technology',
+    // Ethiopian Institute of Textile and Fashion - BSc
+    'Textile Engineering',
+    'Garment Engineering',
+    'Fashion Design',
+    'Leather Engineering',
+    // College of Medicine and Health Sciences - MD/BSc
+    'Medicine (MD)',
+    'Pharmacy',
+    'Anesthesia',
+    'Optometry',
+    'Medical Laboratory Science',
+    'Public Health',
+    'Comprehensive Nursing',
+    'Midwifery',
+    'Psychiatry Nursing',
+    'Pediatric and Child Health Nursing',
+    'Surgical Nursing',
+    'Medical Radiology Technology',
+    'Environmental Health',
+    // College of Business and Economics - BA
+    'Accounting and Finance',
+    'Economics',
     'Management',
     'Marketing Management',
-    'Other Social Sciences',
-    'Other Natural Sciences',
-    'Law',
-    'Electrical Engineering',
-    'Mechanical Engineering',
+    'Logistics and Supply Chain Management',
+    'Public Administration',
+    'Tourism and Hotel Management',
+    // College of Science - BSc
+    'Biology',
+    'Chemistry',
+    'Physics',
+    'Mathematics',
+    'Statistics',
+    'Biotechnology',
+    'Geology',
+    // College of Agriculture - BSc
+    'Plant Sciences',
+    'Animal Sciences',
+    'Horticulture',
+    'Natural Resources Management',
+    'Soil Resource Management',
+    'Forestry',
+    'Agricultural Economics',
+    'Rural Development',
+    'Fisheries and Wildlife Management',
+    // College of Humanities and Social Sciences - BA
+    'English Language and Literature',
+    'Amharic Language and Literature',
+    'History and Heritage Management',
+    'Geography and Environmental Studies',
+    'Sociology',
+    'Social Work',
+    'Political Science and International Relations',
+    'Journalism and Communication',
+    'Civics and Ethical Studies',
+    // College of Education - BA/BEd
+    'Psychology',
+    'Educational Planning and Management',
+    'Special Needs and Inclusive Education',
+    'Adult Education',
+    'Early Childhood Care and Education',
+    // School of Law
+    'Law (LLB)',
+    // Institute of Land Administration - BSc
+    'Land Administration',
+    'Geomatics and Land Surveying',
+    'Real Estate Valuation',
+    // Academy of Sport - BSc
+    'Sport Science',
+    'Football Coaching',
+    // Institute of Disaster Risk Management - BSc
+    'Disaster Risk Management',
+    'Food Security and Development',
+    // Ethiopian Maritime Academy
+    'Marine Engineering',
+  ];
+    // Bahir Dar Institute of Technology (BiT)
     'Civil Engineering',
+    'Mechanical Engineering',
+    'Industrial Engineering',
+    'Electrical & Computer Engineering',
+    'Chemical Engineering',
+    'Software Engineering',
+    'Computer Science',
+    'Information Technology',
+    'Water Resources & Irrigation Engineering',
+    'Hydraulics & Environmental Engineering',
+    'Automotive Engineering',
+    'Mechatronics Engineering',
+    'Food Engineering & Process Technology',
+    // Ethiopian Institute of Textile and Fashion Technology
+    'Textile Engineering',
+    'Garment Engineering',
+    'Fashion Design',
+    'Leather Engineering',
+    // College of Science
+    'Biology',
+    'Chemistry',
+    'Physics',
+    'Mathematics',
+    'Statistics',
+    'Biotechnology',
+    'Geology',
+    // College of Medicine and Health Sciences
+    'Medicine (MD)',
+    'Comprehensive Nursing',
+    'Midwifery',
+    'Public Health',
+    'Medical Laboratory Science',
+    'Pharmacy',
+    'Anesthesia',
+    'Optometry',
+    'Radiology',
+    'Environmental Health',
+    // College of Business and Economics
+    'Accounting and Finance',
+    'Management',
+    'Economics',
+    'Logistics and Supply Chain Management',
+    'Marketing Management',
+    'Public Administration',
+    'Tourism and Hospitality Management',
+    // College of Agriculture and Environmental Sciences
+    'Plant Sciences',
+    'Animal Sciences',
+    'Agricultural Economics',
+    'Natural Resources Management',
+    'Rural Development',
+    'Horticulture',
+    'Soil Resource Management',
+    'Forestry',
+    // College of Humanities and Social Sciences
+    'English Language and Literature',
+    'Amharic Language and Literature',
+    'History and Heritage Management',
+    'Geography and Environmental Studies',
+    'Sociology',
+    'Social Work',
+    'Political Science and International Relations',
+    'Journalism and Communication',
+    'Civics and Ethical Studies',
+    'Philosophy',
+    // College of Education and Behavioral Sciences
+    'Psychology',
+    'Educational Planning and Management',
+    'Special Needs and Inclusive Education',
+    'Adult Education',
+    'Early Childhood Care and Education',
+    // School of Law
+    'Law (LL.B)',
+    // Institute of Land Administration
+    'Land Administration and Surveying',
+    'Real Estate Management',
+    'Geomatics and GIS',
+    // Sport Academy
+    'Sport Science',
+    'Football Coaching',
+    // Institute of Disaster Risk Management
+    'Disaster Risk Management',
+    'Food Security and Development',
+    // Ethiopian Maritime Academy
+    'Marine Engineering',
+    'Nautical Science',
   ];
   
   // Combine common + actual departments
