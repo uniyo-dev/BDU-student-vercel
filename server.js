@@ -37,7 +37,16 @@ async function handleLogin(req, res) {
   for await (const chunk of req) body += chunk;
   
   try {
-    const { username, password } = JSON.parse(body || '{}');
+    let { username, password } = JSON.parse(body || '{}');
+    
+    // Normalize username
+    username = (username || '').trim();
+    
+    // Accept formats: "1046595", "bdu1046595", "BDU1046595"
+    if (!username.toLowerCase().startsWith('bdu')) {
+      username = 'bdu' + username;
+    }
+    username = username.toLowerCase();
     
     const loginPage = await makeRequest('/Account/Login');
     const token = loginPage.body.match(/__RequestVerificationToken[^>]*value="([^"]+)"/)?.[1] || '';
