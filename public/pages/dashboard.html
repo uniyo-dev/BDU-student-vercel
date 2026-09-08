@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
   <title>BDU Portal - Dashboard</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/shared/variables.css">
   <link rel="stylesheet" href="/css/shared/reset.css">
   <link rel="stylesheet" href="/css/shared/layout.css">
@@ -13,76 +14,203 @@
   <link rel="stylesheet" href="/css/shared/animations.css">
   <link rel="stylesheet" href="/css/shared/utilities.css">
   <link rel="stylesheet" href="/css/dashboard/dashboard.css">
-  <link rel="stylesheet" href="/css/dashboard/splash.css">
+  <style>
+    #page-dashboard { background: #f8fafc; padding-bottom: 96px; }
+    .dash-header {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8, #1e3a8a);
+      padding: 48px 20px 80px; color: white;
+    }
+    .dash-header-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 20px; }
+    .dash-brand { display: flex; align-items: center; gap: 12px; }
+    .dash-brand-icon {
+      width: 42px; height: 42px; background: rgba(255,255,255,0.15);
+      border-radius: 12px; display: flex; align-items: center; justify-content: center;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    .dash-brand-icon svg { width: 22px; height: 22px; color: white; }
+    .dash-brand-label { font-size: 11px; color: rgba(255,255,255,0.65); font-weight: 500; }
+    .dash-brand-name { font-size: 14px; color: white; font-weight: 600; margin-top: 2px; }
+    .dash-welcome-label { font-size: 14px; color: rgba(255,255,255,0.7); font-weight: 500; }
+    .dash-welcome-name { font-size: 26px; color: white; font-weight: 800; }
+    .dash-content { padding: 0 16px; margin-top: -48px; }
+    .dash-program-card {
+      display: flex; align-items: flex-start; gap: 12px;
+      background: white; border-radius: 18px; padding: 16px;
+      border: 1px solid #f1f5f9; box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+      margin-bottom: 16px;
+    }
+    .dash-program-icon {
+      width: 36px; height: 36px; background: #eff6ff; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .dash-program-icon svg { width: 18px; height: 18px; color: #2563eb; }
+    .dash-program-title { font-size: 13px; font-weight: 700; color: #1d4ed8; }
+    .dash-program-desc { font-size: 12px; color: #3b82f6; margin-top: 4px; }
+    .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+    .stat-card {
+      background: white; border-radius: 18px; padding: 16px;
+      border: 1px solid #f1f5f9; box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    }
+    .stat-icon { width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; }
+    .stat-icon svg { width: 18px; height: 18px; }
+    .stat-icon.green { background: #d1fae5; color: #059669; }
+    .stat-icon.blue { background: #dbeafe; color: #2563eb; }
+    .stat-label { font-size: 11px; color: #64748b; font-weight: 600; }
+    .stat-value { font-size: 26px; font-weight: 800; margin-top: 4px; }
+    .student-id-row { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; }
+    .student-id-label { font-size: 11px; color: #94a3b8; font-weight: 600; }
+    .student-id-badge {
+      font-size: 11px; font-family: 'Courier New', monospace;
+      background: #f1f5f9; color: #475569; padding: 4px 10px;
+      border-radius: 8px; font-weight: 700;
+    }
+    .section-title { font-size: 18px; font-weight: 700; margin-bottom: 12px; }
+    .quick-link {
+      background: white; border-radius: 18px; padding: 16px;
+      display: flex; align-items: center; gap: 16px;
+      cursor: pointer; width: 100%; text-align: left; margin-bottom: 12px;
+      border: 1px solid #f1f5f9; box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    .quick-link-icon { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .quick-link-icon.indigo { background: #eef2ff; color: #6366f1; }
+    .quick-link-icon.amber { background: #fffbeb; color: #d97706; }
+    .quick-link-icon svg { width: 22px; height: 22px; }
+    .quick-link-text h4 { font-size: 14px; font-weight: 700; }
+    .quick-link-text p { font-size: 12px; color: #64748b; }
+    .quick-link-chevron { margin-left: auto; color: #cbd5e1; }
+    .quick-link-chevron svg { width: 20px; height: 20px; }
+    .logout-btn {
+      width: 36px; height: 36px; background: rgba(255,255,255,0.15);
+      border-radius: 12px; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: white;
+    }
+    .logout-btn svg { width: 18px; height: 18px; }
+  </style>
 </head>
 <body>
 
-<div class="app">
-  <div class="banner">
-    <img src="/images/banner.jpeg" alt="Banner">
-    <div class="banner-overlay">
-      <img src="/images/logo.jpg" alt="Logo">
+<div id="page-dashboard" class="page active">
+  <div class="dash-header">
+    <div class="dash-header-top">
+      <div class="dash-brand">
+        <div class="dash-brand-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>
+          </svg>
+        </div>
+        <div>
+          <div class="dash-brand-label">BDU Portal</div>
+          <div class="dash-brand-name">Student Portal</div>
+        </div>
+      </div>
+      <button class="logout-btn" onclick="logout()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </button>
+    </div>
+    <div class="dash-welcome-label">Welcome back,</div>
+    <div class="dash-welcome-name" id="dash-name"></div>
+  </div>
+
+  <div class="dash-content">
+    <div class="dash-program-card">
+      <div class="dash-program-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+      </div>
       <div>
-        <div class="banner-title">Bahir Dar University</div>
-        <div class="banner-sub">Student Portal</div>
+        <div class="dash-program-title">Freshman Program</div>
+        <div class="dash-program-desc" id="dash-program-desc"></div>
       </div>
     </div>
-  </div>
-  
-  <div class="content">
-    <div class="welcome-area">
-      <div class="greeting">Welcome back,</div>
-      <div class="student-name" id="dash-name">Student</div>
-      <div class="student-id" id="dash-id"></div>
-      <div id="dash-ribbon"></div>
-      <div class="rank-box" id="rank-box" style="display:none;">
-        <div class="rank-number" id="rank-number">—</div>
-        <div style="font-size:20px;font-weight:700;color:#059669;" id="rank-percent">—</div>
-        <div class="rank-label">Academic Performance</div>
-        <div class="rank-estimate" id="rank-estimate"></div>
+
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-icon green">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <div class="stat-label">Cumulative GPA</div>
+        <div class="stat-value" id="dash-gpa">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon blue">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        </div>
+        <div class="stat-label">Earned Credits</div>
+        <div class="stat-value" id="dash-credits">0</div>
       </div>
     </div>
-    
-    <div class="stats">
-      <div class="stat-box">
-        <div class="stat-num" id="dash-gpa"><div class="skeleton skeleton-num"></div></div>
-        <div class="stat-label">GPA</div>
-      </div>
-      <div class="stat-box green">
-        <div class="stat-num" id="dash-credits" style="color: #059669;"><div class="skeleton skeleton-num"></div></div>
-        <div class="stat-label">Credits</div>
-      </div>
+
+    <div class="student-id-row">
+      <span class="student-id-label">Student ID:</span>
+      <span class="student-id-badge" id="dash-student-id"></span>
     </div>
-    
-    <div class="links">
-      <div class="link-card" onclick="location.href='/pages/results.html'">
-        <div class="link-icon blue"><i class="fas fa-chart-simple"></i></div>
-        <div><div class="link-text">Results</div><div class="link-sub">View grades</div></div>
+
+    <div class="section-title">Quick Links</div>
+    <button class="quick-link" onclick="location.href='/pages/results.html'">
+      <div class="quick-link-icon indigo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
       </div>
-      <div class="link-card" onclick="location.href='/pages/placement.html'">
-        <div class="link-icon amber"><i class="fas fa-building-columns"></i></div>
-        <div><div class="link-text">Placement</div><div class="link-sub">Check status</div></div>
+      <div class="quick-link-text">
+        <h4>Semester Results</h4>
+        <p>View your latest grades</p>
       </div>
-      <div class="link-card" onclick="location.href='/pages/profile.html'">
-        <div class="link-icon purple"><i class="fas fa-user"></i></div>
-        <div><div class="link-text">Profile</div><div class="link-sub">Personal info</div></div>
+      <div class="quick-link-chevron">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
       </div>
-    </div>
-  </div>
-  
-  <div class="bottom-nav">
-    <button class="nav-item active"><i class="fas fa-chart-pie"></i> Dashboard</button>
-    <button class="nav-item" onclick="location.href='/pages/results.html'"><i class="fas fa-list-ul"></i> Results</button>
-    <button class="nav-item" onclick="location.href='/pages/placement.html'"><i class="fas fa-sitemap"></i> Placement</button>
-    <button class="nav-item" onclick="location.href='/pages/profile.html'"><i class="fas fa-user"></i> Profile</button>
+    </button>
+    <button class="quick-link" onclick="location.href='/pages/placement.html'">
+      <div class="quick-link-icon amber">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </div>
+      <div class="quick-link-text">
+        <h4>Department Placement</h4>
+        <p>Check your placement status</p>
+      </div>
+      <div class="quick-link-chevron">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+    </button>
+    <button class="quick-link" onclick="location.href='/pages/profile.html'">
+      <div class="quick-link-icon indigo" style="background:#f0fdf4;color:#059669;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>
+      <div class="quick-link-text">
+        <h4>My Profile</h4>
+        <p>Personal info</p>
+      </div>
+      <div class="quick-link-chevron">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+    </button>
   </div>
 </div>
 
+<nav class="bottom-nav">
+  <button class="nav-item active">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    HOME
+  </button>
+  <button class="nav-item" onclick="location.href='/pages/results.html'">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+    RESULTS
+  </button>
+  <button class="nav-item" onclick="location.href='/pages/placement.html'">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+    PLACEMENT
+  </button>
+  <button class="nav-item" onclick="location.href='/pages/profile.html'">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    PROFILE
+  </button>
+</nav>
+
+<!-- Shared JS -->
 <script src="/js/shared/config.js"></script>
 <script src="/js/shared/api.js"></script>
 <script src="/js/shared/auth.js"></script>
 <script src="/js/shared/store.js"></script>
 <script src="/js/shared/ui.js"></script>
+<!-- Dashboard JS -->
 <script src="/js/dashboard/dashboard.js"></script>
+<script src="/js/dashboard/renderer-dashboard.js"></script>
 </body>
 </html>
