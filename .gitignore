@@ -10,25 +10,25 @@ package-lock.json
 *.pem
 *.key
 
-# Backups
+# Backups (all variants)
 *.bak
-*.backup
-*.old
+*.bak-*
+*.bak1
+*.bak2
+*.bak3
+*.bak4
+*.bak5
 
 # Test & Debug scripts (local only)
 test-*.js
 debug*.js
 diagnostic*.js
 verify-credentials.js
-test-all-passwords.js
-test-few-passwords.js
-test-multi-*.js
-test-password-*.js
-test-retry.js
-test-student.js
-
-# Old / experimental
 server-*.js
+*.py
+
+# Old data
+grade-report-data.json
 
 # Logs
 logs/
@@ -51,25 +51,5 @@ build/
 tmp/
 temp/
 
-# Backup files
-*.bak
-*.bak-*
-*.bak2
-*.bak3
-*.bak4
-*.bak5
-*.bak1
-*.bak-noFA
-*.bak-unicode
-*.bak-arrow
-*.bak-info
-*.bak-contact
-
-# Backup files
-*.bak
-*.bak-*
-*.bak1
-*.bak2
-*.bak3
-*.bak4
-*.bak5
+# Unused library
+public/js/lib/
