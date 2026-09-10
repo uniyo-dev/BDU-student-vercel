@@ -381,7 +381,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (criteria.length > 0) {
       let criteriaHtml = '<div style="margin-top:20px;padding:16px;background:white;border-radius:14px;border:2px solid #e3eaf2;">';
-      criteriaHtml += '<div style="font-weight:800;font-size:15px;color:#d97706;margin-bottom:12px;">📊 Placement Criteria (Official)</div>';
+      criteriaHtml += '<div style="font-weight:800;font-size:15px;color:#d97706;margin-bottom:12px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;vertical-align:-3px;display:inline-block;margin-right:6px;"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg>Placement Criteria (Official)</div>';
       
       criteria.forEach(function(c) {
         criteriaHtml += '<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f1f5f9;">';
