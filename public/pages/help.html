@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0B0F19">
+    <meta name="description" content="BD Buddy Help — Frequently asked questions, troubleshooting, and support.">
+    <title>Help & FAQ — BD Buddy</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --brand-violet: #6D28D9;
+            --brand-violet-deep: #4C1D95;
+            --brand-violet-light: #8B5CF6;
+            --brand-gold: #FCD34D;
+            --brand-gold-dark: #F59E0B;
+            --bg-primary: #0B0F19;
+            --bg-surface: #111827;
+            --bg-elevated: #1A2332;
+            --text-primary: #F8FAFC;
+            --text-secondary: #E2E8F0;
+            --text-muted: #94A3B8;
+            --success: #22C55E;
+            --danger: #EC4899;
+            --info: #38BDF8;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.7;
+            min-height: 100vh;
+            background-image:
+                radial-gradient(circle at 20% 10%, rgba(109, 40, 217, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 90%, rgba(245, 158, 11, 0.05) 0%, transparent 50%);
+        }
+
+        .header {
+            text-align: center;
+            padding: 60px 20px 40px;
+        }
+        .header-icon {
+            font-size: 56px;
+            margin-bottom: 16px;
+            display: block;
+        }
+        .header-title {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--brand-gold);
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+        }
+        .header-subtitle {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .container {
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 20px 24px 80px;
+        }
+
+        /* Search */
+        .search-box {
+            position: relative;
+            margin-bottom: 24px;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 16px 20px 16px 50px;
+            background: var(--bg-surface);
+            border: 2px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: inherit;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        .search-box input:focus {
+            border-color: var(--brand-violet);
+            box-shadow: 0 0 0 4px rgba(109, 40, 217, 0.15);
+        }
+        .search-box::before {
+            content: '🔍';
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+            pointer-events: none;
+        }
+
+        /* Category */
+        .category {
+            margin-bottom: 24px;
+        }
+        .category-title {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--brand-gold);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* FAQ Item */
+        .faq {
+            background: var(--bg-surface);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            margin-bottom: 10px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .faq:hover {
+            border-color: rgba(109, 40, 217, 0.4);
+        }
+        .faq-question {
+            padding: 18px 20px;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            user-select: none;
+        }
+        .faq-question::after {
+            content: '+';
+            font-size: 24px;
+            color: var(--brand-violet-light);
+            font-weight: 300;
+            transition: transform 0.3s ease;
+            flex-shrink: 0;
+        }
+        .faq.open .faq-question::after {
+            content: '−';
+            transform: rotate(180deg);
+        }
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            padding: 0 20px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+        .faq.open .faq-answer {
+            max-height: 500px;
+            padding: 0 20px 18px;
+        }
+        .faq-answer strong { color: var(--brand-gold); }
+        .faq-answer code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            padding: 2px 6px;
+            background: var(--bg-elevated);
+            border-radius: 4px;
+            color: var(--brand-violet-light);
+        }
+        .faq-answer ul {
+            margin: 8px 0 8px 20px;
+        }
+        .faq-answer li {
+            margin-bottom: 4px;
+        }
+
+        /* Info box */
+        .info-box {
+            padding: 16px 20px;
+            border-radius: 12px;
+            font-size: 13px;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        .info-box.tip {
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            color: #7DD3FC;
+        }
+        .info-box.warning {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: var(--brand-gold);
+        }
+
+        /* Contact Section */
+        .contact-section {
+            margin-top: 40px;
+            padding: 28px;
+            background: linear-gradient(135deg, rgba(109, 40, 217, 0.15), rgba(236, 72, 153, 0.1));
+            border: 1px solid rgba(109, 40, 217, 0.3);
+            border-radius: 16px;
+            text-align: center;
+        }
+        .contact-section h3 {
+            font-size: 18px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+        .contact-section p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+        .contact-btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: var(--brand-violet);
+            color: #FFFFFF;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+        .contact-btn:hover {
+            background: var(--brand-violet-deep);
+            transform: translateY(-2px);
+        }
+
+        /* Back button */
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 10px 18px;
+            background: var(--brand-violet);
+            color: #FFFFFF;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 700;
+            z-index: 100;
+            box-shadow: 0 4px 15px rgba(109, 40, 217, 0.4);
+            transition: all 0.2s ease;
+        }
+        .back-btn:hover {
+            background: var(--brand-violet-deep);
+            transform: translateX(-3px);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 30px 20px;
+            color: var(--text-muted);
+            font-size: 12px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+    </style>
+</head>
+<body>
+
+    <a href="../index.html" class="back-btn">← Back</a>
+
+    <header class="header">
+        <span class="header-icon">💬</span>
+        <h1 class="header-title">Help & FAQ</h1>
+        <p class="header-subtitle">Everything you need to know about BD Buddy</p>
+    </header>
+
+    <div class="container">
+
+        <!-- Search -->
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Search FAQs..." oninput="filterFAQs()">
+        </div>
+
+        <!-- Getting Started -->
+        <div class="category">
+            <h2 class="category-title">🚀 Getting Started</h2>
+
+            <div class="faq">
+                <div class="faq-question" onclick="toggleFAQ(this)">What is BD Buddy?</div>
+                <div class="faq-answer">
+                    BD Buddy is an unofficial, student-built viewer for the Bahir Dar University student portal. It fetches your real academic data from <code>studentportal.bdu.edu.et</code> and presents it in a clean, fast, mobile-friendly interface.
+                </div>
+            </div>
+
+            <div class="faq">
+                <div class="faq-question" onclick="toggleFAQ(this)">How do I log in?</div>
+                <div class="faq-answer">
+                    Use your <strong>official BDU credentials</strong> — the same username and password you use on <code>studentportal.bdu.edu.et</code>. No separate registration is required.
+                </div>
+            </div>
+
+            <div class="faq">
+                <div class="faq-question" onclick="toggleFAQ(this)">Is BD Buddy free?</div>
+                <div class="faq-answer">
+                    Yes, completely free. No ads, no subscriptions, no hidden fees. Built by a student for students.
+                </div>
+            </div>
+
+            <div class="faq">
+                <div class="faq-question" onclick="toggleFAQ(this)">Can I install it as an app?</div>
+                <div class="faq-answer">
+                    Yes! BD Buddy is a PWA (Progressive Web App).
+                    <ul>
+                        <li><strong>Android/Chrome:</strong> Tap the menu → "Add to Home screen"</li>
+                        <li><strong>iOS/Safari:</strong> Tap Share → "Add to Home Screen"</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Security & Privacy -->
+        <div class="category">
+            <h2 class="category-title">🔒 Security & Privacy</h2>
+
+            <div class="faq">
+                <div class="faq-question" onclick="toggleFAQ(this)">Is my password safe?</div>
+                <div class="faq-answer">
+                    Yes. Your password is forwarded <strong>directly to BDU's official portal</strong> for authentication. It is <strong>never stored</strong> on our servers, never logged, and never shared with anyone.
+                </div>
+            </div>
+
+            <div class="faq">
+                <div class="faq-question" onclick="toggleFAQ(this)">Do you store my grades?</div>
+                <div class="faq-answer">
+                    No. BD Buddy fetches your data on-demand and displays it in your browser. <strong>Nothing is cached</strong> on our servers, and your session data stays on your device.
+                </div>
+            </div>
+
+            <div class="faq">
+                <div class="faq-question" onclick="toggleFAQ(this)">Can BDU see that I'm using BD Buddy?</div>
+                <div class="faq-answer">
+                    BDU sees the same login attempt that it would see if you used the official portal directly. BD Buddy does not bypass any security — it uses the same authentication system.
+                </div>
+            </div>
+
+            <div class="faq">
+                <div class="faq-question" onclick="toggleFAQ(this)">Is BD Buddy affiliated with BDU?</div>
+                <div class="faq-answer">
+                    <strong>No.</strong> BD Buddy is an unofficial, student-built tool. It is not affiliated with, endorsed by, or operated by Bahir Dar University.
+                </div>
+            </div>
+        </div>
+
+        <!-- Using BD Buddy -->
+        <div class="category">
+            <h2 class="category-title">📊 Using BD Buddy</h2>
+
+            <div class="faq">
+                <div class="faq-question" onclick="toggleFAQ(this)">Where is my GPA?</div>
+                <div class="faq-answer">
+                    After login, you'll see your <strong>CGPA</strong> and <strong>semester GPA</strong> on the main dashboard. A detailed grade breakdown (A+, A, B+, B, etc.) is also shown.
+                </div>
+            </div>
+
+            <div class="faq">
+                <div class="faq-question" onclick="toggleFAQ(this)">How do I see my courses?</div>
+                <div class="faq-answer">
+                    Go to the <strong>Dashboard</strong> → your registered courses are listed by semester, with course codes, titles, credit hours, and letter grades.
+                </div>
+            </div>
+
+            <div class="faq">
+                <div class="faq-question" onclick="toggleFAQ(this)">Where are my placement results?</div>
+                <div class="faq-answer">
+                    Click <strong>Placement</strong> in the navigation. You'll see your department placement, priority ranking, and score breakdown.
+                </div>
+            </div>
+
+            <div class="faq">
+                <div class="faq-question" onclick="toggleFAQ(this)">Can I download my transcript?</div>
+                <div class="faq-answer">
+                    A <strong>grade report viewer</strong> is available. Full transcript PDF export is coming soon in a future update.
+                </div>
+            </div>
+        </div>
+
+        <!-- Troubleshooting -->
+        <div class="category">
+            <h2 class="category-title">🔧 Troubleshooting</h2>
+
+            <div class="info-box tip">
+                💡 <strong>Tip:</strong> Before reporting a bug, check if the same issue exists on the official portal at <code>studentportal.bdu.edu.et</code>. If yes, it's a BDU issue.
+            </div>
+
+            <div class="faq">
+                <div class="faq-question" onclick="toggleFAQ(this)">Login isn't working. What should I do?</div>
+                <div class="faq-answer">
+                    Try this checklist:
+                    <ul>
+                        <li>Check your username and password on <code>studentportal.bdu.edu.et</code> first</li>
+                        <li>Make sure you have an active internet connection</li>
+                        <li>Clear your browser cache and try again</li>
+                        <li>Try a different browser (Chrome recommended)</li>
+                        <li>Wait 5 minutes — BDU's portal may be under heavy load</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="faq">
+                <div class="faq-question" onclick="toggleFAQ(this)">My data looks wrong or outdated</div>
+                <div class="faq-answer">
+                    BD Buddy fetches data live from BDU's portal. If it's wrong, BDU's portal is likely wrong too. <strong>Always trust the official portal</strong> if there's any discrepancy. Report the issue to BDU's registrar.
+                </div>
+            </div>
+
+            <div class="faq">
+                <div class="faq-question" onclick="toggleFAQ(this)">The page won't load / blank screen</div>
+                <div class="faq-answer">
+                    Try:
+                    <ul>
+                        <li><strong>Refresh the page</strong> (pull down to refresh on mobile)</li>
+                        <li>Clear your browser cache</li>
+                        <li>Check your internet connection</li>
+                        <li>Close and reopen the app</li>
+                    </ul>
+                    If it still fails, the server may be restarting. Wait 1-2 minutes and try again.
+                </div>
+            </div>
+
+            <div class="faq">
+                <div class="faq-question" onclick="toggleFAQ(this)">I found a bug. How do I report it?</div>
+                <div class="faq-answer">
+                    Before reporting:
+                    <ul>
+                        <li>Check if it also happens at <code>studentportal.bdu.edu.et</code></li>
+                        <li>Note what you were doing when it happened</li>
+                        <li>Take a screenshot if possible</li>
+                    </ul>
+                    Then send it through the contact link below.
+                </div>
+            </div>
+        </div>
+
+        <!-- Coming Soon -->
+        <div class="category">
+            <h2 class="category-title">🚀 Coming Soon</h2>
+
+            <div class="faq">
+                <div class="faq-question" onclick="toggleFAQ(this)">What features are planned?</div>
+                <div class="faq-answer">
+                    <strong>Short term:</strong>
+                    <ul>
+                        <li>Grade report PDF export</li>
+                        <li>Full transcript viewer</li>
+                        <li>Academic calendar integration</li>
+                        <li>Multi-language support (Amharic)</li>
+                        <li>Offline mode</li>
+                    </ul>
+                    <strong>Long term:</strong>
+                    <ul>
+                        <li>GPA calculator</li>
+                        <li>Grade simulator</li>
+                        <li>Course planning tool</li>
+                        <li>Graduation requirement checker</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="faq">
+                <div class="faq-question" onclick="toggleFAQ(this)">Can I suggest a feature?</div>
+                <div class="faq-answer">
+                    Yes! Feature suggestions from students are welcome. Think about how it would help other BDU students, then describe how it would work. Use the contact link below.
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact -->
+        <div class="contact-section">
+            <h3>📞 Still Need Help?</h3>
+            <p>Can't find your answer? Reach out to the developer</p>
+            <a href="/pages/about.html" class="contact-btn">See Contact Info →</a>
+        </div>
+
+    </div>
+
+    <footer class="footer">
+        BD Buddy — Unofficial BDU Portal Viewer
+    </footer>
+
+    <script>
+        // Toggle FAQ open/closed
+        function toggleFAQ(element) {
+            const faq = element.parentElement;
+            faq.classList.toggle('open');
+        }
+
+        // Search filter
+        function filterFAQs() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const faqs = document.querySelectorAll('.faq');
+
+            faqs.forEach(faq => {
+                const text = faq.textContent.toLowerCase();
+                if (text.includes(query)) {
+                    faq.style.display = '';
+                } else {
+                    faq.style.display = 'none';
+                }
+            });
+        }
+
+        // Open first FAQ on load
+        document.addEventListener('DOMContentLoaded', function() {
+            const firstFAQ = document.querySelector('.faq');
+            if (firstFAQ) firstFAQ.classList.add('open');
+        });
+    </script>
+
+
+<!-- BD Buddy Footer Links -->
+<div class="bd-buddy-footer" style="margin-top:24px;padding:20px 16px 28px;border-top:1px solid #e2e8f0;text-align:center;font-size:12px;color:#64748b;">
+  <div style="margin-bottom:10px;">
+    <a href="/" style="color:#2563eb;text-decoration:none;margin:0 8px;font-weight:600;">Home</a>
+    <span style="color:#cbd5e1;">·</span>
+    <a href="/pages/about.html" style="color:#2563eb;text-decoration:none;margin:0 8px;font-weight:600;">About</a>
+    <span style="color:#cbd5e1;">·</span>
+    <a href="/pages/help.html" style="color:#2563eb;text-decoration:none;margin:0 8px;font-weight:600;">Help</a>
+    <span style="color:#cbd5e1;">·</span>
+    <a href="/pages/privacy.html" style="color:#2563eb;text-decoration:none;margin:0 8px;font-weight:600;">Privacy</a>
+    <span style="color:#cbd5e1;">·</span>
+    <a href="/pages/contact.html" style="color:#2563eb;text-decoration:none;margin:0 8px;font-weight:600;">Contact</a>
+    <span style="color:#cbd5e1;">·</span>
+    <a href="/pages/terms.html" style="color:#2563eb;text-decoration:none;margin:0 8px;font-weight:600;">Terms</a>
+  </div>
+  <div style="color:#94a3b8;font-size:11px;">
+    BD Buddy · Unofficial BDU Portal Viewer
+  </div>
+</div>
+
+</body>
+</html>

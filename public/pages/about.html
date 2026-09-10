@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0B0F19">
+    <meta name="description" content="BD Buddy — Your BDU Academic Companion. An unofficial, student-built viewer for the Bahir Dar University student portal.">
+    <title>About — BD Buddy</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --brand-violet: #6D28D9;
+            --brand-violet-deep: #4C1D95;
+            --brand-violet-light: #8B5CF6;
+            --brand-gold: #FCD34D;
+            --brand-gold-dark: #F59E0B;
+            --bg-primary: #0B0F19;
+            --bg-surface: #111827;
+            --bg-elevated: #1A2332;
+            --text-primary: #F8FAFC;
+            --text-secondary: #E2E8F0;
+            --text-muted: #94A3B8;
+            --success: #22C55E;
+            --danger: #EC4899;
+            --info: #38BDF8;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.7;
+            min-height: 100vh;
+            background-image:
+                radial-gradient(circle at 20% 10%, rgba(109, 40, 217, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 90%, rgba(245, 158, 11, 0.05) 0%, transparent 50%);
+        }
+
+        .about-header {
+            text-align: center;
+            padding: 60px 20px 40px;
+            background: linear-gradient(180deg, rgba(109, 40, 217, 0.15) 0%, transparent 100%);
+        }
+        .about-logo {
+            width: 90px;
+            height: 90px;
+            margin: 0 auto 20px;
+            filter: drop-shadow(0 15px 30px rgba(109, 40, 217, 0.5));
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        .about-title {
+            font-size: 36px;
+            font-weight: 900;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #FCD34D, #F59E0B);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+        .about-tagline {
+            font-size: 14px;
+            color: var(--brand-violet-light);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .about-container {
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 20px 24px 80px;
+        }
+
+        .section {
+            background: var(--bg-surface);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 28px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+        .section:hover {
+            border-color: rgba(109, 40, 217, 0.4);
+            transform: translateY(-2px);
+        }
+        .section-title {
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-primary);
+        }
+        .section-title .emoji { font-size: 26px; }
+        .section p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+        .section p strong { color: var(--brand-gold); }
+
+        .feature-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .feature-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--bg-elevated);
+            border-radius: 12px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            transition: all 0.2s ease;
+        }
+        .feature-list li:hover {
+            background: rgba(109, 40, 217, 0.15);
+            color: var(--text-primary);
+        }
+        .feature-list li::before {
+            content: '✓';
+            color: var(--success);
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+        .feature-list li.danger::before {
+            content: '✗';
+            color: var(--danger);
+        }
+
+        .steps {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .step {
+            display: flex;
+            gap: 16px;
+            padding: 16px;
+            background: var(--bg-elevated);
+            border-radius: 12px;
+            border-left: 4px solid var(--brand-violet);
+        }
+        .step-num {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--brand-violet);
+            color: #FFFFFF;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 14px;
+        }
+        .step-content {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+        .step-content strong { color: var(--text-primary); }
+
+        .info-box {
+            padding: 16px 20px;
+            border-radius: 12px;
+            font-size: 13px;
+            margin-top: 12px;
+            line-height: 1.6;
+        }
+        .info-box.warning {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: var(--brand-gold);
+        }
+        .info-box.success {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            color: #86EFAC;
+        }
+
+        .roadmap {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px;
+        }
+        .roadmap-col h4 {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .roadmap-col.done h4 { color: var(--success); }
+        .roadmap-col.soon h4 { color: var(--brand-gold); }
+        .roadmap-col.idea h4 { color: var(--info); }
+        .roadmap-col ul { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+        .roadmap-col li { font-size: 12px; color: var(--text-secondary); padding: 4px 0; }
+
+        .values-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+        }
+        .value-card {
+            text-align: center;
+            padding: 16px 12px;
+            background: var(--bg-elevated);
+            border-radius: 12px;
+        }
+        .value-card .icon { font-size: 24px; margin-bottom: 6px; }
+        .value-card .label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .taglines { display: flex; flex-direction: column; gap: 8px; }
+        .tagline-item {
+            padding: 12px 16px;
+            background: var(--bg-elevated);
+            border-radius: 10px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-style: italic;
+            border-left: 3px solid var(--brand-gold);
+        }
+        .tagline-item.current {
+            border-left-color: var(--brand-violet);
+            background: rgba(109, 40, 217, 0.15);
+            color: var(--text-primary);
+            font-weight: 600;
+            font-style: normal;
+        }
+
+        .vision-box {
+            text-align: center;
+            padding: 32px 24px;
+            background: linear-gradient(135deg, rgba(109, 40, 217, 0.15), rgba(236, 72, 153, 0.1));
+            border: 2px solid rgba(109, 40, 217, 0.3);
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .about-footer {
+            text-align: center;
+            padding: 30px 20px;
+            color: var(--text-muted);
+            font-size: 12px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+        .about-footer strong { color: var(--brand-violet-light); }
+
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 10px 18px;
+            background: var(--brand-violet);
+            color: #FFFFFF;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 700;
+            z-index: 100;
+            box-shadow: 0 4px 15px rgba(109, 40, 217, 0.4);
+            transition: all 0.2s ease;
+        }
+        .back-btn:hover {
+            background: var(--brand-violet-deep);
+            transform: translateX(-3px);
+        }
+    </style>
+</head>
+<body>
+
+    <a href="../index.html" class="back-btn">← Back</a>
+
+    <header class="about-header">
+        <div class="about-logo">
+            <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="bdGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#8B5CF6"/>
+                        <stop offset="100%" stop-color="#4C1D95"/>
+                    </linearGradient>
+                </defs>
+                <rect x="10" y="10" width="180" height="180" rx="45" fill="url(#bdGrad)"/>
+                <rect x="18" y="18" width="164" height="164" rx="36" fill="none" stroke="#FCD34D" stroke-width="1.5" opacity="0.4"/>
+                <g transform="translate(100, 100) scale(6.25) translate(-12, -12)">
+                    <path d="M22 10v6M2 10l10-5 10 5-10 5z" fill="none" stroke="#F8FAFC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M6 12v5c3 3 9 3 12 0v-5" fill="none" stroke="#F8FAFC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </g>
+                <circle cx="100" cy="40" r="5" fill="#FCD34D"/>
+            </svg>
+        </div>
+        <h1 class="about-title">🎓 BD Buddy</h1>
+        <p class="about-tagline">Your BDU Academic Companion</p>
+    </header>
+
+    <div class="about-container">
+
+        <div class="section">
+            <h2 class="section-title"><span class="emoji">📖</span> What is BD Buddy?</h2>
+            <p>BD Buddy is an <strong>unofficial, student-built web application</strong> that gives Bahir Dar University students a cleaner, faster, mobile-friendly way to view their academic data — without the clutter and complexity of the official portal.</p>
+            <p>It doesn't replace the official portal — it's a <strong>viewer</strong> that fetches your real data directly from <strong>studentportal.bdu.edu.et</strong> and presents it in a modern interface.</p>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title"><span class="emoji">⚡</span> Why BD Buddy Exists</h2>
+            <p>The official BDU portal works, but many students find it:</p>
+            <ul class="feature-list" style="margin-top: 12px;">
+                <li class="danger" style="list-style: none;">Hard to read on phones</li>
+                <li class="danger" style="list-style: none;">Slow to navigate</li>
+                <li class="danger" style="list-style: none;">Confusing for finding specific information</li>
+                <li class="danger" style="list-style: none;">Missing a clean GPA overview</li>
+                <li class="danger" style="list-style: none;">Difficult for viewing placement results</li>
+                <li class="danger" style="list-style: none;">Not showing grade breakdowns clearly</li>
+            </ul>
+            <div class="info-box success" style="margin-top: 16px;">
+                <strong>BD Buddy solves all of that.</strong>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title"><span class="emoji">🎯</span> What BD Buddy Does</h2>
+
+            <h4 style="font-size: 14px; color: var(--brand-gold); margin: 16px 0 8px;">📊 Academic Dashboard</h4>
+            <ul class="feature-list">
+                <li>Total semesters, credits, and CGPA at a glance</li>
+                <li>Grade breakdown (A+, A, B+, B, etc.)</li>
+                <li>Rank score calculation</li>
+                <li>Semester-by-semester progress</li>
+            </ul>
+
+            <h4 style="font-size: 14px; color: var(--brand-gold); margin: 20px 0 8px;">📚 Course Details</h4>
+            <ul class="feature-list">
+                <li>All registered courses with codes and titles</li>
+                <li>Letter grades and grade points</li>
+                <li>Credit hours per course</li>
+                <li>Percentage scores where available</li>
+                <li>Organized by semester and academic year</li>
+            </ul>
+
+            <h4 style="font-size: 14px; color: var(--brand-gold); margin: 20px 0 8px;">🏛️ Placement Results</h4>
+            <ul class="feature-list">
+                <li>Department placement outcomes</li>
+                <li>Priority ranking</li>
+                <li>Score breakdown (high school exam, gender, CANG, exam score, etc.)</li>
+                <li>Application status tracking</li>
+                <li>All-student placement list</li>
+            </ul>
+
+            <h4 style="font-size: 14px; color: var(--brand-gold); margin: 20px 0 8px;">👤 Student Profile</h4>
+            <ul class="feature-list">
+                <li>Full name in English and Amharic</li>
+                <li>Student ID, gender, birth date</li>
+                <li>Contact information</li>
+                <li>Enrollment details</li>
+                <li>High school stream</li>
+            </ul>
+
+            <h4 style="font-size: 14px; color: var(--brand-gold); margin: 20px 0 8px;">📱 Progressive Web App (PWA)</h4>
+            <ul class="feature-list">
+                <li>Installable on your phone (add to home screen)</li>
+                <li>Works like a native app</li>
+                <li>Fast and responsive</li>
+                <li>Mobile-first design</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title"><span class="emoji">🔒</span> How It Works — Security First</h2>
+            <p>Your credentials <strong>never leave your device</strong> except to authenticate with BDU's official portal:</p>
+
+            <div class="steps" style="margin-top: 16px;">
+                <div class="step"><div class="step-num">1</div><div class="step-content">You enter your BDU username and password</div></div>
+                <div class="step"><div class="step-num">2</div><div class="step-content">BD Buddy forwards them <strong>directly</strong> to <code>studentportal.bdu.edu.et</code></div></div>
+                <div class="step"><div class="step-num">3</div><div class="step-content">BDU verifies your credentials</div></div>
+                <div class="step"><div class="step-num">4</div><div class="step-content">BD Buddy receives and displays your data</div></div>
+                <div class="step"><div class="step-num">5</div><div class="step-content">Nothing is stored on our servers</div></div>
+            </div>
+
+            <h4 style="font-size: 14px; color: var(--danger); margin: 20px 0 8px;">BD Buddy does NOT:</h4>
+            <ul class="feature-list">
+                <li class="danger" style="list-style: none;">Store your password</li>
+                <li class="danger" style="list-style: none;">Cache your data on the server</li>
+                <li class="danger" style="list-style: none;">Share your information with third parties</li>
+                <li class="danger" style="list-style: none;">Send your credentials anywhere except BDU</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title"><span class="emoji">⚠️</span> Important Disclaimer</h2>
+            <div class="info-box warning">
+                BD Buddy is an <strong>unofficial, student-built tool</strong>. It is <strong>NOT</strong> affiliated with, endorsed by, or operated by Bahir Dar University.
+            </div>
+            <p style="margin-top: 14px;">All academic data is fetched directly from the official BDU portal at <strong>studentportal.bdu.edu.et</strong>. If you notice any discrepancy, <strong>always trust the official portal</strong>.</p>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title"><span class="emoji">🎨</span> Design Philosophy</h2>
+            <div class="values-grid">
+                <div class="value-card"><div class="icon">✨</div><div class="label">Clean</div></div>
+                <div class="value-card"><div class="icon">⚡</div><div class="label">Fast</div></div>
+                <div class="value-card"><div class="icon">📱</div><div class="label">Mobile-first</div></div>
+                <div class="value-card"><div class="icon">♿</div><div class="label">Accessible</div></div>
+                <div class="value-card"><div class="icon">🔒</div><div class="label">Private</div></div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title"><span class="emoji">🛠️</span> Built With</h2>
+            <ul class="feature-list">
+                <li><strong>Backend:</strong> Node.js (plain HTTP server)</li>
+                <li><strong>Frontend:</strong> Vanilla JavaScript + modern CSS</li>
+                <li><strong>Data source:</strong> Official BDU student portal API</li>
+                <li><strong>Hosting:</strong> Render.com</li>
+                <li><strong>Source:</strong> Open-source friendly structure</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title"><span class="emoji">🚀</span> Features Roadmap</h2>
+            <div class="roadmap">
+                <div class="roadmap-col done">
+                    <h4>✅ Available</h4>
+                    <ul>
+                        <li>Secure login with BDU credentials</li>
+                        <li>Biography view</li>
+                        <li>Academic summary with GPA</li>
+                        <li>Course registration details</li>
+                        <li>Placement results</li>
+                        <li>PWA (installable)</li>
+                    </ul>
+                </div>
+                <div class="roadmap-col soon">
+                    <h4>🔜 Coming Soon</h4>
+                    <ul>
+                        <li>Grade report PDF export</li>
+                        <li>Transcript viewer</li>
+                        <li>Academic calendar integration</li>
+                        <li>Dormitory status</li>
+                        <li>Withdrawal summary</li>
+                        <li>Multi-language support (Amharic)</li>
+                        <li>Offline mode</li>
+                        <li>Dark mode</li>
+                    </ul>
+                </div>
+                <div class="roadmap-col idea">
+                    <h4>💡 Future Ideas</h4>
+                    <ul>
+                        <li>GPA calculator</li>
+                        <li>Grade simulator ("what if I get an A?")</li>
+                        <li>Course planning tool</li>
+                        <li>Graduation requirement checker</li>
+                        <li>Peer comparison (anonymized)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title"><span class="emoji">👥</span> Who Is It For?</h2>
+            <p>Every BDU student who wants:</p>
+            <ul class="feature-list" style="margin-top: 12px;">
+                <li>A better way to view their academic records</li>
+                <li>A quick GPA check on their phone</li>
+                <li>Faster access to placement results</li>
+                <li>A clean interface without the clutter</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title"><span class="emoji">🐛</span> Report Issues or Suggest Features</h2>
+            <p>Since BD Buddy is student-built, <strong>feedback from students is essential</strong>.</p>
+
+            <h4 style="font-size: 14px; color: var(--brand-gold); margin: 16px 0 8px;">Found a bug?</h4>
+            <ul class="feature-list">
+                <li>Check if the issue also exists at <code>studentportal.bdu.edu.et</code></li>
+                <li>If yes, it's likely a BDU portal issue, not BD Buddy's</li>
+                <li>If no, it's a BD Buddy bug — report it</li>
+            </ul>
+
+            <h4 style="font-size: 14px; color: var(--brand-gold); margin: 20px 0 8px;">Have a feature idea?</h4>
+            <ul class="feature-list">
+                <li>Think about how it would help other students</li>
+                <li>Describe how it would work</li>
+                <li>Submit it for consideration</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title"><span class="emoji">📜</span> Legal & Ethics</h2>
+            <p>BD Buddy is built on these principles:</p>
+            <ul class="feature-list" style="margin-top: 12px;">
+                <li><strong>Transparency</strong> — Open about what it does and doesn't do</li>
+                <li><strong>Privacy</strong> — Never stores or shares student data</li>
+                <li><strong>Respect</strong> — Respects BDU's systems and rate limits</li>
+                <li><strong>Non-commercial</strong> — Free, no ads, no monetization</li>
+                <li><strong>Student-first</strong> — Built by students, for students</li>
+            </ul>
+
+            <h4 style="font-size: 14px; color: var(--danger); margin: 20px 0 8px;">BD Buddy does NOT:</h4>
+            <ul class="feature-list">
+                <li class="danger" style="list-style: none;">Bypass BDU security</li>
+                <li class="danger" style="list-style: none;">Cache data for other users</li>
+                <li class="danger" style="list-style: none;">Sell or share student information</li>
+                <li class="danger" style="list-style: none;">Pose as the official BDU portal</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title"><span class="emoji">🏫</span> About Bahir Dar University</h2>
+            <p>Bahir Dar University (BDU) is one of Ethiopia's leading higher education institutions, located in Bahir Dar, in the Amhara region. It serves tens of thousands of students across multiple campuses with programs in engineering, sciences, humanities, business, law, and health sciences.</p>
+            <p>The official portal at <strong>studentportal.bdu.edu.et</strong> is the authoritative source for all student data.</p>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title"><span class="emoji">🎯</span> Vision</h2>
+            <div class="vision-box">
+                Every BDU student should be able to check their academic progress <strong>in under 10 seconds</strong>, from any device, with a beautiful interface.
+                <br><br>
+                That's the standard BD Buddy is building toward.
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title"><span class="emoji">🎓</span> Tagline Options</h2>
+            <div class="taglines">
+                <div class="tagline-item current">"Your BDU Academic Companion" ← current</div>
+                <div class="tagline-item">"BDU data, beautifully organized"</div>
+                <div class="tagline-item">"See your academic journey clearly"</div>
+                <div class="tagline-item">"The student portal, reimagined"</div>
+                <div class="tagline-item">"Your grades. Your way."</div>
+                <div class="tagline-item">"Fast. Clean. Yours."</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title"><span class="emoji">📞</span> Contact</h2>
+            <ul class="feature-list">
+                <li><strong>Developer:</strong> Chalachew Agegn</li>
+                <li><strong>Phone:</strong> <a href="tel:0923093416" style="color: var(--brand-violet-light);">0923093416</a></li>
+                <li><strong>Telegram:</strong> <a href="https://t.me/challengepr" target="_blank" style="color: var(--brand-violet-light);">@challengepr</a></li>
+                <li><strong>Email:</strong> <a href="mailto:chalachewagegn7@gmail.com" style="color: var(--brand-violet-light);">chalachewagegn7@gmail.com</a></li>
+                <li><strong>Purpose:</strong> Making student life easier</li>
+                <li><strong>Motto:</strong> Your academic companion</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title"><span class="emoji">💙</span> Acknowledgments</h2>
+            <ul class="feature-list">
+                <li><strong>Bahir Dar University</strong> — For maintaining the official student portal</li>
+                <li><strong>BDU IT Department</strong> — For the API infrastructure</li>
+                <li><strong>Fellow Students</strong> — For testing and feedback</li>
+                <li><strong>Open Source Community</strong> — For the tools that made this possible</li>
+            </ul>
+        </div>
+
+    </div>
+
+    <footer class="about-footer">
+        <p><strong>BD Buddy</strong> — Your BDU Academic Companion</p>
+        <p style="margin-top: 6px;">Not affiliated with Bahir Dar University</p>
+    </footer>
+
+
+<!-- BD Buddy Footer Links -->
+<div class="bd-buddy-footer" style="margin-top:24px;padding:20px 16px 28px;border-top:1px solid #e2e8f0;text-align:center;font-size:12px;color:#64748b;">
+  <div style="margin-bottom:10px;">
+    <a href="/" style="color:#2563eb;text-decoration:none;margin:0 8px;font-weight:600;">Home</a>
+    <span style="color:#cbd5e1;">·</span>
+    <a href="/pages/about.html" style="color:#2563eb;text-decoration:none;margin:0 8px;font-weight:600;">About</a>
+    <span style="color:#cbd5e1;">·</span>
+    <a href="/pages/help.html" style="color:#2563eb;text-decoration:none;margin:0 8px;font-weight:600;">Help</a>
+    <span style="color:#cbd5e1;">·</span>
+    <a href="/pages/privacy.html" style="color:#2563eb;text-decoration:none;margin:0 8px;font-weight:600;">Privacy</a>
+    <span style="color:#cbd5e1;">·</span>
+    <a href="/pages/contact.html" style="color:#2563eb;text-decoration:none;margin:0 8px;font-weight:600;">Contact</a>
+    <span style="color:#cbd5e1;">·</span>
+    <a href="/pages/terms.html" style="color:#2563eb;text-decoration:none;margin:0 8px;font-weight:600;">Terms</a>
+  </div>
+  <div style="color:#94a3b8;font-size:11px;">
+    BD Buddy · Unofficial BDU Portal Viewer
+  </div>
+</div>
+
+</body>
+</html>

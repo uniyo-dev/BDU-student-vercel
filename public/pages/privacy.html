@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0B0F19">
+    <meta name="description" content="BD Buddy Privacy Policy — What we collect, what we don't, and how your data is handled.">
+    <title>Privacy Policy — BD Buddy</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --brand-violet: #6D28D9;
+            --brand-violet-deep: #4C1D95;
+            --brand-violet-light: #8B5CF6;
+            --brand-gold: #FCD34D;
+            --brand-gold-dark: #F59E0B;
+            --bg-primary: #0B0F19;
+            --bg-surface: #111827;
+            --bg-elevated: #1A2332;
+            --text-primary: #F8FAFC;
+            --text-secondary: #E2E8F0;
+            --text-muted: #94A3B8;
+            --success: #22C55E;
+            --danger: #EC4899;
+            --info: #38BDF8;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.7;
+            min-height: 100vh;
+            background-image:
+                radial-gradient(circle at 20% 10%, rgba(109, 40, 217, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 90%, rgba(245, 158, 11, 0.05) 0%, transparent 50%);
+        }
+
+        .header {
+            text-align: center;
+            padding: 60px 20px 40px;
+        }
+        .header-icon {
+            font-size: 56px;
+            margin-bottom: 16px;
+            display: block;
+        }
+        .header-title {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--brand-gold);
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+        }
+        .header-subtitle {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+        .header-date {
+            display: inline-block;
+            margin-top: 12px;
+            padding: 6px 14px;
+            background: var(--bg-elevated);
+            border-radius: 20px;
+            font-size: 11px;
+            color: var(--brand-violet-light);
+            font-weight: 600;
+        }
+
+        .container {
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 20px 24px 80px;
+        }
+
+        /* TL;DR Box */
+        .tldr {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(56, 189, 248, 0.1));
+            border: 2px solid rgba(34, 197, 94, 0.4);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 28px;
+        }
+        .tldr h3 {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--success);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .tldr ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .tldr li {
+            font-size: 13px;
+            color: var(--text-secondary);
+            padding-left: 24px;
+            position: relative;
+            line-height: 1.6;
+        }
+        .tldr li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--success);
+            font-weight: 800;
+        }
+
+        /* Section */
+        .section {
+            background: var(--bg-surface);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 16px;
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: 800;
+            margin-bottom: 14px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section-title .num {
+            display: inline-flex;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--brand-violet);
+            color: #FFFFFF;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+        .section p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+        .section p strong { color: var(--brand-gold); }
+        .section code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            padding: 2px 6px;
+            background: var(--bg-elevated);
+            border-radius: 4px;
+            color: var(--brand-violet-light);
+        }
+        .section ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .section ul li {
+            font-size: 13px;
+            color: var(--text-secondary);
+            padding-left: 24px;
+            position: relative;
+            line-height: 1.6;
+        }
+        .section ul li::before {
+            content: '•';
+            position: absolute;
+            left: 8px;
+            color: var(--brand-violet-light);
+            font-weight: 800;
+            font-size: 16px;
+        }
+        .section ul li.yes::before {
+            content: '✓';
+            color: var(--success);
+            font-size: 13px;
+        }
+        .section ul li.no::before {
+            content: '✗';
+            color: var(--danger);
+            font-size: 13px;
+        }
+
+        /* Data Table */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+            font-size: 13px;
+        }
+        .data-table th {
+            text-align: left;
+            padding: 12px;
+            background: var(--bg-elevated);
+            color: var(--brand-gold);
+            font-weight: 700;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .data-table th:first-child { border-radius: 10px 0 0 0; }
+        .data-table th:last-child { border-radius: 0 10px 0 0; }
+        .data-table td {
+            padding: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+        }
+        .data-table td strong { color: var(--text-primary); }
+
+        /* Highlight Box */
+        .highlight {
+            padding: 16px 20px;
+            border-radius: 12px;
+            font-size: 13px;
+            margin-top: 12px;
+            line-height: 1.6;
+        }
+        .highlight.success {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            color: #86EFAC;
+        }
+        .highlight.warning {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: var(--brand-gold);
+        }
+
+        /* Contact */
+        .contact-box {
+            text-align: center;
+            padding: 32px 24px;
+            background: linear-gradient(135deg, rgba(109, 40, 217, 0.15), rgba(236, 72, 153, 0.1));
+            border: 2px solid rgba(109, 40, 217, 0.3);
+            border-radius: 16px;
+            margin-top: 28px;
+        }
+        .contact-box h3 {
+            font-size: 18px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+        .contact-box p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+        .contact-btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: var(--brand-violet);
+            color: #FFFFFF;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+        .contact-btn:hover {
+            background: var(--brand-violet-deep);
+            transform: translateY(-2px);
+        }
+
+        /* Back button */
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 10px 18px;
+            background: var(--brand-violet);
+            color: #FFFFFF;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 700;
+            z-index: 100;
+            box-shadow: 0 4px 15px rgba(109, 40, 217, 0.4);
+            transition: all 0.2s ease;
+        }
+        .back-btn:hover {
+            background: var(--brand-violet-deep);
+            transform: translateX(-3px);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 30px 20px;
+            color: var(--text-muted);
+            font-size: 12px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+    </style>
+</head>
+<body>
+
+    <a href="../index.html" class="back-btn">← Back</a>
+
+    <header class="header">
+        <span class="header-icon">🔒</span>
+        <h1 class="header-title">Privacy Policy</h1>
+        <p class="header-subtitle">How BD Buddy handles your data</p>
+        <span class="header-date">Last updated: January 2025</span>
+    </header>
+
+    <div class="container">
+
+        <!-- TL;DR -->
+        <div class="tldr">
+            <h3>⚡ The Short Version (TL;DR)</h3>
+            <ul>
+                <li>We <strong>never store your password</strong></li>
+                <li>We <strong>never cache your academic data</strong></li>
+                <li>We <strong>never share your information</strong> with anyone</li>
+                <li>Your credentials go <strong>directly to BDU's official portal</strong></li>
+                <li>We don't use analytics, ads, or tracking of any kind</li>
+            </ul>
+        </div>
+
+        <!-- 1. What is BD Buddy -->
+        <div class="section">
+            <div class="section-title"><span class="num">1</span> What BD Buddy Is</div>
+            <p>BD Buddy is an <strong>unofficial, student-built viewer</strong> for the Bahir Dar University student portal at <code>studentportal.bdu.edu.et</code>.</p>
+            <p>It is <strong>not affiliated</strong> with Bahir Dar University, and it is not an official BDU service. It simply retrieves your real academic data from BDU's portal and displays it in a cleaner interface.</p>
+        </div>
+
+        <!-- 2. Information We Collect -->
+        <div class="section">
+            <div class="section-title"><span class="num">2</span> Information We Collect</div>
+            <p>BD Buddy collects <strong>only what's strictly necessary</strong> to authenticate you with BDU's portal:</p>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Data Type</th>
+                        <th>Collected?</th>
+                        <th>Purpose</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>BDU Username</strong></td>
+                        <td style="color: var(--brand-gold);">Yes (temporary)</td>
+                        <td>Sent to BDU to log you in</td>
+                    </tr>
+                    <tr>
+                        <td><strong>BDU Password</strong></td>
+                        <td style="color: var(--brand-gold);">Yes (in-memory only)</td>
+                        <td>Sent to BDU to log you in</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Academic Data</strong></td>
+                        <td style="color: var(--brand-gold);">Yes (displayed only)</td>
+                        <td>Shown in your browser</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Session Cookie</strong></td>
+                        <td style="color: var(--success);">Yes (local)</td>
+                        <td>Keeps you logged in during your visit</td>
+                    </tr>
+                    <tr>
+                        <td>Email / Phone</td>
+                        <td style="color: var(--danger);">No</td>
+                        <td>—</td>
+                    </tr>
+                    <tr>
+                        <td>Location Data</td>
+                        <td style="color: var(--danger);">No</td>
+                        <td>—</td>
+                    </tr>
+                    <tr>
+                        <td>Device Fingerprint</td>
+                        <td style="color: var(--danger);">No</td>
+                        <td>—</td>
+                    </tr>
+                    <tr>
+                        <td>Analytics / Tracking</td>
+                        <td style="color: var(--danger);">No</td>
+                        <td>—</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 3. How We Handle Your Password -->
+        <div class="section">
+            <div class="section-title"><span class="num">3</span> How We Handle Your Password</div>
+            <div class="highlight success">
+                🔐 Your BDU password is used <strong>only</strong> to authenticate with BDU's official portal. It is never stored, logged, or shared.
+            </div>
+            <p style="margin-top: 14px;">Here's exactly what happens when you log in:</p>
+            <ul>
+                <li class="yes">You type your username and password into BD Buddy</li>
+                <li class="yes">BD Buddy sends them <strong>directly</strong> to <code>studentportal.bdu.edu.et</code></li>
+                <li class="yes">BDU verifies your credentials and returns your data</li>
+                <li class="yes">BD Buddy displays the data in your browser</li>
+                <li class="no">Your password is <strong>never saved to disk</strong></li>
+                <li class="no">Your password is <strong>never sent anywhere else</strong></li>
+                <li class="no">Your password is <strong>never visible</strong> to the developer</li>
+            </ul>
+        </div>
+
+        <!-- 4. Data Storage -->
+        <div class="section">
+            <div class="section-title"><span class="num">4</span> Data Storage</div>
+            <p><strong>Server side:</strong> BD Buddy does <strong>not</strong> store any student data on its servers. Each request is processed in memory and discarded immediately after the response is sent.</p>
+            <p><strong>Client side (your browser):</strong> The following data may be stored <strong>locally on your device</strong>:</p>
+            <ul>
+                <li class="yes">A <strong>session cookie</strong> (to keep you logged in during your visit)</li>
+                <li class="yes">Your <strong>theme preference</strong> (light/dark mode) — if applicable</li>
+                <li class="yes">Your <strong>language preference</strong> — if applicable</li>
+            </ul>
+            <p style="margin-top: 12px;">These are stored only on your device. You can clear them at any time from your browser settings.</p>
+        </div>
+
+        <!-- 5. Third Parties -->
+        <div class="section">
+            <div class="section-title"><span class="num">5</span> Third-Party Services</div>
+            <p>BD Buddy uses <strong>minimal third-party services</strong>:</p>
+            <ul>
+                <li class="yes"><strong>Google Fonts</strong> — For typography (no personal data shared)</li>
+                <li class="yes"><strong>Render.com</strong> — For hosting (see their <a href="https://render.com/privacy" target="_blank" style="color: var(--brand-violet-light);">Privacy Policy</a>)</li>
+                <li class="no"><strong>No analytics</strong> (no Google Analytics, no Plausible, etc.)</li>
+                <li class="no"><strong>No ads</strong> (no AdSense, no ad networks)</li>
+                <li class="no"><strong>No tracking pixels</strong></li>
+                <li class="no"><strong>No social media pixels</strong></li>
+            </ul>
+        </div>
+
+        <!-- 6. Your Rights -->
+        <div class="section">
+            <div class="section-title"><span class="num">6</span> Your Rights</div>
+            <p>You have complete control over your data:</p>
+            <ul>
+                <li class="yes"><strong>Log out at any time</strong> to clear your session</li>
+                <li class="yes"><strong>Clear browser data</strong> to remove all local storage</li>
+                <li class="yes"><strong>Use BD Buddy anonymously</strong> — no registration required</li>
+                <li class="yes"><strong>Stop using BD Buddy</strong> at any time</li>
+            </ul>
+        </div>
+
+        <!-- 7. Security -->
+        <div class="section">
+            <div class="section-title"><span class="num">7</span> Security</div>
+            <p>BD Buddy uses <strong>HTTPS encryption</strong> for all connections. Your login credentials and academic data are encrypted in transit between your browser, BD Buddy, and BDU's portal.</p>
+            <div class="highlight warning">
+                ⚠️ <strong>Important:</strong> No system is 100% secure. If you have concerns about your BDU account security, contact BDU's IT department directly.
+            </div>
+        </div>
+
+        <!-- 8. Children's Privacy -->
+        <div class="section">
+            <div class="section-title"><span class="num">8</span> Children's Privacy</div>
+            <p>BD Buddy is designed for university students. It does not knowingly collect data from anyone under the age of 16. If you are under 16, please use the official BDU portal instead.</p>
+        </div>
+
+        <!-- 9. Changes -->
+        <div class="section">
+            <div class="section-title"><span class="num">9</span> Changes to This Policy</div>
+            <p>This privacy policy may be updated from time to time. Any changes will be posted on this page with an updated "Last updated" date.</p>
+            <p>Continued use of BD Buddy after changes means you accept the updated policy.</p>
+        </div>
+
+        <!-- 10. Contact -->
+        <div class="section">
+            <div class="section-title"><span class="num">10</span> Contact</div>
+            <p>For privacy questions or concerns:</p>
+            <ul>
+                <li>Visit the <a href="/pages/about.html" style="color: var(--brand-violet-light);">About page</a></li>
+                <li>Report issues via the developer contact on the About page</li>
+            </ul>
+        </div>
+
+        <!-- Contact Box -->
+        <div class="contact-box">
+            <h3>🔒 Your Privacy Matters</h3>
+            <p>If anything in this policy is unclear, or if you have concerns, reach out</p>
+            <a href="/pages/about.html" class="contact-btn">Contact Developer →</a>
+        </div>
+
+    </div>
+
+    <footer class="footer">
+        BD Buddy — Unofficial BDU Portal Viewer<br>
+        <span style="font-size: 11px;">Last updated: January 2025</span>
+    </footer>
+
+
+<!-- BD Buddy Footer Links -->
+<div class="bd-buddy-footer" style="margin-top:24px;padding:20px 16px 28px;border-top:1px solid #e2e8f0;text-align:center;font-size:12px;color:#64748b;">
+  <div style="margin-bottom:10px;">
+    <a href="/" style="color:#2563eb;text-decoration:none;margin:0 8px;font-weight:600;">Home</a>
+    <span style="color:#cbd5e1;">·</span>
+    <a href="/pages/about.html" style="color:#2563eb;text-decoration:none;margin:0 8px;font-weight:600;">About</a>
+    <span style="color:#cbd5e1;">·</span>
+    <a href="/pages/help.html" style="color:#2563eb;text-decoration:none;margin:0 8px;font-weight:600;">Help</a>
+    <span style="color:#cbd5e1;">·</span>
+    <a href="/pages/privacy.html" style="color:#2563eb;text-decoration:none;margin:0 8px;font-weight:600;">Privacy</a>
+    <span style="color:#cbd5e1;">·</span>
+    <a href="/pages/contact.html" style="color:#2563eb;text-decoration:none;margin:0 8px;font-weight:600;">Contact</a>
+    <span style="color:#cbd5e1;">·</span>
+    <a href="/pages/terms.html" style="color:#2563eb;text-decoration:none;margin:0 8px;font-weight:600;">Terms</a>
+  </div>
+  <div style="color:#94a3b8;font-size:11px;">
+    BD Buddy · Unofficial BDU Portal Viewer
+  </div>
+</div>
+
+</body>
+</html>

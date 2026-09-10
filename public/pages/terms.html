@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0B0F19">
+    <meta name="description" content="BD Buddy Terms of Use — The rules and conditions for using the unofficial BDU portal viewer.">
+    <title>Terms of Use — BD Buddy</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --brand-violet: #6D28D9;
+            --brand-violet-deep: #4C1D95;
+            --brand-violet-light: #8B5CF6;
+            --brand-gold: #FCD34D;
+            --brand-gold-dark: #F59E0B;
+            --bg-primary: #0B0F19;
+            --bg-surface: #111827;
+            --bg-elevated: #1A2332;
+            --text-primary: #F8FAFC;
+            --text-secondary: #E2E8F0;
+            --text-muted: #94A3B8;
+            --success: #22C55E;
+            --danger: #EC4899;
+            --info: #38BDF8;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.7;
+            min-height: 100vh;
+            background-image:
+                radial-gradient(circle at 20% 10%, rgba(109, 40, 217, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 90%, rgba(245, 158, 11, 0.05) 0%, transparent 50%);
+        }
+
+        .header {
+            text-align: center;
+            padding: 60px 20px 40px;
+        }
+        .header-icon {
+            font-size: 56px;
+            margin-bottom: 16px;
+            display: block;
+        }
+        .header-title {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--brand-gold);
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+        }
+        .header-subtitle {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+        .header-date {
+            display: inline-block;
+            margin-top: 12px;
+            padding: 6px 14px;
+            background: var(--bg-elevated);
+            border-radius: 20px;
+            font-size: 11px;
+            color: var(--brand-violet-light);
+            font-weight: 600;
+        }
+
+        .container {
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 20px 24px 80px;
+        }
+
+        /* TL;DR Box */
+        .tldr {
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.15), rgba(109, 40, 217, 0.1));
+            border: 2px solid rgba(56, 189, 248, 0.4);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 28px;
+        }
+        .tldr h3 {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--info);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .tldr ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .tldr li {
+            font-size: 13px;
+            color: var(--text-secondary);
+            padding-left: 24px;
+            position: relative;
+            line-height: 1.6;
+        }
+        .tldr li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--info);
+            font-weight: 800;
+        }
+
+        /* Section */
+        .section {
+            background: var(--bg-surface);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 16px;
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: 800;
+            margin-bottom: 14px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section-title .num {
+            display: inline-flex;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--brand-violet);
+            color: #FFFFFF;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+        .section p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+        .section p strong { color: var(--brand-gold); }
+        .section code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            padding: 2px 6px;
+            background: var(--bg-elevated);
+            border-radius: 4px;
+            color: var(--brand-violet-light);
+        }
+        .section ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .section ul li {
+            font-size: 13px;
+            color: var(--text-secondary);
+            padding-left: 24px;
+            position: relative;
+            line-height: 1.6;
+        }
+        .section ul li::before {
+            content: '•';
+            position: absolute;
+            left: 8px;
+            color: var(--brand-violet-light);
+            font-weight: 800;
+            font-size: 16px;
+        }
+        .section ul li.yes::before {
+            content: '✓';
+            color: var(--success);
+            font-size: 13px;
+        }
+        .section ul li.no::before {
+            content: '✗';
+            color: var(--danger);
+            font-size: 13px;
+        }
+        .section ul li.warn::before {
+            content: '⚠';
+            color: var(--brand-gold);
+            font-size: 13px;
+        }
+
+        /* Highlight Box */
+        .highlight {
+            padding: 16px 20px;
+            border-radius: 12px;
+            font-size: 13px;
+            margin-top: 12px;
+            line-height: 1.6;
+        }
+        .highlight.success {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            color: #86EFAC;
+        }
+        .highlight.warning {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: var(--brand-gold);
+        }
+        .highlight.danger {
+            background: rgba(236, 72, 153, 0.1);
+            border: 1px solid rgba(236, 72, 153, 0.3);
+            color: #F9A8D4;
+        }
+
+        /* Contact */
+        .contact-box {
+            text-align: center;
+            padding: 32px 24px;
+            background: linear-gradient(135deg, rgba(109, 40, 217, 0.15), rgba(236, 72, 153, 0.1));
+            border: 2px solid rgba(109, 40, 217, 0.3);
+            border-radius: 16px;
+            margin-top: 28px;
+        }
+        .contact-box h3 {
+            font-size: 18px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+        .contact-box p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+        .contact-btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: var(--brand-violet);
+            color: #FFFFFF;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+        .contact-btn:hover {
+            background: var(--brand-violet-deep);
+            transform: translateY(-2px);
+        }
+
+        /* Back button */
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 10px 18px;
+            background: var(--brand-violet);
+            color: #FFFFFF;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 700;
+            z-index: 100;
+            box-shadow: 0 4px 15px rgba(109, 40, 217, 0.4);
+            transition: all 0.2s ease;
+        }
+        .back-btn:hover {
+            background: var(--brand-violet-deep);
+            transform: translateX(-3px);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 30px 20px;
+            color: var(--text-muted);
+            font-size: 12px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+    </style>
+</head>
+<body>
+
+    <a href="../index.html" class="back-btn">← Back</a>
+
+    <header class="header">
+        <span class="header-icon">📜</span>
+        <h1 class="header-title">Terms of Use</h1>
+        <p class="header-subtitle">The rules for using BD Buddy</p>
+        <span class="header-date">Last updated: January 2025</span>
+    </header>
+
+    <div class="container">
+
+        <!-- TL;DR -->
+        <div class="tldr">
+            <h3>⚡ The Short Version (TL;DR)</h3>
+            <ul>
+                <li>Use BD Buddy responsibly and at your own risk</li>
+                <li>It's <strong>unofficial</strong> — not affiliated with BDU</li>
+                <li>It's <strong>free</strong> — no warranty, no guarantee</li>
+                <li>Always trust the <strong>official portal</strong> if there's a discrepancy</li>
+                <li>Use your own credentials — <strong>don't share accounts</strong></li>
+            </ul>
+        </div>
+
+        <!-- 1. Acceptance -->
+        <div class="section">
+            <div class="section-title"><span class="num">1</span> Acceptance of Terms</div>
+            <p>By accessing or using BD Buddy, you agree to these Terms of Use. If you do not agree with any part of these terms, please <strong>do not use BD Buddy</strong>.</p>
+            <p>These terms apply to all visitors, students, and anyone who accesses BD Buddy.</p>
+        </div>
+
+        <!-- 2. Description of Service -->
+        <div class="section">
+            <div class="section-title"><span class="num">2</span> What BD Buddy Is</div>
+            <p>BD Buddy is a <strong>free, unofficial, student-built viewer</strong> for the Bahir Dar University student portal at <code>studentportal.bdu.edu.et</code>.</p>
+            <p>BD Buddy <strong>does not</strong> provide academic services. It simply displays data retrieved from BDU's official portal in a cleaner interface.</p>
+            <div class="highlight warning">
+                ⚠️ BD Buddy is <strong>NOT</strong> affiliated with, endorsed by, or operated by Bahir Dar University.
+            </div>
+        </div>
+
+        <!-- 3. Eligibility -->
+        <div class="section">
+            <div class="section-title"><span class="num">3</span> Eligibility</div>
+            <p>To use BD Buddy, you must:</p>
+            <ul>
+                <li class="yes">Be an active student or authorized user of Bahir Dar University</li>
+                <li class="yes">Have valid BDU credentials (username and password)</li>
+                <li class="yes">Be at least 16 years old</li>
+                <li class="yes">Agree to use BD Buddy only for lawful, personal, non-commercial purposes</li>
+            </ul>
+        </div>
+
+        <!-- 4. Your Account -->
+        <div class="section">
+            <div class="section-title"><span class="num">4</span> Your Account & Credentials</div>
+            <p>You are responsible for:</p>
+            <ul>
+                <li class="yes">Keeping your BDU credentials <strong>secret</strong></li>
+                <li class="yes">All activity that happens under your account</li>
+                <li class="yes">Notifying BDU immediately if you suspect unauthorized access</li>
+                <li class="no"><strong>Not sharing your credentials</strong> with others</li>
+                <li class="no"><strong>Not using BD Buddy to access another student's account</strong></li>
+                <li class="no"><strong>Not automating logins</strong> or scraping data in bulk</li>
+            </ul>
+        </div>
+
+        <!-- 5. Acceptable Use -->
+        <div class="section">
+            <div class="section-title"><span class="num">5</span> Acceptable Use</div>
+            <p>You agree <strong>NOT</strong> to:</p>
+            <ul>
+                <li class="no">Use BD Buddy for any illegal purpose</li>
+                <li class="no">Attempt to bypass BDU's security systems</li>
+                <li class="no">Reverse-engineer, copy, or redistribute BD Buddy's code without permission</li>
+                <li class="no">Use BD Buddy to spam, harass, or harm others</li>
+                <li class="no">Automate access in a way that overloads BDU's servers</li>
+                <li class="no">Misrepresent BD Buddy as an official BDU service</li>
+                <li class="no">Use BD Buddy for commercial purposes</li>
+            </ul>
+            <div class="highlight danger">
+                🚫 Violating these rules may result in your access being blocked and, in severe cases, referral to BDU's authorities.
+            </div>
+        </div>
+
+        <!-- 6. Intellectual Property -->
+        <div class="section">
+            <div class="section-title"><span class="num">6</span> Intellectual Property</div>
+            <p><strong>BD Buddy's code, design, and content</strong> are the property of the developer. You may not copy, modify, or distribute them without permission.</p>
+            <p><strong>Your academic data</strong> belongs to you and BDU. BD Buddy does not claim ownership over your data.</p>
+        </div>
+
+        <!-- 7. Disclaimer of Warranties -->
+        <div class="section">
+            <div class="section-title"><span class="num">7</span> Disclaimer of Warranties</div>
+            <div class="highlight warning">
+                ⚠️ BD Buddy is provided <strong>"as is"</strong> and <strong>"as available"</strong>, without any warranties of any kind.
+            </div>
+            <p style="margin-top: 14px;">We do <strong>not</strong> guarantee:</p>
+            <ul>
+                <li class="no">That BD Buddy will always be available or error-free</li>
+                <li class="no">That the data shown is 100% accurate or up-to-date</li>
+                <li class="no">That BD Buddy will meet your specific needs</li>
+                <li class="no">That your data will always be secure (no system is 100% secure)</li>
+            </ul>
+            <p style="margin-top: 12px;">Always verify critical information (grades, placement, transcripts) with the <strong>official BDU portal</strong>.</p>
+        </div>
+
+        <!-- 8. Limitation of Liability -->
+        <div class="section">
+            <div class="section-title"><span class="num">8</span> Limitation of Liability</div>
+            <p>To the maximum extent permitted by law, the developer of BD Buddy is <strong>not liable</strong> for:</p>
+            <ul>
+                <li class="no">Any loss of data, grades, or academic records</li>
+                <li class="no">Any missed deadlines or academic consequences</li>
+                <li class="no">Any inaccurate information displayed by BD Buddy</li>
+                <li class="no">Any interruption or unavailability of the service</li>
+                <li class="no">Any damages arising from your use of BD Buddy</li>
+            </ul>
+            <p style="margin-top: 12px;">You use BD Buddy <strong>at your own risk</strong>.</p>
+        </div>
+
+        <!-- 9. Accuracy of Information -->
+        <div class="section">
+            <div class="section-title"><span class="num">9</span> Accuracy of Information</div>
+            <p>All data shown by BD Buddy is fetched <strong>directly from BDU's official portal</strong>. If you notice any discrepancy:</p>
+            <ul>
+                <li class="warn">Always trust the <strong>official portal</strong></li>
+                <li class="warn">Report the issue to <strong>BDU's registrar</strong></li>
+                <li class="warn">Do not rely solely on BD Buddy for critical decisions</li>
+            </ul>
+        </div>
+
+        <!-- 10. Service Modifications -->
+        <div class="section">
+            <div class="section-title"><span class="num">10</span> Service Modifications</div>
+            <p>The developer reserves the right to:</p>
+            <ul>
+                <li class="yes">Modify or discontinue BD Buddy at any time</li>
+                <li class="yes">Add or remove features without notice</li>
+                <li class="yes">Restrict access to certain users or regions</li>
+                <li class="yes">Update these Terms of Use at any time</li>
+            </ul>
+            <p style="margin-top: 12px;">Continued use after changes means you accept the updated terms.</p>
+        </div>
+
+        <!-- 11. Termination -->
+        <div class="section">
+            <div class="section-title"><span class="num">11</span> Termination</div>
+            <p>You may stop using BD Buddy at any time. The developer may also terminate or restrict your access if you violate these terms.</p>
+            <p>Upon termination, sections 6 (Intellectual Property), 7 (Disclaimer), and 8 (Limitation of Liability) survive.</p>
+        </div>
+
+        <!-- 12. Governing Law -->
+        <div class="section">
+            <div class="section-title"><span class="num">12</span> Governing Law</div>
+            <p>These Terms of Use are governed by the laws of the <strong>Federal Democratic Republic of Ethiopia</strong>, without regard to conflict of law principles.</p>
+            <p>Any disputes arising from the use of BD Buddy will be resolved in the courts of Ethiopia.</p>
+        </div>
+
+        <!-- 13. Contact -->
+        <div class="section">
+            <div class="section-title"><span class="num">13</span> Contact</div>
+            <p>Questions about these terms?</p>
+            <ul>
+                <li>Visit the <a href="/pages/about.html" style="color: var(--brand-violet-light);">About page</a></li>
+                <li>Report issues via the developer contact on the About page</li>
+            </ul>
+        </div>
+
+        <!-- Contact Box -->
+        <div class="contact-box">
+            <h3>📜 Thank You for Reading</h3>
+            <p>By using BD Buddy, you agree to these terms. Questions or concerns? Reach out</p>
+            <a href="/pages/about.html" class="contact-btn">Contact Developer →</a>
+        </div>
+
+    </div>
+
+    <footer class="footer">
+        BD Buddy — Unofficial BDU Portal Viewer<br>
+        <span style="font-size: 11px;">Last updated: January 2025</span>
+    </footer>
+
+
+<!-- BD Buddy Footer Links -->
+<div class="bd-buddy-footer" style="margin-top:24px;padding:20px 16px 28px;border-top:1px solid #e2e8f0;text-align:center;font-size:12px;color:#64748b;">
+  <div style="margin-bottom:10px;">
+    <a href="/" style="color:#2563eb;text-decoration:none;margin:0 8px;font-weight:600;">Home</a>
+    <span style="color:#cbd5e1;">·</span>
+    <a href="/pages/about.html" style="color:#2563eb;text-decoration:none;margin:0 8px;font-weight:600;">About</a>
+    <span style="color:#cbd5e1;">·</span>
+    <a href="/pages/help.html" style="color:#2563eb;text-decoration:none;margin:0 8px;font-weight:600;">Help</a>
+    <span style="color:#cbd5e1;">·</span>
+    <a href="/pages/privacy.html" style="color:#2563eb;text-decoration:none;margin:0 8px;font-weight:600;">Privacy</a>
+    <span style="color:#cbd5e1;">·</span>
+    <a href="/pages/contact.html" style="color:#2563eb;text-decoration:none;margin:0 8px;font-weight:600;">Contact</a>
+    <span style="color:#cbd5e1;">·</span>
+    <a href="/pages/terms.html" style="color:#2563eb;text-decoration:none;margin:0 8px;font-weight:600;">Terms</a>
+  </div>
+  <div style="color:#94a3b8;font-size:11px;">
+    BD Buddy · Unofficial BDU Portal Viewer
+  </div>
+</div>
+
+</body>
+</html>
