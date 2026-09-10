@@ -1,7 +1,7 @@
 {
   "id": "/",
-  "name": "BDU Student Portal",
-  "short_name": "BDU Portal",
+  "name": "BD Buddy",
+  "short_name": "BD Buddy",
   "description": "Bahir Dar University Student Portal - Check your academic results, GPA, and department placement",
   "start_url": "/",
   "scope": "/",

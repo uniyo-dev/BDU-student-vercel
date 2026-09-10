@@ -1,7 +1,7 @@
 {
-  "name": "bdu-student-portal",
+  "name": "bd-buddy",
   "version": "3.0.0",
-  "description": "BDU Student Portal - Render Version",
+  "description": "Unofficial, student-built interface for the BDU student portal",
   "private": true,
   "scripts": {
     "start": "node server.js"

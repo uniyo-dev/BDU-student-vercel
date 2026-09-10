@@ -306,5 +306,5 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`BDU Student Portal running on port ${PORT}`);
+  console.log(`🎓 BD Buddy running on port ${PORT}`);
 });

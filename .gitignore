@@ -1,7 +1,52 @@
+# Node
 node_modules/
-.netlify/
-*.log
-.DS_Store
+npm-debug.log*
+yarn-error.log*
+package-lock.json
+
+# Environment & Secrets
 .env
-bdu-website.html
-deep-study-placement.js
+.env.local
+*.pem
+*.key
+
+# Backups
+*.bak
+*.backup
+*.old
+
+# Test & Debug scripts (local only)
+test-*.js
+debug*.js
+diagnostic*.js
+verify-credentials.js
+test-all-passwords.js
+test-few-passwords.js
+test-multi-*.js
+test-password-*.js
+test-retry.js
+test-student.js
+
+# Old / experimental
+server-*.js
+
+# Logs
+logs/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Build
+dist/
+build/
+
+# Temp
+tmp/
+temp/
