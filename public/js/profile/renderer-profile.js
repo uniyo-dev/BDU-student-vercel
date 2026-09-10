@@ -45,7 +45,7 @@ class ProfileRenderer {
     return `
       <div class="semester-block semester-1">
         <div class="semester-title">
-          <i class="fas fa-user-graduate"></i>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;vertical-align:-3px;display:inline-block;"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
           ${this.bio.fullName || 'Student'}
         </div>
         <div style="text-align:center;padding:12px;">
@@ -74,7 +74,7 @@ class ProfileRenderer {
     return `
       <div class="semester-block semester-1">
         <div class="semester-title">
-          <i class="fas fa-book-open"></i>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;vertical-align:-3px;display:inline-block;"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
           Academic Biography
         </div>
         ${this.renderRow('Program', this.data?.program)}
@@ -88,7 +88,7 @@ class ProfileRenderer {
     return `
       <div class="semester-block semester-2">
         <div class="semester-title">
-          <i class="fas fa-user"></i>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;vertical-align:-3px;display:inline-block;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
           Personal Biography
         </div>
         ${this.renderRow('Full Name', this.bio.fullName)}
@@ -120,7 +120,7 @@ class ProfileRenderer {
     this.container.innerHTML = `
       <div class="semester-block semester-1">
         <div class="semester-title">
-          <i class="fas fa-exclamation-circle"></i>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;vertical-align:-3px;display:inline-block;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
           No Profile Data
         </div>
         <div style="text-align:center;padding:20px;color:#4a637f;">

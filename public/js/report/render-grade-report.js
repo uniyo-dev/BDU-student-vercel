@@ -115,11 +115,11 @@ const GradeReportApp = {
 
     if (mode === 'single') {
       if (selector) selector.style.display = 'flex';
-      if (titleContainer) titleContainer.innerHTML = '<span>SEMESTER GRADE REPORT</span> <span class="security-badge"><i class="fas fa-lock"></i> SECURE</span>';
+      if (titleContainer) titleContainer.innerHTML = '<span>SEMESTER GRADE REPORT</span> <span class="security-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;vertical-align:-3px;display:inline-block;margin-right:4px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> SECURE</span>';
       this.renderSingleSemester(this.currentSemesterIndex);
     } else {
       if (selector) selector.style.display = 'none';
-      if (titleContainer) titleContainer.innerHTML = '<span>CUMULATIVE GRADE REPORT</span> <span class="security-badge"><i class="fas fa-lock"></i> SECURE</span>';
+      if (titleContainer) titleContainer.innerHTML = '<span>CUMULATIVE GRADE REPORT</span> <span class="security-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;vertical-align:-3px;display:inline-block;margin-right:4px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> SECURE</span>';
       this.renderCumulative();
     }
   },

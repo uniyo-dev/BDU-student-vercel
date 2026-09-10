@@ -30,7 +30,7 @@ const PlacementRenderer = {
     return `
       <div class="semester-block semester-1">
         <div class="semester-title">
-          <i class="fas fa-check-circle"></i>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;vertical-align:-3px;display:inline-block;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
           Placement Status
         </div>
         <div style="text-align:center;padding:16px;">
@@ -72,7 +72,7 @@ const PlacementRenderer = {
     let html = `
       <div class="semester-block semester-2">
         <div class="semester-title">
-          <i class="fas fa-list"></i>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;vertical-align:-3px;display:inline-block;"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
           Placement Criteria
         </div>
     `;

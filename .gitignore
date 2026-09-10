@@ -50,3 +50,26 @@ build/
 # Temp
 tmp/
 temp/
+
+# Backup files
+*.bak
+*.bak-*
+*.bak2
+*.bak3
+*.bak4
+*.bak5
+*.bak1
+*.bak-noFA
+*.bak-unicode
+*.bak-arrow
+*.bak-info
+*.bak-contact
+
+# Backup files
+*.bak
+*.bak-*
+*.bak1
+*.bak2
+*.bak3
+*.bak4
+*.bak5
