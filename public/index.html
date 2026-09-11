@@ -10,6 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="manifest" href="/manifest.json">
   <link rel="stylesheet" href="/css/shared/variables.css">
+  <link rel="stylesheet" href="/css/shared/theme.css">
   <link rel="stylesheet" href="/css/shared/reset.css">
   <link rel="stylesheet" href="/css/shared/layout.css">
   <link rel="stylesheet" href="/css/shared/banner.css">
@@ -357,6 +358,9 @@
 </head>
 <body>
 
+<!-- Theme toggle (floating, works on login page) -->
+<button id="bd-theme-toggle" class="bd-theme-toggle bd-theme-toggle-floating" type="button" aria-label="Toggle theme"></button>
+
 <div id="page-login">
   <div class="login-card">
     <div class="login-logo">
@@ -472,6 +476,7 @@
 </div>
 
 <!-- Shared JS -->
+<script src="/js/shared/theme-toggle.js"></script>
 <script src="/js/shared/config.js"></script>
 <script src="/js/shared/api.js"></script>
 <script src="/js/shared/auth.js"></script>
