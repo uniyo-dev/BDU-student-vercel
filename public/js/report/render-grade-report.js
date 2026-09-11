@@ -200,40 +200,69 @@
       const serial = this.getSerial();
       const verifyUrl = this.getVerifyUrl(bio.studentId);
 
-      // QR
-      const qrContainer = document.getElementById('qr-code');
-      if (qrContainer && typeof QRCode !== 'undefined') {
-        qrContainer.innerHTML = '';
-        const canvas = document.createElement('canvas');
-        qrContainer.appendChild(canvas);
-        QRCode.toCanvas(canvas, verifyUrl, {
-          width: 160, margin: 1,
-          color: { dark: '#0B0F19', light: '#FFFFFF' }
-        });
-      }
-
-      // Verify URL text
+      // Update URL + serial text immediately
       const urlEl = document.getElementById('verify-url');
       if (urlEl) urlEl.textContent = verifyUrl;
 
-      // Barcode
-      if (typeof JsBarcode !== 'undefined') {
-        try {
-          JsBarcode('#barcode-svg', serial, {
-            format: 'CODE128',
-            displayValue: false,
-            height: 50,
-            width: 1.6,
-            margin: 0,
-            background: '#FFFFFF',
-            lineColor: '#0B0F19',
-          });
-        } catch (e) { console.warn('Barcode error', e); }
-      }
-
-      // Serial text
       const serialEl = document.getElementById('serial-text');
       if (serialEl) serialEl.textContent = serial;
+
+      // Render QR + barcode (with retry until libraries are available)
+      this.renderQRWithRetry(verifyUrl, serial, 0);
+    },
+
+    renderQRWithRetry(verifyUrl, serial, attempt) {
+      const qrReady = typeof QRCode !== 'undefined';
+      const bcReady = typeof JsBarcode !== 'undefined';
+
+      // QR
+      if (qrReady) {
+        const qrContainer = document.getElementById('qr-code');
+        if (qrContainer && !qrContainer.dataset.rendered) {
+          qrContainer.innerHTML = '';
+          const canvas = document.createElement('canvas');
+          qrContainer.appendChild(canvas);
+          QRCode.toCanvas(canvas, verifyUrl, {
+            width: 200,
+            margin: 1,
+            color: { dark: '#0B0F19', light: '#FFFFFF' }
+          }, (err) => {
+            if (err) {
+              console.error('QR render error:', err);
+            } else {
+              qrContainer.dataset.rendered = '1';
+            }
+          });
+        }
+      }
+
+      // Barcode
+      if (bcReady) {
+        const bcSvg = document.getElementById('barcode-svg');
+        if (bcSvg && !bcSvg.dataset.rendered) {
+          try {
+            JsBarcode(bcSvg, serial, {
+              format: 'CODE128',
+              displayValue: false,
+              height: 60,
+              width: 2,
+              margin: 4,
+              background: '#FFFFFF',
+              lineColor: '#0B0F19',
+            });
+            bcSvg.dataset.rendered = '1';
+          } catch (e) {
+            console.warn('Barcode error:', e);
+          }
+        }
+      }
+
+      // Retry up to 20 times (2 seconds total) if libraries not ready yet
+      if ((!qrReady || !bcReady) && attempt < 20) {
+        setTimeout(() => this.renderQRWithRetry(verifyUrl, serial, attempt + 1), 100);
+      } else if (attempt >= 20 && (!qrReady || !bcReady)) {
+        console.error('QR/Barcode libraries failed to load after 2s');
+      }
     },
 
     getSerial() {
@@ -305,7 +334,7 @@
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              username: bio.studentId || sessionStorage.getItem('bdu_username'),
+              username: sessionStorage.getItem('bdu_username') || bio.studentId,
               password,
             }),
           });

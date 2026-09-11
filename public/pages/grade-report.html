@@ -16,6 +16,10 @@
 <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#6D28D9">
+
+<!-- External libraries (deferred so they load before DOMContentLoaded) -->
+<script defer src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 <style>
   :root {
     /* ---- Strict 8-color palette ---- */
@@ -627,28 +631,6 @@
     <div id="course-list"></div>
   </section>
 
-  <!-- Verification: QR + Barcode -->
-  <section class="verify-grid">
-    <div class="card">
-      <div class="section-head">
-        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-        <span>Scan to Verify</span>
-      </div>
-      <div class="qr-wrap" id="qr-code"></div>
-      <div class="verify-url" id="verify-url">—</div>
-    </div>
-    <div class="card">
-      <div class="section-head">
-        <svg viewBox="0 0 24 24"><path d="M3 5v14M8 5v14M12 5v14M17 5v14M21 5v14"/></svg>
-        <span>Barcode</span>
-      </div>
-      <div class="barcode-wrap">
-        <svg id="barcode-svg"></svg>
-      </div>
-      <div class="serial-text" id="serial-text">—</div>
-    </div>
-  </section>
-
   <!-- Must Know panel -->
   <section class="card must-know">
     <div class="section-head">
@@ -704,6 +686,26 @@
     </div>
   </section>
 
+  <!-- Verification (centered, bottom middle) -->
+  <section class="card" style="text-align:center;">
+    <div class="section-head" style="justify-content:center;">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      <span>Scan to Verify</span>
+    </div>
+
+    <div class="qr-wrap" id="qr-code" style="display:inline-block;margin:0 auto;"></div>
+
+    <div class="verify-url" id="verify-url" style="margin-top:12px;">—</div>
+
+    <div style="margin-top:20px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.06);">
+      <div style="font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">Document ID</div>
+      <div class="barcode-wrap" style="display:inline-block;padding:12px 20px;">
+        <svg id="barcode-svg"></svg>
+      </div>
+      <div class="serial-text" id="serial-text" style="margin-top:10px;">—</div>
+    </div>
+  </section>
+
   <!-- Download action -->
   <section class="action-wrap">
     <button class="btn-download" id="btn-print" type="button">
@@ -725,10 +727,6 @@
 <footer class="app-footer">
   BD Buddy · Unofficial BDU Portal Viewer · <a href="/pages/about.html">About</a> · <a href="/pages/contact.html">Contact</a>
 </footer>
-
-<!-- External libs -->
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 
 <!-- Shared -->
 <script src="/js/shared/config.js"></script>
