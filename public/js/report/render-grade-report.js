@@ -4,11 +4,24 @@
 
 const GradeReportApp = {
   verifyBaseUrl: 'https://bdu-portal.onrender.com/verify',
+
+  // ============================================================
+  // Print Date — Auto-fill for certificate header
+  // ============================================================
+  setPrintDate() {
+    const el = document.getElementById('print-date');
+    if (!el) return;
+    const now = new Date();
+    const options = { year: 'numeric', month: 'short', day: 'numeric' };
+    el.textContent = now.toLocaleDateString('en-US', options);
+  },
+
   currentMode: 'single',
   currentSemesterIndex: 0,
   reportData: null,
 
   init() {
+    this.setPrintDate();
     // Session Verification Redirect
     if (typeof UI !== 'undefined' && typeof UI.redirectIfNotLoggedIn === 'function') {
       UI.redirectIfNotLoggedIn();

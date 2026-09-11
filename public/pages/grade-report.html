@@ -47,11 +47,29 @@
 
     <!-- Report Header -->
     <header class="report-header">
-      <div class="logo-row">
-        <img src="/images/logo.jpg" alt="BDU Emblem" class="bdu-logo" onerror="this.src='https://via.placeholder.com/48?text=BDU'">
-        <img src="/images/ethiopian_emblem.jpg" alt="Ethiopian Emblem" class="emblem-logo" onerror="this.style.display='none'">
+      <!-- Row 1: BD Buddy + BDU Logo + Print Date -->
+      <div class="header-row-1">
+        <div class="header-left">
+          <svg class="bd-buddy-icon" viewBox="0 0 24 24" fill="none" stroke="#FCD34D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+            <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+          </svg>
+          <div class="bd-buddy-text">
+            <div class="bd-buddy-name">BD Buddy</div>
+            <div class="bd-buddy-tagline">Unofficial BDU Portal Viewer</div>
+          </div>
+        </div>
+        <div class="header-center">
+          <img src="/images/logo.jpg" alt="BDU Logo" class="bdu-logo" onerror="this.style.display='none'">
+        </div>
+        <div class="header-right">
+          <div class="print-date-label">Print Date:</div>
+          <div class="print-date-value" id="print-date">—</div>
+        </div>
       </div>
+      <!-- Row 2: University Name -->
       <div class="uni-name">BAHIR DAR UNIVERSITY</div>
+      <!-- Row 3: Report Title + Security Badge -->
       <div class="report-title" id="report-mode-title">
         <span>SEMESTER GRADE REPORT</span>
         <span class="security-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;vertical-align:-3px;display:inline-block;margin-right:4px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> SECURE</span>

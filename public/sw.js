@@ -18,7 +18,6 @@ const ASSETS = [
   '/images/banner.jpeg',
   '/images/stamp.jpg',
   '/images/Signature.png',
-  '/images/ethiopian_emblem.jpg',
 ];
 
 self.addEventListener('install', (event) => {

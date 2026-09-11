@@ -266,6 +266,21 @@ const server = http.createServer(async (req, res) => {
   if (req.url === '/api/login') {
     return handleLogin(req, res);
   }
+
+  // Verification route: /verify/<token>
+  if (req.url.startsWith('/verify/')) {
+    const verifyPath = path.join(__dirname, 'public', 'pages', 'verify.html');
+    fs.readFile(verifyPath, (err, data) => {
+      if (err) {
+        res.writeHead(404, { 'Content-Type': 'text/plain' });
+        return res.end('Verify page not found');
+      }
+      res.writeHead(200, { 'Content-Type': 'text/html' });
+      res.end(data);
+    });
+    return;
+  }
+
   
   // Serve static files
   let urlPath = req.url.split('?')[0];
