@@ -445,3 +445,21 @@ body {
    Keep slate gradient (looks intentional in both themes)
    ============================================================ */
 
+/* ============================================================
+   COMPATIBILITY ALIASES
+   For pages that use --bg-primary, --bg-surface, --text-primary etc.
+   ============================================================ */
+:root {
+  --bg-primary: var(--body-bg);
+  --bg-surface: var(--card-bg);
+  --bg-elevated: var(--bg-elevated);
+  --text-primary: var(--text-1);
+  --text-secondary: var(--text-2);
+}
+[data-theme="dark"] {
+  --bg-primary: #0B0F19;
+  --bg-surface: #111827;
+  --bg-elevated: #1A2332;
+  --text-primary: #F8FAFC;
+  --text-secondary: #E2E8F0;
+}

@@ -7,25 +7,10 @@
     <meta name="description" content="BD Buddy — Your BDU Academic Companion. An unofficial, student-built viewer for the Bahir Dar University student portal.">
     <title>About — BD Buddy</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="/css/shared/theme.css">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@600&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --brand-violet: #6D28D9;
-            --brand-violet-deep: #4C1D95;
-            --brand-violet-light: #8B5CF6;
-            --brand-gold: #FCD34D;
-            --brand-gold-dark: #F59E0B;
-            --bg-primary: #0B0F19;
-            --bg-surface: #111827;
-            --bg-elevated: #1A2332;
-            --text-primary: #F8FAFC;
-            --text-secondary: #E2E8F0;
-            --text-muted: #94A3B8;
-            --success: #22C55E;
-            --danger: #EC4899;
-            --info: #38BDF8;
-        }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             background: var(--bg-primary);
@@ -289,6 +274,8 @@
     </style>
 </head>
 <body>
+<button id="bd-theme-toggle" class="bd-theme-toggle bd-theme-toggle-floating" type="button" aria-label="Toggle theme"></button>
+
 
     <a href="../index.html" class="back-btn">← Back</a>
 
@@ -603,5 +590,6 @@
   </div>
 </div>
 
+    <script src="/js/shared/theme-toggle.js"></script>
 </body>
 </html>
