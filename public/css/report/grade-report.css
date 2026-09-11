@@ -613,15 +613,6 @@ body {
    TRANSCRIPT HEADER — Same styling
    ============================================================ */
 
-.transcript-header .header-row-1 {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-  gap: 4mm;
-  padding: 0 4mm;
-  height: 14mm;
-}
-
 .cover-page .header-row-1 {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
@@ -742,12 +733,3 @@ body {
   .barcode-section { margin-top: 2mm !important; }
 }
 
-.transcript-header .header-row-1,
-.cover-page .header-row-1 {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-  gap: 4mm;
-  padding: 0 4mm;
-  height: 14mm;
-}
