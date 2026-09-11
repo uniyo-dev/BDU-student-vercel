@@ -34,7 +34,14 @@ def generate_pdf(data):
     """Build the PDF and return bytes."""
 
     bio = data.get("biography", {}) or {}
-    student_id = bio.get("studentId", "UNKNOWN")
+    student_id = bio.get("studentId", "")
+
+    # Validate: require at least a student ID
+    if not student_id or student_id == "UNKNOWN":
+        raise ValueError("No student data provided")
+
+    if not bio.get("fullName"):
+        raise ValueError("No student name provided")
 
     serial = data.get("serial") or f"BDU-GR-{student_id}-X4K9L"
     verify_url = data.get("verifyUrl") or \
