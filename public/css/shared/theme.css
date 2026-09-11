@@ -312,3 +312,113 @@ body {
   border-color: rgba(252, 211, 77, 0.30);
   color: #FCD34D;
 }
+
+/* ============================================================
+   DASHBOARD PAGE — Dark Mode Overrides
+   ============================================================ */
+
+/* Page background */
+[data-theme="dark"] #page-dashboard {
+  background: #0B0F19;
+}
+
+/* Header gradient — dark violet in dark mode */
+[data-theme="dark"] .dash-header {
+  background: linear-gradient(135deg, #4C1D95, #2E1065, #1E1B4B);
+}
+
+/* Program card */
+[data-theme="dark"] .dash-program-card {
+  background: #111827;
+  border-color: #1E293B;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .dash-program-icon {
+  background: rgba(109, 40, 217, 0.15);
+}
+[data-theme="dark"] .dash-program-icon svg {
+  color: #8B5CF6;
+}
+
+[data-theme="dark"] .dash-program-title {
+  color: #8B5CF6;
+}
+
+[data-theme="dark"] .dash-program-desc {
+  color: #A78BFA;
+}
+
+/* Stat cards */
+[data-theme="dark"] .stat-card {
+  background: #111827;
+  border-color: #1E293B;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .stat-icon.green {
+  background: rgba(34, 197, 94, 0.15);
+  color: #4ADE80;
+}
+
+[data-theme="dark"] .stat-icon.blue {
+  background: rgba(109, 40, 217, 0.15);
+  color: #8B5CF6;
+}
+
+[data-theme="dark"] .stat-label {
+  color: #94A3B8;
+}
+
+[data-theme="dark"] .stat-value {
+  color: #F8FAFC;
+}
+
+/* Student ID */
+[data-theme="dark"] .student-id-label {
+  color: #64748B;
+}
+
+[data-theme="dark"] .student-id-badge {
+  background: #1A2332;
+  color: #CBD5E1;
+}
+
+/* Section titles */
+[data-theme="dark"] .section-title {
+  color: #F8FAFC;
+}
+
+/* Quick links */
+[data-theme="dark"] .quick-link {
+  background: #111827;
+  border-color: #1E293B;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .quick-link:hover {
+  background: #1A2332;
+}
+
+[data-theme="dark"] .quick-link-text h4 {
+  color: #F8FAFC;
+}
+
+[data-theme="dark"] .quick-link-text p {
+  color: #94A3B8;
+}
+
+[data-theme="dark"] .quick-link-chevron {
+  color: #475569;
+}
+
+/* Quick link icon variants */
+[data-theme="dark"] .quick-link-icon.indigo {
+  background: rgba(99, 102, 241, 0.15);
+  color: #A5B4FC;
+}
+
+[data-theme="dark"] .quick-link-icon.amber {
+  background: rgba(217, 119, 6, 0.15);
+  color: #FBBF24;
+}
