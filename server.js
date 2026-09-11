@@ -337,6 +337,80 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  // Rankings: POST /api/rankings — fresh re-login + fetch placement data
+  if (req.url === '/api/rankings' && req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => body += chunk);
+    req.on('end', async () => {
+      try {
+        const { username, password } = JSON.parse(body || '{}');
+        if (!username || !password) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          return res.end(JSON.stringify({ success: false, error: 'Missing credentials' }));
+        }
+
+        // Normalize username (same pattern as login)
+        let normalizedUser = String(username).trim();
+        if (!normalizedUser.toLowerCase().startsWith('bdu')) {
+          normalizedUser = 'bdu' + normalizedUser;
+        }
+        normalizedUser = normalizedUser.toLowerCase();
+
+        // Get login page + antiforgery token
+        const loginPage = await makeRequest('/Account/Login');
+        const token = loginPage.body.match(/__RequestVerificationToken[^>]*value="([^"]+)"/)?.[1] || '';
+        const cookies1 = (loginPage.headers['set-cookie'] || []).map(c => c.split(';')[0]);
+
+        // POST credentials
+        const fd = new URLSearchParams();
+        fd.append('Input.UserName', normalizedUser);
+        fd.append('Input.Password', password);
+        fd.append('__RequestVerificationToken', token);
+        fd.append('Input.RememberMe', 'false');
+
+        const loginRes = await makeRequest('/Account/Login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Cookie': cookies1.join('; '),
+            'Origin': 'http://studentportal.bdu.edu.et',
+            'Referer': 'http://studentportal.bdu.edu.et/Account/Login',
+          },
+          body: fd.toString(),
+        });
+
+        if (loginRes.statusCode !== 302 && loginRes.statusCode !== 301) {
+          res.writeHead(401, { 'Content-Type': 'application/json' });
+          return res.end(JSON.stringify({ success: false, error: 'Invalid credentials' }));
+        }
+
+        const cookies2 = (loginRes.headers['set-cookie'] || []).map(c => c.split(';')[0]);
+        const apiHeaders = { 'Cookie': [...cookies1, ...cookies2].join('; '), 'Accept': 'application/json' };
+
+        // Fetch live placement data
+        const [resultRes, criteriaRes, allStudentsRes] = await Promise.all([
+          makeRequest('/Placement/GetPlacementResultSummary', { headers: apiHeaders }),
+          makeRequest('/Placement/GetPlacementCriteria', { headers: apiHeaders }),
+          makeRequest('/Placement/GetDepartmentApplicationSummary', { headers: apiHeaders }),
+        ]);
+
+        const results = JSON.parse(resultRes.body).data || [];
+        const criteria = JSON.parse(criteriaRes.body).data || [];
+        const allStudents = JSON.parse(allStudentsRes.body).data || [];
+
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        return res.end(JSON.stringify({
+          success: true,
+          data: { results, criteria, allStudents },
+        }));
+      } catch (err) {
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: false, error: err.message }));
+      }
+    });
+    return;
+  }
+
   // PDF generation: POST /api/generate-grade-pdf
   if (req.url === '/api/generate-grade-pdf' && req.method === 'POST') {
     let body = '';
