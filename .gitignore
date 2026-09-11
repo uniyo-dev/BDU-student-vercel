@@ -26,6 +26,8 @@ diagnostic*.js
 verify-credentials.js
 server-*.js
 *.py
+!scripts/
+!scripts/*.py
 
 # Old data
 grade-report-data.json
