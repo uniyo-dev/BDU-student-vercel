@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/shared/theme.css">
 
 <!-- Favicon & PWA icons -->
 <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
@@ -21,48 +22,81 @@
 <script defer src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 <style>
-  :root {
-    /* ---- Strict 8-color palette ---- */
-    --violet: #6D28D9;
-    --violet-deep: #4C1D95;
-    --violet-light: #8B5CF6;
-    --gold: #FCD34D;
+  /* ============================================================
+     GRADE REPORT THEME VARIABLES
+     Default = dark. Light mode overrides in [data-theme="light"].
+     ============================================================ */
+  :root,
+  [data-theme="dark"] {
+    /* Brand */
+    --gr-violet: #6D28D9;
+    --gr-violet-deep: #4C1D95;
+    --gr-violet-light: #8B5CF6;
+    --gr-gold: #FCD34D;
+    --gr-brand-gold-dark: #F59E0B;
 
     /* Neutrals */
-    --bg: #0B0F19;
-    --surface: #111827;
-    --elevated: #1A2332;
+    --gr-bg: #0B0F19;
+    --gr-surface: #111827;
+    --gr-elevated: #1A2332;
 
     /* Text */
-    --text: #F8FAFC;
-    --text-2: #E2E8F0;
-    --muted: #94A3B8;
+    --gr-text: #F8FAFC;
+    --gr-text-2: #E2E8F0;
+    --gr-muted: #94A3B8;
 
     /* Semantic */
-    --success: #22C55E;
-    --danger: #EC4899;
+    --gr-success: #22C55E;
+    --gr-danger: #EC4899;
 
     /* Border */
-    --border: rgba(255, 255, 255, 0.08);
-    --border-2: rgba(255, 255, 255, 0.04);
+    --gr-border: rgba(255, 255, 255, 0.08);
+    --gr-border-2: rgba(255, 255, 255, 0.04);
 
-    /* Aliases (backward-compat with existing selectors) */
-    --brand-violet: var(--violet);
-    --brand-violet-deep: var(--violet-deep);
-    --brand-violet-light: var(--violet-light);
-    --brand-gold: var(--gold);
-    --brand-gold-dark: #F59E0B;
-    --bg-primary: var(--bg);
-    --bg-surface: var(--surface);
-    --bg-elevated: var(--elevated);
-    --text-primary: var(--text);
-    --text-secondary: var(--text-2);
-    --text-muted: var(--muted);
+    /* Aliases */
+    --gr-brand-violet: var(--gr-violet);
+    --gr-brand-violet-deep: var(--gr-violet-deep);
+    --gr-brand-violet-light: var(--gr-violet-light);
+    --gr-brand-gold: var(--gr-gold);
+    --gr-bg-primary: var(--gr-bg);
+    --gr-bg-surface: var(--gr-surface);
+    --gr-bg-elevated: var(--gr-elevated);
+    --gr-text-primary: var(--gr-text);
+    --gr-text-secondary: var(--gr-text-2);
+    --gr-text-muted: var(--gr-muted);
+  }
+
+  /* ---- LIGHT THEME — matches the rest of the app (BDU Blue) ---- */
+  [data-theme="light"] {
+    /* Primary — matches login/dashboard royal blue */
+    --gr-violet: #2563eb;         /* renamed in code, but now it's the app's blue */
+    --gr-violet-deep: #1d4ed8;
+    --gr-violet-light: #1a5f9c;   /* BDU institutional blue for accents */
+    --gr-gold: #FCD34D;
+    --gr-brand-gold-dark: #B45309;
+
+    /* Neutrals — matching dashboard */
+    --gr-bg: #f8fafc;
+    --gr-surface: #ffffff;
+    --gr-elevated: #f1f5f9;
+
+    /* Text */
+    --gr-text: #0f172a;
+    --gr-text-2: #334155;
+    --gr-muted: #64748b;
+
+    /* Semantic */
+    --gr-success: #059669;
+    --gr-danger: #c0392b;
+
+    /* Border — matching dashboard */
+    --gr-border: #f1f5f9;
+    --gr-border-2: #e2e8f0;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
-    background: var(--bg);
-    color: var(--text);
+    background: var(--gr-bg);
+    color: var(--gr-text);
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     min-height: 100vh;
     line-height: 1.55;
@@ -80,26 +114,26 @@
     padding: 14px 20px;
     background: rgba(11, 15, 25, 0.85);
     backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid var(--gr-border);
   }
   .brand { display: flex; align-items: center; gap: 12px; }
   .brand-badge {
     width: 40px; height: 40px; border-radius: 11px;
-    background: linear-gradient(135deg, var(--brand-violet-light), var(--brand-violet-deep));
+    background: linear-gradient(135deg, var(--gr-brand-violet-light), var(--gr-brand-violet-deep));
     display: flex; align-items: center; justify-content: center;
     box-shadow: 0 4px 12px rgba(109, 40, 217, 0.35);
     flex-shrink: 0;
   }
   .brand-badge svg {
     width: 22px; height: 22px;
-    stroke: var(--brand-gold); stroke-width: 2.2; fill: none;
+    stroke: var(--gr-brand-gold); stroke-width: 2.2; fill: none;
     stroke-linecap: round; stroke-linejoin: round;
   }
-  .brand-name { font-size: 14px; font-weight: 800; color: var(--brand-violet-light); letter-spacing: -0.2px; }
-  .brand-tag { font-size: 10px; color: var(--text-muted); margin-top: 1px; }
+  .brand-name { font-size: 14px; font-weight: 800; color: var(--gr-brand-violet-light); letter-spacing: -0.2px; }
+  .brand-tag { font-size: 10px; color: var(--gr-text-muted); margin-top: 1px; }
   .header-meta { text-align: right; }
-  .meta-label { font-size: 10px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; }
-  .meta-date { font-size: 12px; color: var(--brand-gold); font-weight: 700; margin-top: 2px; }
+  .meta-label { font-size: 10px; color: var(--gr-text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; }
+  .meta-date { font-size: 12px; color: var(--gr-brand-gold); font-weight: 700; margin-top: 2px; }
 
   /* ---------- Page container ---------- */
   .page {
@@ -110,8 +144,8 @@
 
   /* ---------- Card base ---------- */
   .card {
-    background: var(--bg-surface);
-    border: 1px solid var(--border);
+    background: var(--gr-bg-surface);
+    border: 1px solid var(--gr-border);
     border-radius: 18px;
     padding: 20px;
     margin-bottom: 14px;
@@ -133,7 +167,7 @@
   .hero-id {
     font-family: 'JetBrains Mono', monospace;
     font-size: 13px; font-weight: 700;
-    color: var(--brand-gold);
+    color: var(--gr-brand-gold);
     margin-top: 8px;
     letter-spacing: 1px;
   }
@@ -146,10 +180,10 @@
     display: inline-block;
     padding: 5px 12px;
     background: rgba(255, 255, 255, 0.06);
-    border: 1px solid var(--border);
+    border: 1px solid var(--gr-border);
     border-radius: 999px;
     font-size: 11px; font-weight: 600;
-    color: var(--text-secondary);
+    color: var(--gr-text-secondary);
   }
 
   /* ---------- Summary grid ---------- */
@@ -166,18 +200,18 @@
   }
   .stat-label {
     font-size: 10px; font-weight: 700;
-    color: var(--text-muted);
+    color: var(--gr-text-muted);
     text-transform: uppercase; letter-spacing: 0.6px;
     margin-bottom: 6px;
   }
   .stat-value {
     font-size: 20px; font-weight: 800;
-    color: var(--text-primary);
+    color: var(--gr-text-primary);
     line-height: 1.1;
   }
-  .stat-value.gold { color: var(--brand-gold); }
-  .stat-value.success { color: var(--success); }
-  .stat-value.violet { color: var(--brand-violet-light); }
+  .stat-value.gold { color: var(--gr-brand-gold); }
+  .stat-value.success { color: var(--gr-success); }
+  .stat-value.violet { color: var(--gr-brand-violet-light); }
 
   .gpa-row {
     display: grid;
@@ -193,8 +227,8 @@
     display: flex; align-items: baseline; justify-content: space-between;
     margin-bottom: 8px;
   }
-  .gpa-name { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.6px; }
-  .gpa-val { font-size: 22px; font-weight: 800; color: var(--brand-gold); }
+  .gpa-name { font-size: 11px; font-weight: 700; color: var(--gr-text-muted); text-transform: uppercase; letter-spacing: 0.6px; }
+  .gpa-val { font-size: 22px; font-weight: 800; color: var(--gr-brand-gold); }
   .progress {
     position: relative;
     height: 8px;
@@ -216,7 +250,7 @@
   }
   .progress-bar {
     height: 100%;
-    background: linear-gradient(90deg, var(--violet-light), var(--gold));
+    background: linear-gradient(90deg, var(--gr-violet-light), var(--gr-gold));
     border-radius: 999px;
     width: 0%;
     transition: width 0.6s ease-out;
@@ -228,14 +262,14 @@
   .section-head {
     display: flex; align-items: center; gap: 10px;
     font-size: 13px; font-weight: 800;
-    color: var(--text-primary);
+    color: var(--gr-text-primary);
     margin-bottom: 14px;
     text-transform: uppercase;
     letter-spacing: 0.4px;
   }
   .section-head svg {
     width: 18px; height: 18px;
-    stroke: var(--brand-gold); stroke-width: 2; fill: none;
+    stroke: var(--gr-brand-gold); stroke-width: 2; fill: none;
     stroke-linecap: round; stroke-linejoin: round;
     flex-shrink: 0;
   }
@@ -249,25 +283,25 @@
   .course-table th {
     text-align: left;
     font-size: 10px; font-weight: 700;
-    color: var(--text-muted);
+    color: var(--gr-text-muted);
     text-transform: uppercase; letter-spacing: 0.5px;
     padding: 0 8px 10px 0;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid var(--gr-border);
   }
   .course-table th.num { text-align: right; }
   .course-table td {
     padding: 10px 8px 10px 0;
     border-bottom: 1px solid rgba(255,255,255,0.04);
-    color: var(--text-secondary);
+    color: var(--gr-text-secondary);
     vertical-align: top;
   }
   .course-table tr:last-child td { border-bottom: none; }
   .course-table td.code {
     font-family: 'JetBrains Mono', monospace;
     font-size: 11px; font-weight: 700;
-    color: var(--brand-violet-light);
+    color: var(--gr-brand-violet-light);
   }
-  .course-table td.title { color: var(--text-primary); font-weight: 500; }
+  .course-table td.title { color: var(--gr-text-primary); font-weight: 500; }
   .course-table td.num { text-align: right; font-variant-numeric: tabular-nums; }
   .grade-badge {
     display: inline-block;
@@ -278,9 +312,9 @@
   .grade-Aplus, .grade-A { background: rgba(34, 197, 94, 0.15); color: #4ADE80; }
   .grade-Aminus, .grade-Bplus { background: rgba(56, 189, 248, 0.15); color: #7DD3FC; }
   .grade-B, .grade-Bminus { background: rgba(139, 92, 246, 0.18); color: #C4B5FD; }
-  .grade-Cplus, .grade-C { background: rgba(245, 158, 11, 0.15); color: var(--brand-gold); }
+  .grade-Cplus, .grade-C { background: rgba(245, 158, 11, 0.15); color: var(--gr-brand-gold); }
   .grade-D, .grade-F { background: rgba(236, 72, 153, 0.15); color: #F9A8D4; }
-  .grade-P { background: rgba(148, 163, 184, 0.15); color: var(--text-muted); }
+  .grade-P { background: rgba(148, 163, 184, 0.15); color: var(--gr-text-muted); }
 
   /* ---------- Verification block ---------- */
   .verify-grid {
@@ -301,7 +335,7 @@
   .verify-url {
     font-family: 'JetBrains Mono', monospace;
     font-size: 10px;
-    color: var(--text-muted);
+    color: var(--gr-text-muted);
     word-break: break-all;
     text-align: center;
     line-height: 1.5;
@@ -317,7 +351,7 @@
   .serial-text {
     font-family: 'JetBrains Mono', monospace;
     font-size: 11px;
-    color: var(--brand-gold);
+    color: var(--gr-brand-gold);
     text-align: center;
     letter-spacing: 0.3px;
     font-weight: 700;
@@ -328,23 +362,23 @@
     background: linear-gradient(135deg, rgba(245, 158, 11, 0.08), rgba(109, 40, 217, 0.06));
     border-color: rgba(245, 158, 11, 0.28);
   }
-  .must-know .section-head svg { stroke: var(--brand-gold); }
+  .must-know .section-head svg { stroke: var(--gr-brand-gold); }
   .must-know-list {
     list-style: none;
     display: flex; flex-direction: column; gap: 10px;
   }
   .must-know-list li {
     display: flex; gap: 10px; align-items: flex-start;
-    font-size: 12px; color: var(--text-secondary);
+    font-size: 12px; color: var(--gr-text-secondary);
     line-height: 1.55;
   }
   .must-know-list li svg {
     width: 14px; height: 14px; flex-shrink: 0;
     margin-top: 3px;
-    stroke: var(--brand-gold); stroke-width: 2.2; fill: none;
+    stroke: var(--gr-brand-gold); stroke-width: 2.2; fill: none;
     stroke-linecap: round; stroke-linejoin: round;
   }
-  .must-know-list strong { color: var(--text-primary); font-weight: 700; }
+  .must-know-list strong { color: var(--gr-text-primary); font-weight: 700; }
 
   /* ---------- Signature note ---------- */
   .sig-note {
@@ -354,11 +388,11 @@
   }
   .sig-note svg {
     width: 32px; height: 32px; flex-shrink: 0;
-    stroke: var(--brand-violet-light); stroke-width: 1.8; fill: none;
+    stroke: var(--gr-brand-violet-light); stroke-width: 1.8; fill: none;
     stroke-linecap: round; stroke-linejoin: round;
   }
-  .sig-note-title { font-size: 13px; font-weight: 800; color: var(--text-primary); margin-bottom: 3px; }
-  .sig-note-desc { font-size: 11px; color: var(--text-muted); line-height: 1.5; }
+  .sig-note-title { font-size: 13px; font-weight: 800; color: var(--gr-text-primary); margin-bottom: 3px; }
+  .sig-note-desc { font-size: 11px; color: var(--gr-text-muted); line-height: 1.5; }
 
   /* ---------- Legend ---------- */
   .legend-grid {
@@ -368,7 +402,7 @@
   }
   .legend-item {
     display: flex; align-items: center; gap: 10px;
-    font-size: 12px; color: var(--text-secondary);
+    font-size: 12px; color: var(--gr-text-secondary);
   }
   .legend-sym {
     width: 22px; height: 22px;
@@ -378,7 +412,7 @@
     flex-shrink: 0;
   }
   .legend-sym.success { background: rgba(34, 197, 94, 0.15); color: #4ADE80; }
-  .legend-sym.warning { background: rgba(245, 158, 11, 0.15); color: var(--brand-gold); }
+  .legend-sym.warning { background: rgba(245, 158, 11, 0.15); color: var(--gr-brand-gold); }
   .legend-sym.danger  { background: rgba(236, 72, 153, 0.15); color: #F9A8D4; }
   .legend-sym.info    { background: rgba(56, 189, 248, 0.15); color: #7DD3FC; }
 
@@ -390,7 +424,7 @@
   .btn-download {
     width: 100%;
     padding: 16px 22px;
-    background: linear-gradient(135deg, var(--brand-violet), var(--brand-violet-deep));
+    background: linear-gradient(135deg, var(--gr-brand-violet), var(--gr-brand-violet-deep));
     color: #FFFFFF;
     border: none;
     border-radius: 14px;
@@ -418,7 +452,7 @@
   }
   .action-hint {
     font-size: 11px;
-    color: var(--text-muted);
+    color: var(--gr-text-muted);
     margin-top: 10px;
     display: flex; align-items: center; justify-content: center; gap: 6px;
   }
@@ -433,11 +467,11 @@
     text-align: center;
     padding: 24px 16px 32px;
     font-size: 11px;
-    color: var(--text-muted);
-    border-top: 1px solid var(--border);
+    color: var(--gr-text-muted);
+    border-top: 1px solid var(--gr-border);
     margin-top: 32px;
   }
-  .app-footer a { color: var(--brand-violet-light); text-decoration: none; }
+  .app-footer a { color: var(--gr-brand-violet-light); text-decoration: none; }
   .app-footer a:hover { text-decoration: underline; }
 
   /* ---------- Responsive ---------- */
@@ -479,14 +513,14 @@
   .sticky-dl-title {
     font-size: 12px;
     font-weight: 800;
-    color: var(--text);
+    color: var(--gr-text);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
   .sticky-dl-sub {
     font-size: 10px;
-    color: var(--muted);
+    color: var(--gr-muted);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -495,7 +529,7 @@
   .sticky-dl-btn {
     flex-shrink: 0;
     padding: 12px 20px;
-    background: linear-gradient(135deg, var(--violet), var(--violet-deep));
+    background: linear-gradient(135deg, var(--gr-violet), var(--gr-violet-deep));
     color: #FFFFFF;
     border: none;
     border-radius: 12px;
@@ -532,7 +566,7 @@
     background: rgba(109, 40, 217, 0.08);
     border: 1px solid rgba(109, 40, 217, 0.25);
     border-radius: 12px;
-    color: var(--violet-light);
+    color: var(--gr-violet-light);
     font-family: inherit;
     font-size: 12px;
     font-weight: 700;
@@ -545,13 +579,232 @@
   }
   .course-toggle:hover {
     background: rgba(109, 40, 217, 0.15);
-    color: var(--gold);
+    color: var(--gr-gold);
     border-color: rgba(252, 211, 77, 0.3);
   }
   .course-toggle svg {
     transition: transform 0.3s ease;
   }
   .course-toggle.expanded svg { transform: rotate(180deg); }
+
+
+  /* ============================================================
+     LIGHT THEME SPECIFIC OVERRIDES
+     Match login + dashboard: royal blue header, white cards
+     ============================================================ */
+  [data-theme="light"] body {
+    background: #f8fafc;
+    background-image: none;
+  }
+
+  /* Header bar — same royal blue gradient as dashboard */
+  [data-theme="light"] .app-header {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8, #1e3a8a);
+    border-bottom: none;
+    box-shadow: 0 2px 12px rgba(37, 99, 235, 0.25);
+  }
+
+  /* Brand badge — keep violet (that's the BD Buddy logo) */
+  [data-theme="light"] .brand-badge {
+    background: linear-gradient(135deg, #8B5CF6, #4C1D95);
+    box-shadow: 0 4px 12px rgba(109, 40, 217, 0.35);
+  }
+
+  /* Brand name — white on blue header */
+  [data-theme="light"] .brand-name {
+    color: #ffffff;
+  }
+
+  /* Brand tag — light on blue header */
+  [data-theme="light"] .brand-tag {
+    color: rgba(255, 255, 255, 0.75);
+  }
+
+  /* Header meta — white on blue header */
+  [data-theme="light"] .meta-label {
+    color: rgba(255, 255, 255, 0.75);
+  }
+
+  [data-theme="light"] .meta-date {
+    color: #FCD34D;
+  }
+
+  /* Cards */
+  [data-theme="light"] .card {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  }
+
+  /* Hero card */
+  [data-theme="light"] .hero-card {
+    background: linear-gradient(135deg, #dbeafe, #eff6ff);
+    border-color: rgba(37, 99, 235, 0.25);
+  }
+
+  [data-theme="light"] .hero-name {
+    color: #0f172a;
+  }
+
+  [data-theme="light"] .hero-id {
+    color: #2563eb;
+  }
+
+  [data-theme="light"] .pill {
+    background: rgba(37, 99, 235, 0.08);
+    border-color: rgba(37, 99, 235, 0.15);
+    color: #1e40af;
+  }
+
+  /* Progress bars — blue to gold */
+  [data-theme="light"] .progress-bar {
+    background: linear-gradient(90deg, #2563eb, #FCD34D);
+  }
+
+  /* Section heads use gold accent — keep */
+  [data-theme="light"] .section-head svg {
+    stroke: #d97706;
+  }
+
+  /* Course table — light rows */
+  [data-theme="light"] .course-table td.code {
+    color: #2563eb;
+  }
+
+  /* Grade badges — keep colored */
+
+  /* Verification QR + barcode — white bg */
+  [data-theme="light"] .qr-wrap {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+  }
+
+  [data-theme="light"] .barcode-wrap {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+  }
+
+  [data-theme="light"] .serial-text {
+    color: #1e40af;
+  }
+
+  /* Must know panel — lighter blue tint */
+  [data-theme="light"] .must-know {
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.04), rgba(109, 40, 217, 0.03));
+    border-color: rgba(37, 99, 235, 0.20);
+  }
+
+  [data-theme="light"] .must-know .section-head svg {
+    stroke: #2563eb;
+  }
+
+  /* Signature note — blue tint */
+  [data-theme="light"] .sig-note {
+    background: rgba(37, 99, 235, 0.05);
+    border-color: rgba(37, 99, 235, 0.20);
+  }
+
+  [data-theme="light"] .sig-note svg {
+    stroke: #2563eb;
+  }
+
+  /* Symbol legend — stays dark on white */
+  [data-theme="light"] .legend-item {
+    color: #334155;
+  }
+
+  /* Download button — royal blue like login */
+  [data-theme="light"] .btn-download {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    box-shadow: 0 10px 24px rgba(37, 99, 235, 0.35);
+  }
+
+  [data-theme="light"] .btn-download:hover:not(:disabled) {
+    box-shadow: 0 14px 32px rgba(37, 99, 235, 0.45);
+  }
+
+  /* Sticky bar — white bg, blue button */
+  [data-theme="light"] .sticky-dl {
+    background: rgba(255, 255, 255, 0.95);
+    border-top: 1px solid #e2e8f0;
+    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.08);
+  }
+
+  [data-theme="light"] .sticky-dl-title {
+    color: #0f172a;
+  }
+
+  [data-theme="light"] .sticky-dl-sub {
+    color: #64748b;
+  }
+
+  [data-theme="light"] .sticky-dl-btn {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+  }
+
+  /* Footer */
+  [data-theme="light"] .app-footer {
+    color: #64748b;
+    border-top-color: #e2e8f0;
+  }
+
+  [data-theme="light"] .app-footer a {
+    color: #2563eb;
+  }
+
+  /* Course toggle */
+  [data-theme="light"] .course-toggle {
+    background: rgba(37, 99, 235, 0.05);
+    border-color: rgba(37, 99, 235, 0.20);
+    color: #2563eb;
+  }
+
+  [data-theme="light"] .course-toggle:hover {
+    background: rgba(37, 99, 235, 0.10);
+    color: #1e40af;
+    border-color: rgba(37, 99, 235, 0.35);
+  }
+
+  /* Theme toggle button — visible on blue header */
+  [data-theme="light"] .bd-theme-toggle {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+  }
+
+  [data-theme="light"] .bd-theme-toggle:hover {
+    background: rgba(255, 255, 255, 0.25);
+  }
+
+  /* ---- Fixes for invisible-on-white backgrounds ---- */
+  [data-theme="light"] .pill {
+    background: rgba(37, 99, 235, 0.08);
+    border-color: rgba(37, 99, 235, 0.20);
+    color: #1e40af;
+  }
+
+  [data-theme="light"] .progress {
+    background: #e2e8f0;
+  }
+
+  [data-theme="light"] .progress::before {
+    background-image:
+      linear-gradient(90deg,
+        transparent calc(25% - 1px), rgba(0, 0, 0, 0.08) 25%, transparent calc(25% + 1px),
+        transparent calc(50% - 1px), rgba(0, 0, 0, 0.08) 50%, transparent calc(50% + 1px),
+        transparent calc(75% - 1px), rgba(0, 0, 0, 0.08) 75%, transparent calc(75% + 1px));
+  }
+
+  [data-theme="light"] .must-know {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.06), rgba(37, 99, 235, 0.04));
+    border-color: rgba(37, 99, 235, 0.20);
+  }
+
+  [data-theme="light"] .sig-note {
+    background: rgba(37, 99, 235, 0.05);
+    border-color: rgba(37, 99, 235, 0.20);
+  }
+
+
 </style>
 </head>
 <body>
@@ -569,9 +822,12 @@
       <div class="brand-tag">Unofficial BDU Portal Viewer</div>
     </div>
   </div>
-  <div class="header-meta">
-    <div class="meta-label">Grade Report</div>
-    <div class="meta-date" id="print-date">—</div>
+  <div style="display:flex;gap:12px;align-items:center;">
+    <div class="header-meta">
+      <div class="meta-label">Grade Report</div>
+      <div class="meta-date" id="print-date">—</div>
+    </div>
+    <button id="bd-theme-toggle" class="bd-theme-toggle" type="button" aria-label="Toggle theme"></button>
   </div>
 </header>
 
@@ -729,6 +985,7 @@
 </footer>
 
 <!-- Shared -->
+<script src="/js/shared/theme-toggle.js"></script>
 <script src="/js/shared/config.js"></script>
 <script src="/js/shared/api.js"></script>
 <script src="/js/shared/auth.js"></script>
