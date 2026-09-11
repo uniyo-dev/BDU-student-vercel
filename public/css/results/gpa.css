@@ -39,18 +39,14 @@
 
 /* SGPA Card */
 .gpa-card.sgpa {
-  background: linear-gradient(135deg, #d1fae5, #ecfdf5, #d1fae5);
-  background-size: 200% 200%;
-  border: 2px solid #6ee7b7;
-  animation: gradientShift 3s ease infinite;
+  background: var(--gpa-bg);
+  border: 2px solid var(--gpa-border);
 }
 
 /* CGPA Card */
 .gpa-card.cgpa {
-  background: linear-gradient(135deg, #dbeafe, #eff6ff, #dbeafe);
-  background-size: 200% 200%;
-  border: 2px solid #93c5fd;
-  animation: gradientShift 3s ease infinite;
+  background: var(--cgpa-bg);
+  border: 2px solid var(--cgpa-border);
 }
 
 @keyframes gradientShift {
@@ -68,8 +64,8 @@
   transition: all 0.3s ease;
 }
 
-.sgpa .gpa-value { color: #059669; }
-.cgpa .gpa-value { color: #2563eb; }
+.sgpa .gpa-value { color: var(--gpa-color); }
+.cgpa .gpa-value { color: var(--cgpa-color); }
 
 .gpa-card:hover .gpa-value {
   transform: scale(1.1);
@@ -83,12 +79,12 @@
   margin-top: 6px;
 }
 
-.sgpa .gpa-label { color: #059669; }
-.cgpa .gpa-label { color: #2563eb; }
+.sgpa .gpa-label { color: var(--gpa-color); }
+.cgpa .gpa-label { color: var(--cgpa-color); }
 
 /* GPA Box (compact horizontal) */
 .gpa-box {
-  background: #f2f8ff;
+  background: var(--bg-elevated);
   margin: 12px 20px 16px;
   border-radius: 24px;
   padding: 16px 20px;
@@ -122,7 +118,7 @@
 
 .gpa-item .sm {
   font-size: 10px;
-  color: #3c5a78;
+  color: var(--text-2);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -130,7 +126,7 @@
 
 /* GPA Badge */
 .gpa-item .badge {
-  background: #1f8b4c;
+  background: var(--success);
   color: white;
   padding: 6px 16px;
   border-radius: 40px;
@@ -149,7 +145,7 @@
 .gpa-progress {
   width: 100%;
   height: 8px;
-  background: #e2e8f0;
+  background: var(--border-light);
   border-radius: 40px;
   margin-top: 8px;
   overflow: hidden;
@@ -168,7 +164,7 @@
   justify-content: space-between;
   padding: 4px 20px;
   font-size: 9px;
-  color: #4f647c;
+  color: var(--text-2);
   font-weight: 600;
 }
 
@@ -181,7 +177,7 @@
 }
 
 .gpa-stat-item {
-  background: white;
+  background: var(--card-bg);
   border-radius: 12px;
   padding: 12px;
   text-align: center;
@@ -202,7 +198,7 @@
 
 .gpa-stat-label {
   font-size: 9px;
-  color: #5a708b;
+  color: var(--text-2);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   font-weight: 600;
@@ -213,7 +209,7 @@
 .gpa-warning {
   background: var(--warning-bg);
   border: 1px solid var(--warning-border);
-  color: #856404;
+  color: var(--warning);
   padding: 10px 16px;
   border-radius: 12px;
   font-size: 12px;
@@ -227,7 +223,7 @@
 .gpa-danger {
   background: var(--danger-bg);
   border: 1px solid var(--danger-border);
-  color: #721c24;
+  color: var(--danger);
   padding: 10px 16px;
   border-radius: 12px;
   font-size: 12px;
@@ -242,7 +238,7 @@
 .gpa-success {
   background: var(--success-bg);
   border: 1px solid var(--success-border);
-  color: #155724;
+  color: var(--success);
   padding: 10px 16px;
   border-radius: 12px;
   font-size: 12px;

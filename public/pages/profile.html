@@ -7,6 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/shared/variables.css">
+  <link rel="stylesheet" href="/css/shared/theme.css">
   <link rel="stylesheet" href="/css/shared/reset.css">
   <link rel="stylesheet" href="/css/shared/layout.css">
   <link rel="stylesheet" href="/css/shared/banner.css">
@@ -18,7 +19,8 @@
 <body>
 
 <div id="page-profile" class="page active">
-  <div class="profile-header">
+  <div class="profile-header" style="position:relative;">
+    <button id="bd-theme-toggle" class="bd-theme-toggle" type="button" aria-label="Toggle theme" style="position:absolute;top:16px;right:16px;background:rgba(255,255,255,0.15);border-color:rgba(255,255,255,0.25);color:white;"></button>
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
       <button class="back-btn" onclick="location.href='/pages/dashboard.html'">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
@@ -57,6 +59,7 @@
 </nav>
 
 <!-- Shared JS -->
+<script src="/js/shared/theme-toggle.js"></script>
 <script src="/js/shared/config.js"></script>
 <script src="/js/shared/api.js"></script>
 <script src="/js/shared/auth.js"></script>

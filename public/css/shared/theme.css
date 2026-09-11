@@ -422,3 +422,26 @@ body {
   background: rgba(217, 119, 6, 0.15);
   color: #FBBF24;
 }
+
+/* ============================================================
+   RESULTS PAGE — Light theme header
+   Use royal blue (matches login/dashboard), not institutional BDU blue
+   ============================================================ */
+[data-theme="light"] .results-header {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8, #1e3a8a);
+}
+
+[data-theme="light"] .gpa-card-primary {
+  background: linear-gradient(135deg, #2563eb, #1e40af);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+}
+
+[data-theme="light"] .results-content {
+  color: #0f172a;
+}
+
+/* ============================================================
+   PROFILE PAGE — Light theme header
+   Keep slate gradient (looks intentional in both themes)
+   ============================================================ */
+

@@ -26,7 +26,7 @@
 }
 
 .course-row:hover {
-  background: #f8faff;
+  background: var(--body-bg);
   box-shadow: 0 4px 12px rgba(0,0,0,0.06);
   transform: translateX(4px);
 }
@@ -50,10 +50,10 @@
 
 .course-info .ccode {
   font-size: 11px;
-  color: #4f6885;
+  color: var(--text-2);
   font-weight: 500;
   display: inline-block;
-  background: #f1f5f9;
+  background: var(--bg-elevated);
   padding: 2px 8px;
   border-radius: 6px;
   margin-top: 4px;
@@ -61,7 +61,7 @@
 
 .course-info .cred {
   font-size: 11px;
-  color: #4f6885;
+  color: var(--text-2);
   margin-left: 8px;
 }
 
@@ -96,12 +96,12 @@
 }
 
 .course-grade .letter.incomplete {
-  background: #6f8aa8;
+  background: var(--text-muted);
 }
 
 .course-grade .pts {
   font-size: 11px;
-  color: #3e5f7e;
+  color: var(--text-2);
   font-weight: 500;
   margin-top: 2px;
 }
@@ -121,15 +121,15 @@
   transform: scale(1.1);
 }
 
-.grade-A { background: #d1fae5; color: #065f46; }
-.grade-A-plus { background: #a7f3d0; color: #065f46; }
-.grade-B { background: #dbeafe; color: #1e40af; }
-.grade-B-plus { background: #bfdbfe; color: #1e40af; }
-.grade-C { background: #fef3c7; color: #92400e; }
-.grade-C-plus { background: #fde68a; color: #92400e; }
-.grade-D { background: #ffedd5; color: #9a3412; }
-.grade-F { background: #fee2e2; color: #991b1b; }
-.grade-P { background: #f1f5f9; color: #475569; }
+.grade-A { background: var(--grade-A-bg); color: var(--grade-A-color); }
+.grade-A-plus { background: var(--grade-A-bg); color: var(--grade-A-color); }
+.grade-B { background: var(--grade-B-bg); color: var(--grade-B-color); }
+.grade-B-plus { background: var(--grade-B-bg); color: var(--grade-B-color); }
+.grade-C { background: var(--grade-C-bg); color: var(--grade-C-color); }
+.grade-C-plus { background: var(--grade-C-bg); color: var(--grade-C-color); }
+.grade-D { background: var(--grade-D-bg); color: var(--grade-D-color); }
+.grade-F { background: var(--grade-F-bg); color: var(--grade-F-color); }
+.grade-P { background: var(--grade-P-bg); color: var(--grade-P-color); }
 
 /* Course Status */
 .course-status {
@@ -141,6 +141,6 @@
   margin-top: 4px;
 }
 
-.course-status.normal { background: #d1fae5; color: #065f46; }
-.course-status.repeat { background: #fef3c7; color: #92400e; }
-.course-status.incomplete { background: #fee2e2; color: #991b1b; }
+.course-status.normal { background: var(--success-bg); color: var(--success); }
+.course-status.repeat { background: var(--warning-bg); color: var(--warning); }
+.course-status.incomplete { background: var(--danger-bg); color: var(--danger); }
