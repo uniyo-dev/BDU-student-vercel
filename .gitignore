@@ -55,3 +55,7 @@ temp/
 
 # Unused library
 public/js/lib/
+
+# Python cache
+__pycache__/
+*.pyc

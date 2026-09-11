@@ -1,0 +1,36 @@
+<svg viewBox="0 0 240 64" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bdGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#8B5CF6"/>
+      <stop offset="100%" stop-color="#4C1D95"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Badge background -->
+  <rect x="4" y="8" width="48" height="48" rx="11" fill="url(#bdGrad)"/>
+
+  <!-- Gold ring inside badge -->
+  <rect x="7" y="11" width="42" height="42" rx="9"
+        fill="none" stroke="#FCD34D" stroke-width="0.8" opacity="0.55"/>
+
+  <!-- Graduation cap icon (center of badge) -->
+  <g transform="translate(28, 32)">
+    <path d="M-13 -3 L0 -9 L13 -3 L0 3 Z"
+          fill="none" stroke="#FCD34D" stroke-width="2.2"
+          stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M-7 1 L-7 6 Q0 10 7 6 L7 1"
+          fill="none" stroke="#FCD34D" stroke-width="2.2"
+          stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="10" cy="-3" r="1.5" fill="#FCD34D"/>
+  </g>
+
+  <!-- Wordmark -->
+  <text x="62" y="30" font-family="Helvetica, Arial, sans-serif"
+        font-size="15" font-weight="800" fill="#6D28D9"
+        letter-spacing="0.3">BD Buddy</text>
+
+  <!-- Tagline -->
+  <text x="62" y="45" font-family="Helvetica, Arial, sans-serif"
+        font-size="9" font-weight="500" fill="#64748b"
+        letter-spacing="0.2">Unofficial BDU Portal Viewer</text>
+</svg>

@@ -281,13 +281,69 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  // Password verification: POST /api/verify-password
+  if (req.url === '/api/verify-password' && req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => body += chunk);
+    req.on('end', async () => {
+      try {
+        const { username, password } = JSON.parse(body || '{}');
+        
+        if (!username || !password) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          return res.end(JSON.stringify({ valid: false, error: 'Missing credentials' }));
+        }
+
+        // Normalize username (same as login)
+        let normalizedUser = String(username).trim();
+        if (!normalizedUser.toLowerCase().startsWith('bdu')) {
+          normalizedUser = 'bdu' + normalizedUser;
+        }
+        normalizedUser = normalizedUser.toLowerCase();
+
+        // Get the login page + antiforgery token
+        const loginPage = await makeRequest('/Account/Login');
+        const token = loginPage.body.match(/__RequestVerificationToken[^>]*value="([^"]+)"/)?.[1] || '';
+        const cookies1 = (loginPage.headers['set-cookie'] || []).map(c => c.split(';')[0]);
+
+        // POST credentials
+        const fd = new URLSearchParams();
+        fd.append('Input.UserName', normalizedUser);
+        fd.append('Input.Password', password);
+        fd.append('__RequestVerificationToken', token);
+        fd.append('Input.RememberMe', 'false');
+
+        const verifyRes = await makeRequest('/Account/Login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Cookie': cookies1.join('; '),
+            'Origin': 'http://studentportal.bdu.edu.et',
+            'Referer': 'http://studentportal.bdu.edu.et/Account/Login',
+          },
+          body: fd.toString(),
+        });
+
+        // Success = 302 redirect
+        const valid = (verifyRes.statusCode === 302 || verifyRes.statusCode === 301);
+
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ valid: valid }));
+      } catch (err) {
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ valid: false, error: err.message }));
+      }
+    });
+    return;
+  }
+
   // PDF generation: POST /api/generate-grade-pdf
   if (req.url === '/api/generate-grade-pdf' && req.method === 'POST') {
     let body = '';
     req.on('data', chunk => body += chunk);
     req.on('end', () => {
       const { spawn } = require('child_process');
-      const py = spawn('python3', [path.join(__dirname, 'scripts', 'generate_grade_pdf.py')]);
+      const py = spawn('python3', [path.join(__dirname, 'scripts', 'grade_report.py')]);
       
       let pdfChunks = [];
       let errChunks = [];
@@ -313,8 +369,8 @@ const server = http.createServer(async (req, res) => {
       });
       
       py.on('error', err => {
-        res.writeHead(500, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ success: false, error: err.message }));
+        res.writeHead(500, { 'Content-Type': 'text/plain' });
+        res.end('PDF spawn failed: ' + err.message);
       });
       
       py.stdin.write(body);
