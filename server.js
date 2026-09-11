@@ -281,6 +281,48 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  // PDF generation: POST /api/generate-grade-pdf
+  if (req.url === '/api/generate-grade-pdf' && req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => body += chunk);
+    req.on('end', () => {
+      const { spawn } = require('child_process');
+      const py = spawn('python3', [path.join(__dirname, 'scripts', 'generate_grade_pdf.py')]);
+      
+      let pdfChunks = [];
+      let errChunks = [];
+      
+      py.stdout.on('data', c => pdfChunks.push(c));
+      py.stderr.on('data', c => errChunks.push(c));
+      
+      py.on('close', code => {
+        if (code !== 0) {
+          res.writeHead(500, { 'Content-Type': 'application/json' });
+          return res.end(JSON.stringify({ 
+            success: false, 
+            error: Buffer.concat(errChunks).toString() 
+          }));
+        }
+        const pdf = Buffer.concat(pdfChunks);
+        res.writeHead(200, {
+          'Content-Type': 'application/pdf',
+          'Content-Disposition': 'attachment; filename="BDU-Grade-Report.pdf"',
+          'Content-Length': pdf.length,
+        });
+        res.end(pdf);
+      });
+      
+      py.on('error', err => {
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: false, error: err.message }));
+      });
+      
+      py.stdin.write(body);
+      py.stdin.end();
+    });
+    return;
+  }
+
   
   // Serve static files
   let urlPath = req.url.split('?')[0];

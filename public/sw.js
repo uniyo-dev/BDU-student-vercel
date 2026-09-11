@@ -14,7 +14,7 @@ const ASSETS = [
   '/pages/placement.html',
   '/pages/profile.html',
   '/pages/grade-report.html',
-  '/images/logo.jpg',
+  '/images/logo.png',
   '/images/banner.jpeg',
   '/images/stamp.jpg',
   '/images/Signature.png',

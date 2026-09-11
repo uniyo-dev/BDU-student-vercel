@@ -8,6 +8,80 @@ const GradeReportApp = {
   // ============================================================
   // Print Date — Auto-fill for certificate header
   // ============================================================
+  async downloadPDF(btn) {
+    const originalHTML = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;vertical-align:-3px;display:inline-block;margin-right:4px;"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> Generating PDF...';
+
+    try {
+      const bio = this.reportData?.biography || {};
+      const regs = this.reportData?.registrations || [];
+      const reg = regs[this.currentSemesterIndex] || {};
+      const allCourses = this.reportData?.courses || [];
+      const semCourses = allCourses.find(c => c.semester === reg.semester);
+      const courses = (semCourses?.courses || []).map(c => ({
+        code: c.code,
+        title: c.title,
+        credit: c.credit,
+        grade: c.grade,
+      }));
+
+      const summary = {
+        totalCredits: courses.reduce((s, c) => s + (parseFloat(c.credit) || 0), 0),
+        cumulativeGPA: reg.cgpa || '—',
+        sgpa: reg.sgpa || '—',
+      };
+
+      const registration = {
+        program: this.reportData?.program || '—',
+        acYear: reg.acYear || '—',
+        semester: reg.semester || '—',
+        status: reg.status || 'Pass',
+      };
+
+      const serial = this.getStableSerial ? this.getStableSerial() : 'BDU-GR-UNKNOWN';
+      const verifyUrl = this.getVerifyUrl ? this.getVerifyUrl() : '';
+
+      const payload = {
+        biography: bio,
+        registration: registration,
+        courses: courses,
+        summary: summary,
+        serial: serial,
+        verifyUrl: verifyUrl,
+      };
+
+      const response = await fetch('/api/generate-grade-pdf', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const errText = await response.text();
+        throw new Error('PDF generation failed: ' + errText);
+      }
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `BDU-Grade-Report-${bio.studentId || 'Unknown'}-${serial}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;vertical-align:-3px;display:inline-block;margin-right:4px;"><polyline points="20 6 9 17 4 12"/></svg> Downloaded!';
+      setTimeout(() => { btn.innerHTML = originalHTML; btn.disabled = false; }, 2000);
+    } catch (err) {
+      console.error(err);
+      alert('PDF download failed: ' + err.message);
+      btn.innerHTML = originalHTML;
+      btn.disabled = false;
+    }
+  },
+
   setPrintDate() {
     const el = document.getElementById('print-date');
     if (!el) return;
@@ -66,7 +140,7 @@ const GradeReportApp = {
     const btnSingle = document.getElementById('option-single');
     const btnCumulative = document.getElementById('option-cumulative');
 
-    if (btnPrint) btnPrint.addEventListener('click', () => window.print());
+    if (btnPrint) btnPrint.addEventListener('click', () => this.downloadPDF(btnPrint));
     if (btnBack) btnBack.addEventListener('click', () => window.location.href = '/pages/results.html');
     if (btnSingle) btnSingle.addEventListener('click', () => this.switchMode('single'));
     if (btnCumulative) btnCumulative.addEventListener('click', () => this.switchMode('cumulative'));
