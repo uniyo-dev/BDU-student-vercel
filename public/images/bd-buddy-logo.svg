@@ -1,36 +1,27 @@
-<svg viewBox="0 0 240 64" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 340 70" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <linearGradient id="bdGrad" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#8B5CF6"/>
       <stop offset="100%" stop-color="#4C1D95"/>
     </linearGradient>
+    <linearGradient id="bdShine" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.28"/>
+      <stop offset="50%" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
   </defs>
-
-  <!-- Badge background -->
-  <rect x="4" y="8" width="48" height="48" rx="11" fill="url(#bdGrad)"/>
-
-  <!-- Gold ring inside badge -->
-  <rect x="7" y="11" width="42" height="42" rx="9"
-        fill="none" stroke="#FCD34D" stroke-width="0.8" opacity="0.55"/>
-
-  <!-- Graduation cap icon (center of badge) -->
-  <g transform="translate(28, 32)">
-    <path d="M-13 -3 L0 -9 L13 -3 L0 3 Z"
-          fill="none" stroke="#FCD34D" stroke-width="2.2"
-          stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="M-7 1 L-7 6 Q0 10 7 6 L7 1"
-          fill="none" stroke="#FCD34D" stroke-width="2.2"
-          stroke-linecap="round" stroke-linejoin="round"/>
-    <circle cx="10" cy="-3" r="1.5" fill="#FCD34D"/>
+  <g transform="translate(8, 8)">
+    <rect width="54" height="54" rx="14" fill="url(#bdGrad)"/>
+    <rect width="54" height="54" rx="14" fill="url(#bdShine)"/>
+    <rect x="2.5" y="2.5" width="49" height="49" rx="11.5" fill="none" stroke="#FCD34D" stroke-width="1.2" opacity="0.4"/>
+    <g transform="translate(27, 28) scale(1.6) translate(-12, -12)">
+      <path d="M22 10v6M2 10l10-5 10 5-10 5z" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M6 12v5c3 3 9 3 12 0v-5" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    <circle cx="27" cy="12" r="2.2" fill="#FCD34D"/>
+    <circle cx="21" cy="46" r="1.4" fill="#2ECC71" opacity="0.85"/>
+    <circle cx="27" cy="47" r="1.4" fill="#FCD34D" opacity="0.85"/>
+    <circle cx="33" cy="46" r="1.4" fill="#E74C3C" opacity="0.85"/>
   </g>
-
-  <!-- Wordmark -->
-  <text x="62" y="30" font-family="Helvetica, Arial, sans-serif"
-        font-size="15" font-weight="800" fill="#6D28D9"
-        letter-spacing="0.3">BD Buddy</text>
-
-  <!-- Tagline -->
-  <text x="62" y="45" font-family="Helvetica, Arial, sans-serif"
-        font-size="9" font-weight="500" fill="#64748b"
-        letter-spacing="0.2">Unofficial BDU Portal Viewer</text>
+  <text x="76" y="38" font-family="'Inter', -apple-system, sans-serif" font-size="24" font-weight="900" fill="#8B5CF6" letter-spacing="-0.3">BD Buddy</text>
+  <text x="77" y="54" font-family="'Inter', -apple-system, sans-serif" font-size="9.5" font-weight="600" fill="#94A3B8" letter-spacing="0.4">UNOFFICIAL BDU PORTAL VIEWER</text>
 </svg>

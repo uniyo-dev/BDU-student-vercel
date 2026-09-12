@@ -2,7 +2,10 @@
 #page-dashboard { background: var(--body-bg); padding-bottom: 96px; }
 
 .dash-header {
-  background: linear-gradient(135deg, #2563eb, #1d4ed8, #1e3a8a);
+  background: linear-gradient(135deg,
+    var(--primary),
+    var(--primary-hover),
+    var(--primary-dark));
   padding: 48px 20px 80px;
   display: flex; flex-direction: column;
 }

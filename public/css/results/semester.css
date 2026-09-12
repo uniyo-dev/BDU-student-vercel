@@ -34,7 +34,7 @@
 .gpa-card-primary {
   border-radius: 18px; padding: 16px; color: white;
   background: linear-gradient(135deg, var(--primary-lighter), var(--primary-light));
-  box-shadow: 0 4px 12px rgba(37,99,235,0.2);
+  box-shadow: var(--shadow-md);
 }
 .gpa-card-primary .gpa-label { font-size: 11px; opacity: 0.8; font-weight: 600; margin-bottom: 4px; }
 .gpa-card-primary .gpa-value { font-size: 34px; font-weight: 800; line-height: 1; }
@@ -82,12 +82,12 @@
   font-size: 13px; font-weight: 700;
   padding: 6px 14px; border-radius: 10px; flex-shrink: 0;
 }
-.grade-A { background: #d1fae5; color: #065f46; }
-.grade-B { background: #dbeafe; color: #1e40af; }
-.grade-C { background: #fef3c7; color: #92400e; }
-.grade-D { background: #ffedd5; color: #9a3412; }
-.grade-F { background: #fee2e2; color: #991b1b; }
-.grade-P { background: #f1f5f9; color: #475569; }
+.grade-A { background: var(--grade-A-bg); color: var(--grade-A-color); }
+.grade-B { background: var(--grade-B-bg); color: var(--grade-B-color); }
+.grade-C { background: var(--grade-C-bg); color: var(--grade-C-color); }
+.grade-D { background: var(--grade-D-bg); color: var(--grade-D-color); }
+.grade-F { background: var(--grade-F-bg); color: var(--grade-F-color); }
+.grade-P { background: var(--grade-P-bg); color: var(--grade-P-color); }
 
 
 /* ===== Rules moved from inline <style> ===== */
@@ -109,7 +109,7 @@
 }
 .toggle-btn.active {
   border-color: var(--primary-light); background: var(--info-bg); color: var(--primary-light);
-  box-shadow: 0 2px 8px rgba(26,95,156,0.15);
+  box-shadow: var(--shadow-sm);
 }
 .toggle-btn:hover { transform: translateY(-2px); }
 
