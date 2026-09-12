@@ -62,16 +62,16 @@ document.addEventListener('DOMContentLoaded', function() {
           '<div class="course-meta"><span class="course-code">' + c.code + '</span>' +
           '<span class="course-credits">· ' + c.credit + ' cr</span></div>' +
           '<div class="course-name">' + c.title + '</div>' +
-          '<div style="font-size:11px;color:#4f6885;margin-top:2px;">' + c.points + ' pts</div>' +
+          '<div class="course-points">' + c.points + ' pts</div>' +
           '</div>' +
-          '<div style="text-align:right;">' +
-          '<div style="font-weight:800;font-size:14px;color:#0f172a;">' + (c.percentage || '—') + '</div>' +
+          '<div class="course-score-wrap">' +
+          '<div class="course-percentage">' + (c.percentage || '—') + '</div>' +
           '<span class="grade-badge ' + gradeClass(c.grade) + '">' + (c.grade || '—') + '</span>' +
           '</div>' +
           '</div>';
       });
     } else {
-      coursesHtml = '<div style="padding:20px;text-align:center;color:#94a3b8;font-size:13px;">No courses registered yet.</div>';
+      coursesHtml = '<div class="course-empty">No courses registered yet.</div>';
     }
     
     const html = '<div class="semester-block">' +
@@ -86,14 +86,14 @@ document.addEventListener('DOMContentLoaded', function() {
       '<div class="gpa-card-secondary">' +
       '<div class="gpa-label">CGPA</div>' +
       '<div class="gpa-value">' + cgpaHtml + '</div>' +
-      '<div style="font-size:10px;color:#94a3b8;margin-top:4px;">' + semCredits + ' Credit Hours</div>' +
+      '<div class="gpa-credit-hours">' + semCredits + ' Credit Hours</div>' +
       '</div>' +
       '</div>' +
       '<div class="courses-title">Course Results</div>' +
       coursesHtml +
       '</div>' +
-      '<button onclick="location.href=\'/pages/grade-report.html\'" style="width:100%;padding:14px;background:#1a5f9c;color:white;border:none;border-radius:50px;font-weight:700;font-size:14px;cursor:pointer;margin-top:12px;">' +
-      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;vertical-align:middle;"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> Print Grade Report</button>';
+      '<button onclick="location.href=\'/pages/grade-report.html\'" class="btn-print-report">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> Print Grade Report</button>';
     
     container.innerHTML = html;
   }

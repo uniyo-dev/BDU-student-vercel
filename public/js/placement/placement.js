@@ -235,7 +235,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let html = '';
     
     if (pageStudents.length === 0) {
-      html = '<div style="text-align:center;padding:40px;color:#64748b;">No students in this department yet.<br>Results will appear when placement is released.</div>';
+      html = '<div class="dept-empty">No students in this department yet.<br>Results will appear when placement is released.</div>';
     } else {
       pageStudents.forEach(function(s, index) {
         const globalRank = start + index + 1;
@@ -326,13 +326,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const criteria = placement.criteria || [];
     
     if (criteria.length > 0) {
-      let criteriaHtml = '<div style="margin-top:20px;padding:16px;background:white;border-radius:14px;border:2px solid #e3eaf2;">';
-      criteriaHtml += '<div style="font-weight:800;font-size:15px;color:#d97706;margin-bottom:12px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;vertical-align:-3px;display:inline-block;margin-right:6px;"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg>Placement Criteria (Official)</div>';
+      let criteriaHtml = '<div class="criteria-box">';
+      criteriaHtml += '<div class="criteria-box-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg>Placement Criteria (Official)</div>';
       
       criteria.forEach(function(c) {
-        criteriaHtml += '<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f1f5f9;">';
-        criteriaHtml += '<span style="font-size:12px;color:#4a637f;">' + c.name + '</span>';
-        criteriaHtml += '<span style="font-weight:800;font-size:13px;color:#d97706;">' + c.percent + '%</span>';
+        criteriaHtml += '<div class="criteria-box-row">';
+        criteriaHtml += '<span class="criteria-box-name">' + c.name + '</span>';
+        criteriaHtml += '<span class="criteria-box-value">' + c.percent + '%</span>';
         criteriaHtml += '</div>';
       });
       

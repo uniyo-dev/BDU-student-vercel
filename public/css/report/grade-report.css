@@ -779,3 +779,8 @@
     background: rgba(37, 99, 235, 0.05);
     border-color: rgba(37, 99, 235, 0.20);
   }
+/* ===== JS-generated content ===== */
+.course-empty-msg {
+  color: var(--gr-text-muted);
+  font-size: 13px;
+}

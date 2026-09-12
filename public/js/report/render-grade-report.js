@@ -143,7 +143,7 @@
 
       if (!courses.length) {
         container.innerHTML =
-          '<p style="color:#94a3b8;font-size:13px;">No course records found.</p>';
+          '<p class="course-empty-msg">No course records found.</p>';
         return;
       }
 

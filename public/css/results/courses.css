@@ -144,3 +144,54 @@
 .course-status.normal { background: var(--success-bg); color: var(--success); }
 .course-status.repeat { background: var(--warning-bg); color: var(--warning); }
 .course-status.incomplete { background: var(--danger-bg); color: var(--danger); }
+
+/* ===== JS-generated content classes ===== */
+.course-points {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.course-percentage {
+  font-weight: 800;
+  font-size: 14px;
+  color: var(--text-1);
+}
+
+.course-score-wrap {
+  text-align: right;
+}
+
+.course-empty {
+  padding: 20px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.gpa-credit-hours {
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.btn-print-report {
+  width: 100%;
+  padding: 14px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  margin-top: 12px;
+  transition: background 0.2s ease;
+  font-family: inherit;
+}
+.btn-print-report:hover { background: var(--primary-hover); }
+.btn-print-report svg {
+  width: 18px;
+  height: 18px;
+  vertical-align: middle;
+}
