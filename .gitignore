@@ -59,3 +59,10 @@ public/js/lib/
 # Python cache
 __pycache__/
 *.pyc
+
+# Secrets (additional)
+*.hmac
+doc.hmac
+hmac-secret.txt
+secrets/
+*.secret
