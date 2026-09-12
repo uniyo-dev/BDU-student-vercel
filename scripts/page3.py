@@ -293,10 +293,9 @@ def _draw_about_contact(c, top_y, height):
     c.setFont("Helvetica", 8)
     y_r = top_y + 12
     contact_rows = [
-        ("Developer:", "Chalachew Agegn"),
+        ("Project:", "BD Buddy"),
         ("Telegram:", "@challengepr"),
         ("Email:", "chalachewagegn7@gmail.com"),
-        ("Phone:", "0923093416"),
     ]
     for (lbl, val) in contact_rows:
         c.setFont("Helvetica-Bold", 8)

@@ -98,12 +98,27 @@ All academic data is fetched directly from the official BDU portal at studentpor
 
 ---
 
-## 🔐 Demo Credentials (For Testing)
+## 🔐 Credentials & Testing
 
-Username: bdu10460670
-Password: @Chalie/2026
+**Never commit credentials to this repository.**
 
-Note: These are test credentials for demonstration. Do not use in production.
+BD Buddy does **not** ship with demo accounts. Every user logs in with their own
+BDU username and password on the login page. Passwords are only used to make the
+request to the BDU portal and are never stored, logged, or committed.
+
+### Testing locally
+
+To test BD Buddy:
+
+1. Run `node server.js`
+2. Open `http://localhost:3000`
+3. Log in with **your own BDU credentials**
+
+Never commit test credentials. Use your own account locally and clear browser
+storage between sessions.
+
+If you find credentials anywhere in this repo or its history, please open an
+issue immediately.
 
 ---
 
