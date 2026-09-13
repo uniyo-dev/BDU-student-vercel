@@ -8,6 +8,9 @@
    ================================================================ */
 
 [data-theme="dark"] {
+  --profile-header-from: #1e1b4b;
+  --profile-header-to:   #312e81;
+
   /* ---------------- Backgrounds ---------------- */
   --bg-body: #0B0F19;
   --bg-card: #111827;

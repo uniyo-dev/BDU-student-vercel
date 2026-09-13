@@ -8,6 +8,10 @@
    ================================================================ */
 
 :root {
+  /* Profile header gradient (fixed dark, readable in both themes) */
+  --profile-header-from: #0f172a;
+  --profile-header-to:   #1e293b;
+
   /* ---------------- Backgrounds ---------------- */
   --bg-body: #f8fafc;
   --bg-card: #ffffff;

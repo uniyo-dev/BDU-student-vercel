@@ -2,7 +2,7 @@
 #page-profile { background: var(--bg-body); padding-bottom: 96px; }
 
 .profile-header {
-  background: linear-gradient(135deg, var(--text-2), var(--text-1));
+  background: linear-gradient(135deg, var(--profile-header-from), var(--profile-header-to));
   color: white; padding: 48px 20px 64px;
 }
 .profile-header h1 { font-size: 20px; font-weight: 700; margin-bottom: 24px; }
