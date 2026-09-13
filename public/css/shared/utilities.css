@@ -19,7 +19,7 @@
 .text-warning { color: var(--warning); }
 .text-danger { color: var(--danger); }
 .text-info { color: var(--info); }
-.text-muted { color: #4a637f; }
+.text-muted { color: var(--text-muted); }
 
 /* Backgrounds */
 .bg-primary { background: var(--primary); }
@@ -92,7 +92,8 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(255,255,255,0.9);
+  background: var(--bg-body);
+  opacity: 0.92;
   backdrop-filter: blur(10px);
   display: flex;
   align-items: center;

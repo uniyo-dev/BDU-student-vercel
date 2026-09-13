@@ -64,8 +64,8 @@
   background: var(--info-bg);
 }
 [data-theme="dark"] .bottom-nav .active {
-  background: rgba(109, 40, 217, 0.15);
-  color: #8B5CF6;
+  background: color-mix(in srgb, var(--primary) 15%, transparent);
+  color: var(--primary-light);
 }
 
 .bottom-nav .active i,
@@ -73,5 +73,10 @@
   color: var(--primary-light);
 }
 [data-theme="dark"] .bottom-nav .active svg {
-  color: #8B5CF6;
+  color: var(--primary-light);
+}
+
+/* Responsive */
+@media (max-width: 520px) {
+  .bottom-nav { max-width: 100%; left: 0; right: 0; transform: none; }
 }

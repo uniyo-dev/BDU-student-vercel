@@ -21,7 +21,7 @@ const UI = {
   },
 
   gradeClass(grade) {
-    if (!grade || grade === '—') return 'grade-F';
+    if (!grade || grade === '—') return 'grade-dash';
     if (grade.startsWith('A')) return 'grade-A';
     if (grade.startsWith('B')) return 'grade-B';
     if (grade.startsWith('C')) return 'grade-C';

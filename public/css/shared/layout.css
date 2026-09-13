@@ -1,6 +1,5 @@
 /* Shared Layout */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Inter', sans-serif; background: #f8fafc; color: #0f172a; -webkit-font-smoothing: antialiased; }
+body { font-family: 'Inter', sans-serif; background: var(--bg-body); color: var(--text-1); -webkit-font-smoothing: antialiased; }
 a { text-decoration: none; color: inherit; }
 input, button { font-family: inherit; }
 button { cursor: pointer; border: none; background: none; }
@@ -9,24 +8,6 @@ button { cursor: pointer; border: none; background: none; }
 .page.active { display: block; }
 
 .app-layout { position: relative; }
-
-/* Bottom Navigation with SVG */
-.bottom-nav {
-  position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
-  background: rgba(255,255,255,0.97); backdrop-filter: blur(12px);
-  border-top: 1px solid #e2e8f0;
-  display: flex; align-items: center; justify-content: space-around;
-  padding: 8px 8px 12px;
-}
-.nav-item {
-  display: flex; flex-direction: column; align-items: center; gap: 4px;
-  padding: 8px 16px; border-radius: 14px; cursor: pointer;
-  font-size: 10px; font-weight: 600; color: #94a3b8;
-  transition: all 0.2s; background: none; border: none; letter-spacing: 0.05em;
-}
-.nav-item svg { width: 24px; height: 24px; stroke-width: 2; }
-.nav-item.active { color: #2563eb; }
-.nav-item.active svg { stroke-width: 2.5; }
 
 /* Back button with SVG */
 .back-btn {
@@ -48,8 +29,8 @@ button { cursor: pointer; border: none; background: none; }
 
 /* Card */
 .card {
-  background: white; border-radius: 18px; border: 1px solid #f1f5f9;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  background: var(--bg-card); border-radius: 18px; border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
 }
 
 /* Spinner */
@@ -65,7 +46,3 @@ button { cursor: pointer; border: none; background: none; }
 .hidden { display: none !important; }
 .mt-4 { margin-top: 16px; }
 .mb-4 { margin-bottom: 16px; }
-
-/* Responsive */
-.bottom-nav { max-width: 480px; left: 50%; transform: translateX(-50%); }
-@media (max-width: 520px) { .bottom-nav { max-width: 100%; left: 0; transform: none; } }

@@ -21,16 +21,6 @@ document.addEventListener('DOMContentLoaded', function() {
   
   let currentSemester = 0;
   
-  function gradeClass(grade) {
-    if (!grade || grade === '—') return 'grade-dash';
-    if (grade.startsWith('A')) return 'grade-A';
-    if (grade.startsWith('B')) return 'grade-B';
-    if (grade.startsWith('C')) return 'grade-C';
-    if (grade.startsWith('D')) return 'grade-D';
-    if (grade === 'P') return 'grade-P';
-    return 'grade-F';
-  }
-  
   function renderToggle() {
     if (!toggleContainer) return;
     
@@ -66,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function() {
           '</div>' +
           '<div class="course-score-wrap">' +
           '<div class="course-percentage">' + (c.percentage || '—') + '</div>' +
-          '<span class="grade-badge ' + gradeClass(c.grade) + '">' + (c.grade || '—') + '</span>' +
+          '<span class="grade-badge ' + UI.gradeClass(c.grade) + '">' + (c.grade || '—') + '</span>' +
           '</div>' +
           '</div>';
       });

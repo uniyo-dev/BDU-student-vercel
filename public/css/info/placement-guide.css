@@ -88,7 +88,7 @@
     
     /* Alert Banner */
     .alert-banner {
-      background: #fff3cd;
+      background: var(--warning-bg);
       border: 2px solid var(--secondary);
       border-radius: 14px;
       padding: 14px;
@@ -250,7 +250,7 @@
     
     /* Tips */
     .tip-box {
-      background: #fff3cd;
+      background: var(--warning-bg);
       border-left: 4px solid var(--secondary);
       padding: 12px;
       border-radius: 8px;

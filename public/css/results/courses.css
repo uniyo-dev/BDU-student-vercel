@@ -195,3 +195,9 @@
   height: 18px;
   vertical-align: middle;
 }
+
+/* Grade badge: missing/incomplete grade */
+.grade-dash {
+  background: var(--bg-elevated);
+  color: var(--text-muted);
+}

@@ -158,7 +158,7 @@
         '</tr></thead><tbody>';
 
       courses.forEach((c, idx) => {
-        const gradeClass = 'grade-' + String(c.grade || '').replace('+', 'plus').replace('-', 'minus');
+        const gradeClass = 'grade-' + String(c.grade || '').replace('+', '-plus').replace('-', '-minus');
         const hidden = hasMore && idx >= SHOW_INITIAL;
         html += '<tr' + (hidden ? ' class="course-row-hidden" style="display:none"' : '') + '>' +
           '<td class="code">' + this.esc(c.code || '—') + '</td>' +
@@ -195,9 +195,9 @@
     },
 
     // ---------- Verification (QR + barcode) ----------
-    renderVerification() {
+    async renderVerification() {
       const bio = this.reportData.biography || {};
-      const serial = this.getSerial();
+      const serial = await this.getSerial();
       const verifyUrl = this.getVerifyUrl(bio.studentId);
 
       // Update URL + serial text immediately
@@ -265,17 +265,23 @@
       }
     },
 
-    getSerial() {
+    async getSerial() {
+      if (this._serial) return this._serial;
       const bio = this.reportData.biography || {};
-      const key = 'bdu_report_serial_' + (bio.studentId || 'UNKNOWN');
-      let serial = localStorage.getItem(key);
-      if (!serial) {
-        const digits = (bio.studentId || '000000').replace(/\D/g, '') || '000000';
-        const salt = Math.random().toString(36).substring(2, 7).toUpperCase();
-        serial = 'BDU-GR-' + digits + '-' + salt;
-        localStorage.setItem(key, serial);
+      const studentId = bio.studentId || '';
+      if (!studentId) return '';
+
+      try {
+        const res = await fetch('/api/serial/new?studentId=' + encodeURIComponent(studentId));
+        const data = await res.json();
+        if (data && data.success && data.serial) {
+          this._serial = data.serial;
+          return this._serial;
+        }
+      } catch (err) {
+        console.error('Failed to fetch serial:', err);
       }
-      return serial;
+      return '';
     },
 
     getVerifyUrl(studentId) {
@@ -313,7 +319,7 @@
         semester: reg.semester || '—',
         status: reg.status || 'Pass',
       };
-      const serial = this.getSerial();
+      const serial = await this.getSerial();
       const verifyUrl = this.getVerifyUrl(bio.studentId);
       const printMode = 'Semester ' + (reg.semester || 'I');
 

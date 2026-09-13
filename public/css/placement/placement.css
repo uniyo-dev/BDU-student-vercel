@@ -11,20 +11,6 @@
   background: linear-gradient(135deg, #92400e, #78350f);
 }
 
-.back-btn {
-  width: 36px;
-  height: 36px;
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: white;
-  border: none;
-}
-.back-btn svg { width: 20px; height: 20px; }
-
 /* Tab switcher */
 .tab-switcher {
   display: flex;

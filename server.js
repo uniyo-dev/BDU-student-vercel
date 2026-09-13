@@ -4,6 +4,102 @@ const path = require('path');
 
 const PORT = process.env.PORT || 3000;
 
+// ============================================================
+// Environment loading (development only)
+// Reads .env file if present. On Render, env vars come from dashboard.
+// ============================================================
+try {
+  const envPath = path.join(__dirname, '.env');
+  if (fs.existsSync(envPath)) {
+    const envContent = fs.readFileSync(envPath, 'utf8');
+    envContent.split(/\r?\n/).forEach(function (line) {
+      const m = line.match(/^([A-Z_][A-Z0-9_]*)=(.*)$/);
+      if (m && !process.env[m[1]]) {
+        process.env[m[1]] = m[2];
+      }
+    });
+  }
+} catch (err) {
+  // .env is optional
+}
+
+// ============================================================
+// HMAC-signed serials
+// ============================================================
+const crypto = require('crypto');
+const HMAC_SECRET = process.env.HMAC_SECRET;
+const HMAC_SIG_LENGTH = 10;
+
+if (!HMAC_SECRET) {
+  console.error('=================================================');
+  console.error('  WARNING: HMAC_SECRET not set.');
+  console.error('  Serial verification will NOT work.');
+  console.error('  Set it via .env (local) or Render env var (prod).');
+  console.error('=================================================');
+} else {
+  console.log('HMAC secret loaded (' + HMAC_SECRET.length + ' chars)');
+}
+
+function signSerial(studentId, timestamp, random) {
+  if (!HMAC_SECRET) return '';
+  const payload = studentId + '|' + timestamp + '|' + random;
+  const hmac = crypto.createHmac('sha256', HMAC_SECRET)
+                     .update(payload)
+                     .digest('hex');
+  return hmac.slice(0, HMAC_SIG_LENGTH).toUpperCase();
+}
+
+function generateSerial(studentId) {
+  const timestamp = Date.now().toString(36).toUpperCase();
+  const random = crypto.randomBytes(3).toString('hex').toUpperCase();
+  const sig = signSerial(studentId, timestamp, random);
+  return 'BDU-GR-' + studentId + '-' + timestamp + '-' + random + '-' + sig;
+}
+
+function verifySerial(serial) {
+  if (!HMAC_SECRET) {
+    return { valid: false, reason: 'Verification unavailable: server secret not configured' };
+  }
+  if (!serial || typeof serial !== 'string') {
+    return { valid: false, reason: 'No serial provided' };
+  }
+
+  const parts = serial.split('-');
+  // Expected: BDU-GR-<studentId>-<timestamp>-<random>-<signature>
+  if (parts.length !== 6) {
+    return { valid: false, reason: 'Malformed serial' };
+  }
+  if (parts[0] !== 'BDU' || parts[1] !== 'GR') {
+    return { valid: false, reason: 'Invalid serial prefix' };
+  }
+
+  const studentId = parts[2];
+  const timestamp = parts[3];
+  const random = parts[4];
+  const providedSig = parts[5];
+
+  const expectedSig = signSerial(studentId, timestamp, random);
+
+  // Constant-time comparison to prevent timing attacks
+  if (providedSig.length !== expectedSig.length) {
+    return { valid: false, reason: 'Invalid signature length' };
+  }
+  let mismatch = 0;
+  for (let i = 0; i < expectedSig.length; i++) {
+    mismatch |= providedSig.charCodeAt(i) ^ expectedSig.charCodeAt(i);
+  }
+  if (mismatch !== 0) {
+    return { valid: false, reason: 'Signature mismatch' };
+  }
+
+  const generatedAt = parseInt(timestamp, 36);
+  return {
+    valid: true,
+    studentId: studentId,
+    generatedAt: isNaN(generatedAt) ? null : generatedAt,
+  };
+}
+
 // BDU Portal API helper
 function makeRequest(path, options = {}) {
   return new Promise((resolve, reject) => {
@@ -416,6 +512,21 @@ const server = http.createServer(async (req, res) => {
     let body = '';
     req.on('data', chunk => body += chunk);
     req.on('end', () => {
+      // Parse payload, generate a signed serial, and re-serialize.
+      // Backend now owns serial generation so it can sign with HMAC.
+      let modifiedBody = body;
+      try {
+        const payload = JSON.parse(body);
+        if (payload && payload.biography && payload.biography.studentId) {
+          payload.serial = generateSerial(payload.biography.studentId);
+          modifiedBody = JSON.stringify(payload);
+        } else {
+          console.error('PDF payload missing studentId; cannot generate serial');
+        }
+      } catch (err) {
+        console.error('Failed to parse PDF payload:', err.message);
+      }
+
       const { spawn } = require('child_process');
       const py = spawn('python3', [path.join(__dirname, 'scripts', 'grade_report.py')]);
       
@@ -447,13 +558,66 @@ const server = http.createServer(async (req, res) => {
         res.end('PDF spawn failed: ' + err.message);
       });
       
-      py.stdin.write(body);
+      py.stdin.write(modifiedBody);
       py.stdin.end();
     });
     return;
   }
 
   
+  // ============================================================
+  // Serial generation endpoint
+  // GET /api/serial/new?studentId=<id>
+  // Returns a fresh signed serial for the current session.
+  // ============================================================
+  if (req.url.startsWith('/api/serial/new') && req.method === 'GET') {
+    const query = req.url.split('?')[1] || '';
+    const params = new URLSearchParams(query);
+    const studentId = params.get('studentId') || '';
+
+    if (!studentId) {
+      res.writeHead(400, { 'Content-Type': 'application/json' });
+      return res.end(JSON.stringify({ success: false, error: 'Missing studentId' }));
+    }
+
+    const serial = generateSerial(studentId);
+    res.writeHead(200, {
+      'Content-Type': 'application/json',
+      'Cache-Control': 'no-store',
+    });
+    return res.end(JSON.stringify({ success: true, serial: serial }));
+  }
+
+  // ============================================================
+  // Serial verification endpoint
+  // GET /api/verify/:serial
+  // ============================================================
+  if (req.url.startsWith('/api/verify/') && req.method === 'GET') {
+    const serial = decodeURIComponent(req.url.slice('/api/verify/'.length));
+    const result = verifySerial(serial);
+
+    res.writeHead(200, {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*',
+      'Cache-Control': 'no-store',
+    });
+
+    if (result.valid) {
+      return res.end(JSON.stringify({
+        valid: true,
+        serial: serial,
+        studentId: result.studentId,
+        generatedAt: result.generatedAt,
+      }));
+    } else {
+      return res.end(JSON.stringify({
+        valid: false,
+        serial: serial,
+        error: result.reason || 'Serial could not be verified',
+      }));
+    }
+  }
+
   // Serve static files
   let urlPath = req.url.split('?')[0];
   if (urlPath === '/') urlPath = '/index.html';

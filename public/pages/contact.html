@@ -51,8 +51,8 @@
 
         <!-- Success message -->
         <div class="success-message" id="successMsg">
-            <strong><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;vertical-align:-3px;display:inline-block;margin-right:6px;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>Message sent!</strong>
-            Thank you for your feedback. We'll get back to you soon.
+            <strong><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;vertical-align:-3px;display:inline-block;margin-right:6px;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>Opening your email app...</strong>
+            Your message is pre-filled. Just review and hit Send.
         </div>
 
         <!-- Contact form -->
@@ -60,7 +60,7 @@
             <h2 class="form-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;vertical-align:-3px;display:inline-block;margin-right:8px;"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>Send a Message</h2>
             <p class="form-subtitle">Fill out the form below and we'll respond as soon as possible</p>
 
-            <form id="contactForm" onsubmit="submitForm(event)">
+            <form id="contactForm">
                 <div class="form-group">
                     <label class="form-label" for="name">Your Name <span class="required">*</span></label>
                     <input class="form-input" type="text" id="name" name="name" placeholder="e.g. Abebe Kebede" required>
@@ -94,7 +94,7 @@
                 </div>
 
                 <div class="form-actions">
-                    <button type="button" class="btn btn-secondary" onclick="resetForm()">Clear</button>
+                    <button type="button" class="btn btn-secondary" id="resetFormBtn">Clear</button>
                     <button type="submit" class="btn btn-primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;vertical-align:-3px;display:inline-block;margin-right:6px;"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>Send Message</button>
                 </div>
             </form>
@@ -117,31 +117,6 @@
         BD Buddy — Unofficial BDU Portal Viewer<br>
         <span style="font-size: 11px;">Not affiliated with Bahir Dar University</span>
     </footer>
-
-    <script>
-        function submitForm(event) {
-            event.preventDefault();
-            const name = document.getElementById('name').value.trim();
-            const email = document.getElementById('email').value.trim();
-            const category = document.getElementById('category').value;
-            const subject = document.getElementById('subject').value.trim();
-            const message = document.getElementById('message').value.trim();
-            if (!name || !email || !category || !subject || !message) {
-                alert('Please fill in all required fields');
-                return;
-            }
-            console.log('Contact form submitted:', { name, email, category, subject, message });
-            document.getElementById('successMsg').classList.add('show');
-            document.getElementById('contactForm').reset();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            setTimeout(() => { document.getElementById('successMsg').classList.remove('show'); }, 5000);
-        }
-        function resetForm() {
-            document.getElementById('contactForm').reset();
-        }
-    </script>
-
-
 <!-- BD Buddy Footer Links -->
 <div class="bd-buddy-footer" style="margin-top:24px;padding:20px 16px 28px;border-top:1px solid #e2e8f0;text-align:center;font-size:12px;color:#64748b;">
   <div style="margin-bottom:10px;">
@@ -163,5 +138,6 @@
 </div>
 
     <script src="/js/shared/theme-toggle.js"></script>
+<script src="/js/contact/contact.js"></script>
 </body>
 </html>

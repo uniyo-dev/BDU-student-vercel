@@ -81,7 +81,7 @@ def draw_single_column_table(c, courses, top_y):
         c.drawString(col_x[4], ty(y), str(crs.get('points', '')))
 
         pct = crs.get('percentage', '')
-        c.drawString(col_x[5], ty(y), f"{pct}%" if pct else "-")
+        c.drawString(col_x[5], ty(y), str(pct) if pct else "-")
 
         c.setStrokeColor(BORDER_LIGHT)
         c.setLineWidth(0.3)

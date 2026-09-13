@@ -10,7 +10,7 @@ An unofficial, student-built viewer for the Bahir Dar University student portal 
 
 BD Buddy is an **unofficial, student-built web application** that gives Bahir Dar University students a cleaner, faster, mobile-friendly way to view their academic data — without the clutter and complexity of the official portal.
 
-It doesn't replace the official portal — it's a **viewer** that fetches your real data directly from studentportal.bdu.edu.et and presents it in a modern interface.
+It doesn't replace the official portal — it's a **viewer** that fetches your real data from studentportal.bdu.edu.et through its server and presents it in a modern interface.
 
 ---
 
@@ -77,7 +77,7 @@ The official BDU portal works, but many students find it:
 Your credentials never leave your device except to authenticate with BDU's official portal:
 
 1. You enter your BDU username and password
-2. BD Buddy forwards them directly to studentportal.bdu.edu.et
+2. BD Buddy forwards them to studentportal.bdu.edu.et through its server (never stored, never logged)
 3. BDU verifies your credentials
 4. BD Buddy receives and displays your data
 5. Nothing is stored on our servers
@@ -94,7 +94,7 @@ Your credentials never leave your device except to authenticate with BDU's offic
 
 BD Buddy is an **unofficial, student-built tool**. It is **NOT** affiliated with, endorsed by, or operated by Bahir Dar University.
 
-All academic data is fetched directly from the official BDU portal at studentportal.bdu.edu.et. If you notice any discrepancy, always trust the official portal.
+All academic data is fetched from the official BDU portal at studentportal.bdu.edu.et through BD Buddy's server. If you notice any discrepancy, always trust the official portal.
 
 ---
 

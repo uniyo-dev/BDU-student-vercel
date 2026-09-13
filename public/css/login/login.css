@@ -119,7 +119,7 @@
 }
 .whats-new-badge {
   display: inline-block; padding: 2px 8px;
-  background: #F59E0B; color: #0B0F19;
+  background: var(--accent); color: var(--text-inverse);
   border-radius: 10px; font-size: 9px; font-weight: 800;
   letter-spacing: 0.5px; text-transform: uppercase;
 }

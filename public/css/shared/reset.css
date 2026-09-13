@@ -13,21 +13,6 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 
-body {
-  font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
-  background: var(--body-bg);
-  color: var(--primary);
-  line-height: 1.5;
-  min-height: 100vh;
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-tap-highlight-color: transparent;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  user-select: none;
-}
-
 img {
   max-width: 100%;
   height: auto;
@@ -71,14 +56,21 @@ table {
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: var(--bg-elevated);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #94a3b8;
+  background: var(--text-muted);
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #64748b;
+  background: var(--text-2);
+}
+
+/* Allow text selection on data-display elements */
+[class*="card"], [class*="row"], [class*="list"], [class*="value"],
+p, h1, h2, h3, h4, h5, h6, li, td, th, code, pre {
+  -webkit-user-select: text;
+  user-select: text;
 }

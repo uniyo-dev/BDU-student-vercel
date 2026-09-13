@@ -285,10 +285,10 @@
     border-radius: 6px;
     font-size: 11px; font-weight: 800;
   }
-  .grade-Aplus, .grade-A { background: rgba(34, 197, 94, 0.15); color: #4ADE80; }
-  .grade-Aminus, .grade-Bplus { background: rgba(56, 189, 248, 0.15); color: #7DD3FC; }
-  .grade-B, .grade-Bminus { background: rgba(139, 92, 246, 0.18); color: #C4B5FD; }
-  .grade-Cplus, .grade-C { background: rgba(245, 158, 11, 0.15); color: var(--gr-brand-gold); }
+  .grade-A-plus, .grade-A { background: rgba(34, 197, 94, 0.15); color: #4ADE80; }
+  .grade-A-minus, .grade-B-plus { background: rgba(56, 189, 248, 0.15); color: #7DD3FC; }
+  .grade-B, .grade-B-minus { background: rgba(139, 92, 246, 0.18); color: #C4B5FD; }
+  .grade-C-plus, .grade-C { background: rgba(245, 158, 11, 0.15); color: var(--gr-brand-gold); }
   .grade-D, .grade-F { background: rgba(236, 72, 153, 0.15); color: #F9A8D4; }
   .grade-P { background: rgba(148, 163, 184, 0.15); color: var(--gr-text-muted); }
 

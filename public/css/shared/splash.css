@@ -1,0 +1,69 @@
+/* ================================================================
+   Splash Screen
+   Shown briefly on first load. Fades out after ~800ms.
+   ================================================================ */
+
+#splash-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  opacity: 1;
+  transition: opacity 0.4s ease;
+  pointer-events: all;
+}
+
+#splash-screen.splash-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.splash-content {
+  text-align: center;
+  color: #ffffff;
+  animation: splashFadeIn 0.5s ease;
+}
+
+@keyframes splashFadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.splash-logo {
+  width: 90px;
+  height: 90px;
+  margin: 0 auto 20px;
+  display: block;
+  filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.35));
+}
+
+.splash-title {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  margin-bottom: 4px;
+}
+
+.splash-subtitle {
+  font-size: 12px;
+  opacity: 0.85;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+.splash-spinner {
+  width: 32px;
+  height: 32px;
+  margin: 28px auto 0;
+  border: 3px solid rgba(255, 255, 255, 0.25);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: splashSpin 0.8s linear infinite;
+}
+
+@keyframes splashSpin {
+  to { transform: rotate(360deg); }
+}
