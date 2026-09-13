@@ -56,50 +56,107 @@
 .profile-row-value { font-size: 14px; font-weight: 700; color: var(--text-1); margin-top: 2px; }
 
 /* ===== Achievements section (JS-generated) ===== */
+
+.profile-spacer {
+  padding-bottom: 24px;
+}
+
+
+/* === Achievements redesign (M5) === */
+
 .achievements-section-title {
   margin-top: 20px;
 }
-.achievements-card {
-  padding: 16px;
+
+/* Hero card — top-earning classification */
+.achievement-hero {
+  background: linear-gradient(135deg, var(--profile-header-from), var(--profile-header-to));
+  color: white;
+  border-radius: 18px;
+  padding: 20px 18px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+}
+.achievement-hero-icon {
+  font-size: 36px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.achievement-hero-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.achievement-hero-tier {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.75;
+}
+.achievement-hero-title {
+  font-size: 20px;
+  font-weight: 800;
+}
+.achievement-hero-desc {
+  font-size: 13px;
+  opacity: 0.85;
+}
+
+/* Grid of secondary achievements */
+.achievement-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+}
+
+.achievement-tile {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+.achievement-tile:active {
+  transform: scale(0.97);
+}
+.achievement-tile-icon {
+  font-size: 22px;
+  line-height: 1;
+}
+.achievement-tile-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-1);
+}
+.achievement-tile-desc {
+  font-size: 11px;
+  color: var(--text-3);
+  line-height: 1.35;
+}
+
+/* Locked summary line */
+.achievement-locked {
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: var(--bg-subtle, var(--bg-card));
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  font-size: 12px;
+  color: var(--text-3);
   text-align: center;
 }
-.deans-list {
-  font-size: 14px;
-  font-weight: 800;
-  color: var(--warning);
-  margin-bottom: 8px;
-}
-.deans-list svg {
-  width: 16px;
-  height: 16px;
-  vertical-align: -3px;
-  display: inline-block;
-  margin-right: 6px;
-}
-.achievement-badges {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-.badge {
-  padding: 4px 12px;
-  border-radius: 40px;
-  font-size: 12px;
-  font-weight: 700;
-}
-.badge-aplus {
-  background: var(--grade-A-bg);
-  color: var(--grade-A-color);
-}
-.badge-a {
-  background: var(--grade-B-bg);
-  color: var(--grade-B-color);
-}
-.badge-score {
-  background: var(--grade-C-bg);
-  color: var(--grade-C-color);
-}
-.profile-spacer {
-  padding-bottom: 24px;
+
+/* Empty state */
+.achievement-empty {
+  padding: 24px 16px;
+  text-align: center;
+  color: var(--text-3);
+  font-size: 13px;
 }

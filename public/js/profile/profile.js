@@ -48,20 +48,163 @@ document.addEventListener('DOMContentLoaded', function() {
   const breakdown = summary.gradeBreakdown || {};
   const rankScore = summary.rankScore || 0;
   
-  html += '<div class="profile-section-title achievements-section-title">Achievements</div>';
-  html += '<div class="profile-card achievements-card">';
-  
-  if (gpa === 4.00) {
-    html += '<div class="deans-list"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>DEAN\'S LIST - PERFECT 4.00</div>';
+  // === Achievements redesign (M5) ===
+  // Classification (official BDU tiers)
+  function classifyGpa(g) {
+    if (g >= 3.50) return { tier: 'First Class',  icon: '\u{1F3C6}', desc: 'Graduating with distinction' };
+    if (g >= 3.00) return { tier: 'Second Class', icon: '\u{1F948}', desc: 'Strong academic standing' };
+    if (g >= 2.00) return { tier: 'Third Class',  icon: '\u{1F949}', desc: 'Degree requirements met' };
+    return null;
   }
-  
-  html += '<div class="achievement-badges">';
-  html += '<span class="badge badge-aplus">A+: ' + (breakdown.Aplus || 0) + '</span>';
-  html += '<span class="badge badge-a">A: ' + (breakdown.A || 0) + '</span>';
-  html += '<span class="badge badge-score">Score: ' + rankScore + ' pts</span>';
-  html += '</div>';
-  html += '</div>';
-  
+
+  // Compute all achievements
+  function computeAchievements(data, summary) {
+    const gpa = parseFloat(summary.cumulativeGPA) || 0;
+    const breakdown = summary.gradeBreakdown || {};
+    const aPlus = parseInt(breakdown.Aplus || 0, 10);
+    const aGrade = parseInt(breakdown.A || 0, 10);
+    const fGrade = parseInt(breakdown.F || 0, 10);
+    const highGrades = aPlus + aGrade;
+
+    const regs = (data.registrations || []).slice().sort(function(x, y) {
+      if (x.acYear !== y.acYear) return String(x.acYear).localeCompare(String(y.acYear));
+      return String(x.semester).localeCompare(String(y.semester));
+    });
+
+    const sgpas = regs
+      .map(function(r) { return parseFloat(r.sgpa); })
+      .filter(function(v) { return !isNaN(v) && v > 0; });
+
+    const fastClimber = sgpas.length >= 2 && sgpas.every(function(v, i) {
+      return i === 0 || v > sgpas[i - 1];
+    });
+
+    const consistent = sgpas.length >= 2 && sgpas.every(function(v) { return v >= 3.00; });
+
+    const unlocked = [];
+
+    // Classification (hero)
+    const cls = classifyGpa(gpa);
+    if (cls) {
+      unlocked.push({
+        hero: true,
+        tier: 'Classification',
+        icon: cls.icon,
+        title: cls.tier,
+        desc: cls.desc
+      });
+    }
+
+    // Secondary achievements
+    if (aPlus > 0) {
+      unlocked.push({
+        icon: '\u{1F4AF}',
+        title: 'Perfect Grade',
+        desc: aPlus + ' A+ grade' + (aPlus === 1 ? '' : 's')
+      });
+    }
+
+    if (highGrades >= 10) {
+      unlocked.push({
+        icon: '\u{1F4DA}',
+        title: 'Scholar',
+        desc: highGrades + ' A/A+ grades'
+      });
+    } else if (highGrades >= 5) {
+      unlocked.push({
+        icon: '\u{2B50}',
+        title: 'Excellence',
+        desc: highGrades + ' A/A+ grades'
+      });
+    }
+
+    if (sgpas.length >= 1 && fGrade === 0) {
+      unlocked.push({
+        icon: '\u{1F3AF}',
+        title: 'No Failure',
+        desc: 'Clean academic record'
+      });
+    }
+
+    if (fastClimber) {
+      unlocked.push({
+        icon: '\u{1F680}',
+        title: 'Fast Climber',
+        desc: 'GPA improved every semester'
+      });
+    }
+
+    if (gpa >= 3.50) {
+      unlocked.push({
+        icon: '\u{1F525}',
+        title: 'Hot Streak',
+        desc: 'CGPA at or above 3.50'
+      });
+    }
+
+    if (consistent) {
+      unlocked.push({
+        icon: '\u{1F4C8}',
+        title: 'Consistent',
+        desc: 'Every semester at or above 3.00'
+      });
+    }
+
+    // Catalog for "N more to unlock" count
+    const catalog = [
+      gpa >= 2.00,                    // Third Class
+      gpa >= 3.00,                    // Second Class
+      gpa >= 3.50,                    // First Class
+      aPlus > 0,                      // Perfect Grade
+      highGrades >= 5,                // Excellence
+      highGrades >= 10,               // Scholar
+      sgpas.length >= 1 && fGrade === 0, // No Failure
+      fastClimber,                    // Fast Climber
+      gpa >= 3.50,                    // Hot Streak
+      consistent                      // Consistent
+    ];
+    const lockedCount = catalog.filter(function(x) { return !x; }).length;
+
+    return { unlocked: unlocked, lockedCount: lockedCount };
+  }
+
+  const ach = computeAchievements(data, summary);
+  const heroes = ach.unlocked.filter(function(a) { return a.hero; });
+  const secondaries = ach.unlocked.filter(function(a) { return !a.hero; });
+
+  html += '<div class="profile-section-title achievements-section-title">Achievements</div>';
+
+  if (ach.unlocked.length === 0) {
+    html += '<div class="profile-card achievement-empty">Keep studying \u2014 achievements appear as you progress.</div>';
+  } else {
+    if (heroes.length) {
+      html += '<div class="profile-card achievement-hero">';
+      html += '<div class="achievement-hero-icon">' + heroes[0].icon + '</div>';
+      html += '<div class="achievement-hero-body">';
+      html += '<div class="achievement-hero-tier">' + heroes[0].tier + '</div>';
+      html += '<div class="achievement-hero-title">' + heroes[0].title + '</div>';
+      html += '<div class="achievement-hero-desc">' + heroes[0].desc + '</div>';
+      html += '</div></div>';
+    }
+
+    if (secondaries.length) {
+      html += '<div class="profile-card"><div class="achievement-grid">';
+      for (let i = 0; i < secondaries.length; i++) {
+        const a = secondaries[i];
+        html += '<div class="achievement-tile">';
+        html += '<div class="achievement-tile-icon">' + a.icon + '</div>';
+        html += '<div class="achievement-tile-title">' + a.title + '</div>';
+        html += '<div class="achievement-tile-desc">' + a.desc + '</div>';
+        html += '</div>';
+      }
+      html += '</div></div>';
+    }
+
+    if (ach.lockedCount > 0) {
+      html += '<div class="achievement-locked">\u{1F512} ' + ach.lockedCount + ' more to unlock</div>';
+    }
+  }
+
   // Academic Info
   html += '<div class="profile-section-title">Academic Info</div>';
   html += '<div class="profile-card">';
