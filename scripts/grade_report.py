@@ -80,28 +80,66 @@ def generate_pdf(data):
         # Nothing to render — fall back to a single page so the doc isn't blank
         draw_page_two(c, data, serial, print_date, verify_url)
     else:
-        # Summary table now appears inline on the cover page (page1.py).
-        # No standalone summary page.
+        # Summary table appears inline on the cover page (page1.py).
 
-        # One page per semester
+        # Group populated semesters by academic year.
+        # Within a year with both Sem I and Sem II, use Cumulative mode
+        # (two-column). A year with only one semester uses single-column.
+        from collections import OrderedDict
+        by_year = OrderedDict()
         for reg, sem_id, sem_courses in populated:
-            total_credits = sum(float(x.get("credit", 0) or 0) for x in sem_courses)
-            page_data = {
-                "biography": data.get("biography", {}),
-                "registration": {
-                    "program": reg.get("program") or data.get("program") or "—",
-                    "acYear": reg.get("acYear", "—"),
-                    "semester": sem_id,
-                    "status": reg.get("status", "Pass"),
-                },
-                "courses": sem_courses,
-                "summary": {
-                    "totalCredits": total_credits,
-                    "cumulativeGPA": reg.get("cgpa", "—"),
-                    "sgpa": reg.get("sgpa", "—"),
-                },
-                "printMode": "Semester " + sem_id,
-            }
+            year = str(reg.get("acYear") or "Unknown")
+            by_year.setdefault(year, {})[sem_id] = (reg, sem_courses)
+
+        for year, sems in by_year.items():
+            sem_ids = sorted(sems.keys())
+
+            if "I" in sems and "II" in sems:
+                # Cumulative: both semesters side by side
+                reg_i, courses_i = sems["I"]
+                reg_ii, courses_ii = sems["II"]
+                all_courses = courses_i + courses_ii
+                total_credits = sum(float(x.get("credit", 0) or 0) for x in all_courses)
+
+                page_data = {
+                    "biography": data.get("biography", {}),
+                    "registration": {
+                        "program": reg_ii.get("program") or data.get("program") or "—",
+                        "acYear": year,
+                        "semester": "Cumulative",
+                        "status": reg_ii.get("status", "Pass"),
+                    },
+                    "courses": all_courses,
+                    "summary": {
+                        "totalCredits": total_credits,
+                        "cumulativeGPA": reg_ii.get("cgpa", "—"),
+                        "sgpa": reg_ii.get("sgpa", "—"),
+                    },
+                    "printMode": "Cumulative",
+                }
+            else:
+                # Only one semester in this year — single-column
+                sem_id = sem_ids[0]
+                reg, sem_courses = sems[sem_id]
+                total_credits = sum(float(x.get("credit", 0) or 0) for x in sem_courses)
+
+                page_data = {
+                    "biography": data.get("biography", {}),
+                    "registration": {
+                        "program": reg.get("program") or data.get("program") or "—",
+                        "acYear": year,
+                        "semester": sem_id,
+                        "status": reg.get("status", "Pass"),
+                    },
+                    "courses": sem_courses,
+                    "summary": {
+                        "totalCredits": total_credits,
+                        "cumulativeGPA": reg.get("cgpa", "—"),
+                        "sgpa": reg.get("sgpa", "—"),
+                    },
+                    "printMode": "Semester " + sem_id,
+                }
+
             draw_page_two(c, page_data, serial, print_date, verify_url)
 
     draw_page_three(c, data, serial, print_date, verify_url)
