@@ -238,37 +238,6 @@
     <footer class="footer">
         BD Buddy — Unofficial BDU Portal Viewer
     </footer>
-
-    <script>
-        // Toggle FAQ open/closed
-        function toggleFAQ(element) {
-            const faq = element.parentElement;
-            faq.classList.toggle('open');
-        }
-
-        // Search filter
-        function filterFAQs() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            const faqs = document.querySelectorAll('.faq');
-
-            faqs.forEach(faq => {
-                const text = faq.textContent.toLowerCase();
-                if (text.includes(query)) {
-                    faq.style.display = '';
-                } else {
-                    faq.style.display = 'none';
-                }
-            });
-        }
-
-        // Open first FAQ on load
-        document.addEventListener('DOMContentLoaded', function() {
-            const firstFAQ = document.querySelector('.faq');
-            if (firstFAQ) firstFAQ.classList.add('open');
-        });
-    </script>
-
-
 <!-- BD Buddy Footer Links -->
 <div class="bd-buddy-footer" style="margin-top:24px;padding:20px 16px 28px;border-top:1px solid #e2e8f0;text-align:center;font-size:12px;color:#64748b;">
   <div style="margin-bottom:10px;">
@@ -290,5 +259,6 @@
 </div>
 
     <script src="/js/shared/theme-toggle.js"></script>
+<script src="/js/help/help.js"></script>
 </body>
 </html>

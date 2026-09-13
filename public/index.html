@@ -147,12 +147,6 @@
 <script src="/js/shared/ui.js"></script>
 <!-- Login JS -->
 <script src="/js/login/login-handler.js"></script>
-<script>
-    function toggleWhatsNew() {
-      const box = document.getElementById('whatsNewBox');
-      if (box) box.classList.toggle('open');
-    }
-</script>
 <!-- About Modal -->
 <div class="about-modal-overlay" id="aboutModal" onclick="closeAboutModalOutside(event)">
   <div class="about-modal" onclick="event.stopPropagation()">
@@ -210,30 +204,6 @@
     </div>
   </div>
 </div>
-
-<script>
-    function openAboutModal() {
-      const modal = document.getElementById('aboutModal');
-      if (modal) {
-        modal.classList.add('show');
-        document.body.style.overflow = 'hidden';
-      }
-    }
-    function closeAboutModal() {
-      const modal = document.getElementById('aboutModal');
-      if (modal) {
-        modal.classList.remove('show');
-        document.body.style.overflow = '';
-      }
-    }
-    function closeAboutModalOutside(event) {
-      if (event.target.id === 'aboutModal') closeAboutModal();
-    }
-    // Close on Escape key
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') closeAboutModal();
-    });
-</script>
-
+<script src="/js/index/index.js"></script>
 </body>
 </html>

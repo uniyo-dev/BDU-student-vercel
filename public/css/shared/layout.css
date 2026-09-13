@@ -33,16 +33,6 @@ button { cursor: pointer; border: none; background: none; }
   box-shadow: var(--shadow-sm);
 }
 
-/* Spinner */
-.spinner {
-  width: 20px; height: 20px;
-  border: 2px solid rgba(255,255,255,0.3);
-  border-top: 2px solid white; border-radius: 50%;
-  animation: spin 0.7s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
 
 /* Utilities */
 .hidden { display: none !important; }
-.mt-4 { margin-top: 16px; }
-.mb-4 { margin-bottom: 16px; }

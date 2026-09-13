@@ -84,15 +84,6 @@
 
 .login-footer { margin-top: 16px; text-align: center; font-size: 11px; color: var(--text-muted); }
 
-/* ===== Spinner ===== */
-.spinner {
-  width: 20px; height: 20px;
-  border: 2px solid rgba(255,255,255,0.3);
-  border-top: 2px solid white;
-  border-radius: 50%;
-  animation: spin 0.7s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
 
 .hidden { display: none !important; }
 
