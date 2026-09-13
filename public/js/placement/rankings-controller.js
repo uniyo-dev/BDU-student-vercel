@@ -6,7 +6,9 @@
   // ============================================================
   function getTabFromHash() {
     const h = window.location.hash.replace('#', '');
-    return (h === 'rankings') ? 'rankings' : 'departments';
+    if (h === 'rankings') return 'rankings';
+    if (h === 'priorities') return 'priorities';
+    return 'departments';
   }
 
   function switchTab(tab) {
@@ -17,9 +19,13 @@
     // Show/hide content
     const deptSection = document.getElementById('tab-departments');
     const rankSection = document.getElementById('tab-rankings');
+    const prioSection = document.getElementById('tab-priorities');
     if (!deptSection || !rankSection) return;
     deptSection.style.display = (tab === 'departments') ? '' : 'none';
     rankSection.style.display = (tab === 'rankings') ? '' : 'none';
+    if (prioSection) {
+      prioSection.style.display = (tab === 'priorities') ? '' : 'none';
+    }
 
     // Update hash (without jumping)
     if (history.replaceState) {
@@ -31,6 +37,11 @@
     // Lazy render rankings on first show
     if (tab === 'rankings' && !window.RankingsController.rendered) {
       window.RankingsController.render();
+    }
+
+    // Lazy render priorities on first show
+    if (tab === 'priorities' && window.PrioritiesController && !window.PrioritiesController.rendered) {
+      window.PrioritiesController.render();
     }
   }
 

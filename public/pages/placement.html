@@ -15,6 +15,7 @@
   <link rel="stylesheet" href="/css/shared/animations.css">
   <link rel="stylesheet" href="/css/shared/utilities.css">
   <link rel="stylesheet" href="/css/placement/placement.css">
+  <link rel="stylesheet" href="/css/placement/priorities.css">
 </head>
 <body>
 
@@ -44,6 +45,12 @@
         <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>
       </svg>
       Rankings
+    </button>
+    <button class="tab-switch-btn" data-tab="priorities" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" style="vertical-align:-3px;margin-right:6px;">
+        <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>
+      </svg>
+      Priorities
     </button>
   </div>
 
@@ -88,6 +95,13 @@
       </div>
     </div>
   </div><!-- /tab-rankings -->
+
+  <!-- ============ PRIORITIES TAB ============ -->
+  <div id="tab-priorities" class="tab-content" style="display:none;">
+    <div class="priorities-content" id="priorities-content">
+      <!-- Rendered by priorities-controller.js -->
+    </div>
+  </div><!-- /tab-priorities -->
 </div>
 
 <nav class="bottom-nav">

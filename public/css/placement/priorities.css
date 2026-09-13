@@ -1,0 +1,309 @@
+/* ================================================================
+   Priorities Tab Styles
+   ================================================================ */
+
+.priorities-content {
+  padding: 16px;
+}
+
+.priorities-section {
+  background: var(--bg-card);
+  border-radius: 18px;
+  padding: 18px 16px;
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 16px;
+}
+
+.priorities-section-head {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text-1);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 14px;
+}
+
+/* ---- Result card ---- */
+.priorities-result {
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--primary) 12%, transparent),
+    color-mix(in srgb, var(--primary) 4%, transparent));
+  border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent);
+  border-radius: 18px;
+  padding: 22px 20px;
+  margin-bottom: 16px;
+}
+
+.priorities-result-head {
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--primary);
+  margin-bottom: 16px;
+}
+
+.priorities-badge-selected {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 40px;
+  background: var(--success-bg);
+  color: var(--success);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+}
+
+.priorities-badge-pending {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 40px;
+  background: var(--warning-bg);
+  color: var(--warning);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+}
+
+.priorities-dept-name {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text-1);
+  margin-bottom: 4px;
+}
+
+.priorities-meta {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.priorities-others {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid color-mix(in srgb, var(--primary) 20%, transparent);
+}
+
+.priorities-other-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  font-size: 13px;
+}
+
+.priorities-other-dept {
+  color: var(--text-1);
+  font-weight: 600;
+}
+
+.priorities-other-status {
+  color: var(--danger);
+  font-weight: 700;
+  font-size: 11px;
+}
+
+/* ---- Score breakdown ---- */
+.priorities-criteria-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.priorities-criteria-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 12px;
+  background: var(--bg-body);
+  border-radius: 10px;
+}
+
+.priorities-criteria-name {
+  font-size: 12px;
+  color: var(--text-2);
+  font-weight: 600;
+}
+
+.priorities-criteria-weight {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.priorities-criteria-score {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text-1);
+  font-variant-numeric: tabular-nums;
+  min-width: 60px;
+  text-align: right;
+}
+
+.priorities-criteria-total {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 12px;
+  align-items: center;
+  padding: 12px;
+  background: color-mix(in srgb, var(--primary) 10%, transparent);
+  border-radius: 10px;
+  margin-top: 6px;
+}
+
+/* ---- Priority list ---- */
+.priorities-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.priorities-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  background: var(--bg-body);
+  border-radius: 12px;
+  border: 1px solid var(--border-light);
+}
+
+.priorities-card.is-selected {
+  background: var(--success-bg);
+  border-color: var(--success-border);
+}
+
+.priorities-num {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--bg-elevated);
+  color: var(--text-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.priorities-card.is-selected .priorities-num {
+  background: var(--success);
+  color: #fff;
+}
+
+.priorities-card-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.priorities-dept {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-1);
+}
+
+.priorities-score {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.priorities-status {
+  font-size: 10px;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: 100px;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.priorities-status.selected { background: var(--success-bg); color: var(--success); }
+.priorities-status.rejected { background: var(--danger-bg); color: var(--danger); }
+
+/* ---- Simulator ---- */
+.priorities-sim {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.priorities-sim-block {
+  padding: 12px;
+  background: var(--bg-body);
+  border-radius: 12px;
+  border: 1px solid var(--border-light);
+}
+
+.priorities-sim-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 8px;
+}
+
+.priorities-sim-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  font-size: 12px;
+  color: var(--text-2);
+}
+
+.priorities-sim-status {
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.priorities-sim-note {
+  padding: 10px 14px;
+  background: var(--warning-bg);
+  border: 1px solid var(--warning-border);
+  border-radius: 10px;
+  font-size: 11px;
+  color: var(--warning);
+  line-height: 1.5;
+}
+
+/* ---- Action guide ---- */
+.priorities-action-list {
+  padding-left: 20px;
+  font-size: 13px;
+  color: var(--text-2);
+  line-height: 1.8;
+  margin-bottom: 14px;
+}
+
+.priorities-action-list a {
+  color: var(--primary);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.priorities-guide-btn {
+  display: inline-block;
+  padding: 12px 20px;
+  background: var(--primary);
+  color: #fff;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background 0.2s ease;
+}
+
+.priorities-guide-btn:hover {
+  background: var(--primary-hover);
+}
+
+.priorities-empty {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 13px;
+}
