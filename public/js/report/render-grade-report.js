@@ -215,24 +215,24 @@
       const qrReady = typeof QRCode !== 'undefined';
       const bcReady = typeof JsBarcode !== 'undefined';
 
-      // QR
+      // QR (qrcodejs API — was qrcode@1.5.3, switched for CDN reliability)
       if (qrReady) {
         const qrContainer = document.getElementById('qr-code');
         if (qrContainer && !qrContainer.dataset.rendered) {
           qrContainer.innerHTML = '';
-          const canvas = document.createElement('canvas');
-          qrContainer.appendChild(canvas);
-          QRCode.toCanvas(canvas, verifyUrl, {
-            width: 200,
-            margin: 1,
-            color: { dark: '#0B0F19', light: '#FFFFFF' }
-          }, (err) => {
-            if (err) {
-              console.error('QR render error:', err);
-            } else {
-              qrContainer.dataset.rendered = '1';
-            }
-          });
+          try {
+            new QRCode(qrContainer, {
+              text: verifyUrl,
+              width: 200,
+              height: 200,
+              colorDark: '#0B0F19',
+              colorLight: '#FFFFFF',
+              correctLevel: QRCode.CorrectLevel ? QRCode.CorrectLevel.M : undefined
+            });
+            qrContainer.dataset.rendered = '1';
+          } catch (err) {
+            console.error('QR render error:', err);
+          }
         }
       }
 
