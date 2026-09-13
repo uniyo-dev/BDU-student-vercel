@@ -676,3 +676,108 @@
   background: var(--primary-hover);
   border-color: var(--primary-hover);
 }
+
+
+/* ===== M5 5.3b: choice planner ===== */
+
+.priorities-planner-note {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-bottom: 14px;
+}
+.priorities-planner-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.priorities-planner-row {
+  display: grid;
+  grid-template-columns: 32px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 12px;
+  background: var(--bg-body);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+}
+.priorities-planner-num {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--primary) 12%, transparent);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 800;
+}
+.priorities-planner-select {
+  width: 100%;
+  padding: 8px 10px;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border-light);
+  border-radius: 10px;
+  font-size: 13px;
+  font-family: inherit;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 16px;
+  padding-right: 32px;
+}
+.priorities-planner-select:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+.priorities-planner-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.priorities-planner-btn {
+  width: 30px;
+  height: 22px;
+  padding: 0;
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  font-size: 10px;
+  cursor: pointer;
+  font-family: inherit;
+  line-height: 1;
+}
+.priorities-planner-btn:hover:not(:disabled) {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+.priorities-planner-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+.priorities-planner-actions {
+  margin-top: 14px;
+  display: flex;
+  justify-content: flex-end;
+}
+.priorities-planner-reset {
+  padding: 8px 14px;
+  background: transparent;
+  border: 1px solid var(--border-light);
+  border-radius: 10px;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+}
+.priorities-planner-reset:hover {
+  color: var(--primary);
+  border-color: var(--primary);
+}

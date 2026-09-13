@@ -507,6 +507,8 @@
                  '  ->  ' + row.contribution.toFixed(2));
     });
     lines.push('  Total (computed): ' + bd.total.toFixed(2));
+    var planText = getPlanTextForSnapshot();
+    if (planText) lines.push(planText);
     lines.push('');
     lines.push('IMPORTANT:');
     lines.push('This is a snapshot of your BD Buddy view, not an official BDU record.');
@@ -604,6 +606,222 @@
     }
   }
 
+  // ===== M5 5.3b: choice planner =====
+
+  var PLAN_KEY = 'bd_priority_plan';
+  var PLAN_SLOTS = 10;
+
+  function getAllDepartments() {
+    var fromGlobal = (window.BDU_DEPARTMENTS || []).slice();
+    if (fromGlobal.length > 0) return fromGlobal;
+    return [
+      'Civil Engineering',
+      'Mechanical Engineering',
+      'Electrical and Computer Engineering',
+      'Software Engineering',
+      'Computer Science',
+      'Information Technology',
+      'Chemical Engineering',
+      'Textile Engineering',
+      'Medicine (MD)',
+      'Pharmacy',
+      'Law',
+      'Economics',
+      'Accounting & Finance',
+      'Management',
+      'Marketing'
+    ];
+  }
+
+  function loadPlan() {
+    try {
+      var raw = localStorage.getItem(PLAN_KEY);
+      if (!raw) return null;
+      var parsed = JSON.parse(raw);
+      if (!parsed || !Array.isArray(parsed)) return null;
+      // Clamp to PLAN_SLOTS, keep only strings
+      return parsed.slice(0, PLAN_SLOTS).map(function (x) { return String(x || ''); });
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function savePlan(plan) {
+    try { localStorage.setItem(PLAN_KEY, JSON.stringify(plan)); } catch (e) {}
+  }
+
+  function buildDefaultPlan(results) {
+    var plan = [];
+    var sorted = (results || []).slice().sort(function (a, b) {
+      return (parseInt(a.priority, 10) || 999) - (parseInt(b.priority, 10) || 999);
+    });
+    sorted.forEach(function (r) {
+      if (plan.length < PLAN_SLOTS) plan.push(r.department || '');
+    });
+    while (plan.length < PLAN_SLOTS) plan.push('');
+    return plan;
+  }
+
+  function renderChoicePlanner(results) {
+    var plan = loadPlan();
+    var isDefault = false;
+    if (!plan) {
+      plan = buildDefaultPlan(results);
+      isDefault = true;
+    }
+    while (plan.length < PLAN_SLOTS) plan.push('');
+
+    var depts = getAllDepartments();
+
+    var html = '<div class="priorities-section priorities-planner-section">';
+    html += '<div class="priorities-section-head">' +
+              '<span class="priorities-head-icon">' + ICONS.target + '</span>' +
+              esc(t('planner_head', 'Plan Your Choices')) +
+            '</div>';
+    html += '<div class="priorities-planner-note">' +
+              esc(t('planner_note', 'Arrange the departments you would submit, most preferred first. This is your workspace - it is not sent anywhere.')) +
+            '</div>';
+
+    html += '<div class="priorities-planner-list">';
+    for (var i = 0; i < PLAN_SLOTS; i++) {
+      var current = plan[i] || '';
+      html += '<div class="priorities-planner-row" data-plan-row="' + i + '">';
+      html += '<div class="priorities-planner-num">' + (i + 1) + '</div>';
+      html += '<select class="priorities-planner-select" data-plan-select="' + i + '">';
+      html += '<option value="">' + esc(t('planner_empty', '— Choose a department —')) + '</option>';
+      var used = plan.indexOf(current);
+      depts.forEach(function (d) {
+        var selected = (d === current) ? ' selected' : '';
+        var usedElsewhere = (plan.indexOf(d) !== -1 && plan.indexOf(d) !== i) ? ' data-used-elsewhere="1"' : '';
+        html += '<option value="' + esc(d) + '"' + selected + usedElsewhere + '>' + esc(d) + '</option>';
+      });
+      html += '</select>';
+      html += '<div class="priorities-planner-buttons">';
+      html += '<button type="button" class="priorities-planner-btn" data-plan-up="' + i + '" aria-label="Move up"' + (i === 0 ? ' disabled' : '') + '>▲</button>';
+      html += '<button type="button" class="priorities-planner-btn" data-plan-down="' + i + '" aria-label="Move down"' + (i === PLAN_SLOTS - 1 ? ' disabled' : '') + '>▼</button>';
+      html += '</div>';
+      html += '</div>';
+    }
+    html += '</div>';
+
+    html += '<div class="priorities-planner-actions">';
+    html += '<button type="button" class="priorities-planner-reset" data-plan-reset>' +
+              esc(t('planner_reset', 'Reset to my submitted order')) +
+            '</button>';
+    html += '</div>';
+
+    html += '</div>';
+
+    // If we built a default plan, persist it so it survives reload
+    if (isDefault) savePlan(plan);
+
+    return html;
+  }
+
+  function wireChoicePlanner(container, results) {
+    var section = container.querySelector('.priorities-planner-section');
+    if (!section) return;
+
+    function getPlanFromDOM() {
+      var selects = section.querySelectorAll('[data-plan-select]');
+      var plan = [];
+      selects.forEach(function (sel) { plan.push(sel.value || ''); });
+      return plan;
+    }
+
+    function refreshButtons(plan) {
+      // Update up/down disabled states
+      var rows = section.querySelectorAll('[data-plan-row]');
+      rows.forEach(function (row, i) {
+        var upBtn = row.querySelector('[data-plan-up]');
+        var downBtn = row.querySelector('[data-plan-down]');
+        if (upBtn) upBtn.disabled = (i === 0);
+        if (downBtn) downBtn.disabled = (i === PLAN_SLOTS - 1);
+      });
+      // Mark duplicate-used options (visual hint only)
+      var selects = section.querySelectorAll('[data-plan-select]');
+      selects.forEach(function (sel, i) {
+        var opts = sel.querySelectorAll('option');
+        opts.forEach(function (opt) {
+          if (!opt.value) return;
+          var usedElsewhere = false;
+          for (var j = 0; j < selects.length; j++) {
+            if (j !== i && selects[j].value === opt.value) { usedElsewhere = true; break; }
+          }
+          opt.style.color = usedElsewhere ? 'var(--warning)' : '';
+        });
+      });
+    }
+
+    function onSelectChange() {
+      var plan = getPlanFromDOM();
+      savePlan(plan);
+      refreshButtons(plan);
+    }
+
+    function moveRow(from, to) {
+      if (to < 0 || to >= PLAN_SLOTS) return;
+      var plan = getPlanFromDOM();
+      var tmp = plan[from];
+      plan[from] = plan[to];
+      plan[to] = tmp;
+      // Update selects
+      var selects = section.querySelectorAll('[data-plan-select]');
+      selects.forEach(function (sel, i) { sel.value = plan[i] || ''; });
+      savePlan(plan);
+      refreshButtons(plan);
+    }
+
+    // Wire selects
+    section.querySelectorAll('[data-plan-select]').forEach(function (sel) {
+      sel.addEventListener('change', onSelectChange);
+    });
+
+    // Wire up/down buttons
+    section.querySelectorAll('[data-plan-up]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var i = parseInt(btn.getAttribute('data-plan-up'), 10);
+        moveRow(i, i - 1);
+      });
+    });
+    section.querySelectorAll('[data-plan-down]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var i = parseInt(btn.getAttribute('data-plan-down'), 10);
+        moveRow(i, i + 1);
+      });
+    });
+
+    // Wire reset
+    var resetBtn = section.querySelector('[data-plan-reset]');
+    if (resetBtn) {
+      resetBtn.addEventListener('click', function () {
+        var defaults = buildDefaultPlan(results);
+        savePlan(defaults);
+        var selects = section.querySelectorAll('[data-plan-select]');
+        selects.forEach(function (sel, i) { sel.value = defaults[i] || ''; });
+        refreshButtons(defaults);
+      });
+    }
+
+    // Initial state
+    refreshButtons(getPlanFromDOM());
+  }
+
+  // Include planned order in snapshot text
+  function getPlanTextForSnapshot() {
+    var plan = loadPlan();
+    if (!plan) return '';
+    var filled = plan.filter(function (x) { return x; });
+    if (!filled.length) return '';
+    var lines = [];
+    lines.push('');
+    lines.push('MY PLANNED ORDER (in BD Buddy, not yet submitted):');
+    filled.forEach(function (dept, i) {
+      lines.push('  ' + (i + 1) + '. ' + dept);
+    });
+    return lines.join('\n');
+  }
+
   window.PrioritiesController = {
     rendered: false,
 
@@ -625,6 +843,7 @@
       html += renderSimulator(criteria);
       html += renderActionGuide();
       html += renderPreSubmitChecklist();
+      html += renderChoicePlanner(results);
       html += renderSnapshotPanel(placement);
 
       container.innerHTML = html;
@@ -633,6 +852,7 @@
       wireCopyButton(container, results);
       wireChecklist(container);
       wireSnapshot(container, data);
+      wireChoicePlanner(container, results);
 
       this.rendered = true;
     }

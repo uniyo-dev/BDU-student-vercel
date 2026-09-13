@@ -179,6 +179,8 @@ document.addEventListener('DOMContentLoaded', function() {
     'Marine Engineering',
     'Nautical Science',
   ];
+  // Expose for other placement modules (priorities planner)
+  window.BDU_DEPARTMENTS = commonDepartments;
   
   // Combine common + actual departments
   commonDepartments.forEach(function(dept) {
