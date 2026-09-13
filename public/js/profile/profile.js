@@ -40,6 +40,19 @@ document.addEventListener('DOMContentLoaded', function() {
   const mailIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>';
   const globeIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>';
   const starIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>';
+
+  // === Achievement icons (SVG) ===
+  const achTrophy      = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>';
+  const achAward       = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>';
+  const achStar        = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>';
+  const achRocket      = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.5-2 5-2 5s3.5-.5 5-2"/><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg>';
+  const achTarget      = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>';
+  const achCheckCircle = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>';
+  const achBookOpen    = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>';
+  const achChartLine   = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>';
+  const achLockedSvg   = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;vertical-align:-2px;"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
+  const achCrown       = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18h18l-2-9-4 4-3-6-3 6-4-4-2 9z"/><circle cx="12" cy="4" r="1"/></svg>';
+
   
   let html = '';
   
@@ -51,9 +64,9 @@ document.addEventListener('DOMContentLoaded', function() {
   // === Achievements redesign (M5) ===
   // Classification (official BDU tiers)
   function classifyGpa(g) {
-    if (g >= 3.50) return { tier: 'First Class',  icon: '\u{1F3C6}', desc: 'Graduating with distinction' };
-    if (g >= 3.00) return { tier: 'Second Class', icon: '\u{1F948}', desc: 'Strong academic standing' };
-    if (g >= 2.00) return { tier: 'Third Class',  icon: '\u{1F949}', desc: 'Degree requirements met' };
+    if (g >= 3.50) return { tier: 'First Class',  icon: achTrophy, desc: 'Graduating with distinction' };
+    if (g >= 3.00) return { tier: 'Second Class', icon: achAward, desc: 'Strong academic standing' };
+    if (g >= 2.00) return { tier: 'Third Class',  icon: achAward, desc: 'Degree requirements met' };
     return null;
   }
 
@@ -98,7 +111,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Secondary achievements
     if (aPlus > 0) {
       unlocked.push({
-        icon: '\u{1F4AF}',
+        icon: achCheckCircle,
         title: 'Perfect Grade',
         desc: aPlus + ' A+ grade' + (aPlus === 1 ? '' : 's')
       });
@@ -106,13 +119,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (highGrades >= 10) {
       unlocked.push({
-        icon: '\u{1F4DA}',
+        icon: achBookOpen,
         title: 'Scholar',
         desc: highGrades + ' A/A+ grades'
       });
     } else if (highGrades >= 5) {
       unlocked.push({
-        icon: '\u{2B50}',
+        icon: achStar,
         title: 'Excellence',
         desc: highGrades + ' A/A+ grades'
       });
@@ -120,7 +133,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (sgpas.length >= 1 && fGrade === 0) {
       unlocked.push({
-        icon: '\u{1F3AF}',
+        icon: achTarget,
         title: 'No Failure',
         desc: 'Clean academic record'
       });
@@ -128,7 +141,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (fastClimber) {
       unlocked.push({
-        icon: '\u{1F680}',
+        icon: achRocket,
         title: 'Fast Climber',
         desc: 'GPA improved every semester'
       });
@@ -136,7 +149,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (gpa >= 3.50) {
       unlocked.push({
-        icon: '\u{1F525}',
+        icon: achCrown,
         title: 'Hot Streak',
         desc: 'CGPA at or above 3.50'
       });
@@ -144,7 +157,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (consistent) {
       unlocked.push({
-        icon: '\u{1F4C8}',
+        icon: achChartLine,
         title: 'Consistent',
         desc: 'Every semester at or above 3.00'
       });
@@ -201,7 +214,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     if (ach.lockedCount > 0) {
-      html += '<div class="achievement-locked">\u{1F512} ' + ach.lockedCount + ' more to unlock</div>';
+      html += '<div class="achievement-locked">' + achLockedSvg + ' ' + ach.lockedCount + ' more to unlock</div>';
     }
   }
 
