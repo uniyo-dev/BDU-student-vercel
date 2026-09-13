@@ -687,7 +687,7 @@
       var current = plan[i] || '';
       html += '<div class="priorities-planner-row" data-plan-row="' + i + '">';
       html += '<div class="priorities-planner-num">' + (i + 1) + '</div>';
-      html += '<select class="priorities-planner-select" data-plan-select="' + i + '">';
+      html += '<select class="priorities-planner-select" data-plan-select="' + i + '" data-dropdown>';
       html += '<option value="">' + esc(t('planner_empty', '— Choose a department —')) + '</option>';
       var used = plan.indexOf(current);
       depts.forEach(function (d) {
@@ -805,6 +805,11 @@
 
     // Initial state
     refreshButtons(getPlanFromDOM());
+
+    // Init styled dropdowns on the planner selects
+    if (window.BDDropdown && typeof window.BDDropdown.init === 'function') {
+      window.BDDropdown.init(section);
+    }
   }
 
   // Include planned order in snapshot text
