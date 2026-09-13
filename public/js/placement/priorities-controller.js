@@ -376,6 +376,234 @@
     });
   }
 
+  // ===== M5 5.3a: checklist + snapshot =====
+
+  var CHECKLIST_KEY = 'bd_priority_checklist';
+
+  var CHECKLIST_ITEMS = [
+    { id: 'criteria',  text: 'I have reviewed the placement criteria (CGPA 50%, Program Exam 30%, ESSLCE 20%)' },
+    { id: 'scores',    text: 'I know my current CGPA and program exam score' },
+    { id: 'research',  text: 'I have researched the departments I am interested in' },
+    { id: 'order',     text: 'I have written my top choices in order, most preferred first' },
+    { id: 'binding',   text: 'I understand placement is binding once submitted on the official portal' },
+    { id: 'deadline',  text: 'I know the submission deadline' },
+    { id: 'ready',     text: 'I have my student ID and password ready for the official portal' },
+    { id: 'official',  text: 'I will submit through the official portal at studentportal.bdu.edu.et, not a third-party tool' }
+  ];
+
+  function loadChecklistState() {
+    try {
+      var raw = localStorage.getItem(CHECKLIST_KEY);
+      if (!raw) return {};
+      var parsed = JSON.parse(raw);
+      return parsed && typeof parsed === 'object' ? parsed : {};
+    } catch (e) {
+      return {};
+    }
+  }
+
+  function saveChecklistState(state) {
+    try { localStorage.setItem(CHECKLIST_KEY, JSON.stringify(state)); } catch (e) {}
+  }
+
+  function renderPreSubmitChecklist() {
+    var state = loadChecklistState();
+    var checked = CHECKLIST_ITEMS.filter(function (item) { return state[item.id]; }).length;
+    var total = CHECKLIST_ITEMS.length;
+
+    var html = '<div class="priorities-section priorities-checklist-section">';
+    html += '<div class="priorities-section-head">' +
+              '<span class="priorities-head-icon">' + ICONS.info + '</span>' +
+              esc(t('checklist_head', 'Before You Submit')) +
+            '</div>';
+    html += '<div class="priorities-checklist-progress">' +
+              '<span class="priorities-checklist-count" data-checklist-count>' +
+                checked + ' / ' + total +
+              '</span>' +
+              ' ' + esc(t('checklist_done', 'done')) +
+            '</div>';
+    html += '<div class="priorities-checklist">';
+    CHECKLIST_ITEMS.forEach(function (item) {
+      var isChecked = !!state[item.id];
+      html += '<label class="priorities-checklist-item' + (isChecked ? ' is-checked' : '') + '" data-checklist-item="' + item.id + '">';
+      html += '<input type="checkbox" class="priorities-checklist-box" data-checklist-input="' + item.id + '"' + (isChecked ? ' checked' : '') + '>';
+      html += '<span class="priorities-checklist-text">' + esc(item.text) + '</span>';
+      html += '</label>';
+    });
+    html += '</div>';
+    html += '<button type="button" class="priorities-checklist-reset" data-checklist-reset>' +
+              esc(t('checklist_reset', 'Reset checklist')) +
+            '</button>';
+    html += '</div>';
+    return html;
+  }
+
+  function renderSnapshotPanel(placement) {
+    var results = (placement && placement.results) || [];
+    if (!results.length) return '';
+
+    var html = '<div class="priorities-section priorities-snapshot-section">';
+    html += '<div class="priorities-section-head">' +
+              '<span class="priorities-head-icon">' + ICONS.copy + '</span>' +
+              esc(t('snapshot_head', 'Snapshot for Your Records')) +
+            '</div>';
+    html += '<div class="priorities-snapshot-note">' +
+              esc(t('snapshot_note', 'Save a copy of your placement view for your own records. Not an official BDU document.')) +
+            '</div>';
+    html += '<div class="priorities-snapshot-actions">';
+    html += '<button type="button" class="priorities-snapshot-btn priorities-snapshot-btn--primary" data-snapshot-download>' +
+              esc(t('snapshot_download', 'Download .txt')) +
+            '</button>';
+    html += '<button type="button" class="priorities-snapshot-btn" data-snapshot-copy>' +
+              esc(t('snapshot_copy', 'Copy to clipboard')) +
+            '</button>';
+    html += '</div>';
+    html += '</div>';
+    return html;
+  }
+
+  function redactStudentId(id) {
+    var s = String(id || '');
+    if (s.length <= 4) return s || '—';
+    return s.slice(0, 3) + 'XXXX' + s.slice(-4);
+  }
+
+  function formatSnapshotText(data) {
+    var bio = (data && data.biography) || {};
+    var summary = (data && data.summary) || {};
+    var placement = (data && data.placement) || {};
+    var results = placement.results || [];
+    var criteria = placement.criteria || [];
+
+    var now = new Date();
+    var pad = function (n) { return n < 10 ? '0' + n : String(n); };
+    var stamp = now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate()) +
+                ' ' + pad(now.getHours()) + ':' + pad(now.getMinutes());
+
+    var lines = [];
+    lines.push('BDU Placement - Record Snapshot');
+    lines.push('Generated: ' + stamp + ' (device time)');
+    lines.push('Student: ' + redactStudentId(bio.studentId));
+    lines.push('CGPA: ' + (summary.cumulativeGPA || '—'));
+    if (results[0] && results[0].totalScore) {
+      lines.push('Placement score (first row): ' + results[0].totalScore);
+    }
+    lines.push('');
+    lines.push('ACTUAL SUBMITTED CHOICES:');
+    var sorted = results.slice().sort(function (a, b) {
+      return (parseInt(a.priority, 10) || 999) - (parseInt(b.priority, 10) || 999);
+    });
+    sorted.forEach(function (r) {
+      lines.push('  ' + (r.priority || '?') + '. ' + (r.department || '—') + ' - ' + (r.status || '—'));
+    });
+    lines.push('');
+    lines.push('CRITERIA (from BDU):');
+    var bd = computeBreakdown(criteria);
+    bd.rows.forEach(function (row) {
+      var scoredTxt = row.scored !== null ? row.scored : '—';
+      var maxTxt = row.maximum !== null ? ' / ' + row.maximum : '';
+      var pctTxt = row.percent !== null ? row.percent + '%' : '—';
+      lines.push('  - ' + row.name + ' (' + pctTxt + '): ' + scoredTxt + maxTxt +
+                 '  ->  ' + row.contribution.toFixed(2));
+    });
+    lines.push('  Total (computed): ' + bd.total.toFixed(2));
+    lines.push('');
+    lines.push('IMPORTANT:');
+    lines.push('This is a snapshot of your BD Buddy view, not an official BDU record.');
+    lines.push('Verify at: https://studentportal.bdu.edu.et');
+
+    return lines.join('\n');
+  }
+
+  function wireChecklist(container) {
+    var items = container.querySelectorAll('[data-checklist-item]');
+    var countEl = container.querySelector('[data-checklist-count]');
+    var resetBtn = container.querySelector('[data-checklist-reset]');
+
+    function refreshCount() {
+      var total = CHECKLIST_ITEMS.length;
+      var checked = 0;
+      items.forEach(function (el) {
+        var input = el.querySelector('input[type="checkbox"]');
+        if (input && input.checked) checked++;
+      });
+      if (countEl) countEl.textContent = checked + ' / ' + total;
+    }
+
+    items.forEach(function (el) {
+      var input = el.querySelector('input[type="checkbox"]');
+      if (!input) return;
+      input.addEventListener('change', function () {
+        var state = loadChecklistState();
+        state[input.getAttribute('data-checklist-input')] = input.checked;
+        saveChecklistState(state);
+        el.classList.toggle('is-checked', input.checked);
+        refreshCount();
+      });
+    });
+
+    if (resetBtn) {
+      resetBtn.addEventListener('click', function () {
+        try { localStorage.removeItem(CHECKLIST_KEY); } catch (e) {}
+        items.forEach(function (el) {
+          var input = el.querySelector('input[type="checkbox"]');
+          if (input) input.checked = false;
+          el.classList.remove('is-checked');
+        });
+        refreshCount();
+      });
+    }
+  }
+
+  function wireSnapshot(container, data) {
+    var downloadBtn = container.querySelector('[data-snapshot-download]');
+    var copyBtn = container.querySelector('[data-snapshot-copy]');
+
+    function getText() {
+      return formatSnapshotText(data);
+    }
+
+    if (downloadBtn) {
+      downloadBtn.addEventListener('click', function () {
+        try {
+          var text = getText();
+          var blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+          var url = URL.createObjectURL(blob);
+          var a = document.createElement('a');
+          var d = new Date();
+          var pad = function (n) { return n < 10 ? '0' + n : String(n); };
+          var fname = 'bdu-choices-' + d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + '.txt';
+          a.href = url;
+          a.download = fname;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          setTimeout(function () { URL.revokeObjectURL(url); }, 2000);
+        } catch (e) {
+          window.alert('Could not download. Try "Copy to clipboard" instead.');
+        }
+      });
+    }
+
+    if (copyBtn) {
+      copyBtn.addEventListener('click', function () {
+        var text = getText();
+        var done = function () {
+          var orig = copyBtn.textContent;
+          copyBtn.textContent = t('snapshot_copied', 'Copied!');
+          setTimeout(function () { copyBtn.textContent = orig; }, 1500);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(done).catch(function () {
+            window.prompt('Copy manually:', text);
+          });
+        } else {
+          window.prompt('Copy manually:', text);
+        }
+      });
+    }
+  }
+
   window.PrioritiesController = {
     rendered: false,
 
@@ -396,11 +624,15 @@
       html += renderPriorityList(results);
       html += renderSimulator(criteria);
       html += renderActionGuide();
+      html += renderPreSubmitChecklist();
+      html += renderSnapshotPanel(placement);
 
       container.innerHTML = html;
 
       wireSimulator(container);
       wireCopyButton(container, results);
+      wireChecklist(container);
+      wireSnapshot(container, data);
 
       this.rendered = true;
     }

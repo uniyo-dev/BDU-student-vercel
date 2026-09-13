@@ -546,3 +546,133 @@
   color: var(--text-muted);
   line-height: 1.5;
 }
+
+
+/* ===== M5 5.3a: checklist + snapshot ===== */
+
+/* --- Checklist --- */
+.priorities-checklist-progress {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+}
+.priorities-checklist-count {
+  font-weight: 800;
+  color: var(--primary);
+  font-variant-numeric: tabular-nums;
+}
+.priorities-checklist {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.priorities-checklist-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--bg-body);
+  border: 1px solid var(--border-light);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.priorities-checklist-item:hover {
+  border-color: var(--primary);
+}
+.priorities-checklist-item.is-checked {
+  background: color-mix(in srgb, var(--success) 8%, transparent);
+  border-color: color-mix(in srgb, var(--success) 30%, transparent);
+}
+.priorities-checklist-box {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  min-width: 18px;
+  border: 2px solid var(--border-light);
+  border-radius: 5px;
+  background: var(--bg-card);
+  cursor: pointer;
+  position: relative;
+  margin-top: 1px;
+  transition: all 0.15s ease;
+}
+.priorities-checklist-box:checked {
+  background: var(--success);
+  border-color: var(--success);
+}
+.priorities-checklist-box:checked::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 5px;
+  width: 5px;
+  height: 9px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+.priorities-checklist-text {
+  font-size: 13px;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+.priorities-checklist-item.is-checked .priorities-checklist-text {
+  color: var(--text-secondary);
+}
+.priorities-checklist-reset {
+  margin-top: 12px;
+  padding: 8px 14px;
+  background: transparent;
+  border: 1px solid var(--border-light);
+  border-radius: 10px;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+}
+.priorities-checklist-reset:hover {
+  color: var(--danger);
+  border-color: var(--danger-border);
+}
+
+/* --- Snapshot --- */
+.priorities-snapshot-note {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+.priorities-snapshot-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.priorities-snapshot-btn {
+  flex: 1;
+  min-width: 140px;
+  padding: 10px 14px;
+  background: var(--bg-body);
+  border: 1px solid var(--border-light);
+  border-radius: 10px;
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.priorities-snapshot-btn:hover {
+  border-color: var(--primary);
+}
+.priorities-snapshot-btn--primary {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+.priorities-snapshot-btn--primary:hover {
+  background: var(--primary-hover);
+  border-color: var(--primary-hover);
+}
