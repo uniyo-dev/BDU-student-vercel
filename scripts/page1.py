@@ -14,6 +14,8 @@ from shared import (
     draw_security_layers, draw_standard_footer, draw_common_header,
 )
 
+from page_summary import draw_summary_table
+
 
 def draw_page_one(c, data, serial, print_date, verify_url):
     """Render the cover page onto canvas c."""
@@ -117,6 +119,10 @@ def draw_page_one(c, data, serial, print_date, verify_url):
                  "This academic summary is linked dynamically to the student portal databases.")
     c.drawString(MARGIN_LEFT + 28 * mm, ty(qr_y_top + 18),
                  f"To confirm authenticity, scan this QR code or navigate to: {verify_url[:50]}...")
+
+    # ---------- Academic Summary table (inline) ----------
+    # Draws all semesters at a glance. Positioned below the QR block.
+    draw_summary_table(c, data, top_y=228)
 
     # ---------- Footer ----------
     draw_standard_footer(c)

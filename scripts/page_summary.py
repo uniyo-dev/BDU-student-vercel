@@ -1,85 +1,66 @@
 """
-BD Buddy — Summary Page: Academic Overview
-Draws a table of all semesters with per-semester stats + overall totals.
+BD Buddy — Summary Table Helper
+Draws the per-semester summary table. Used inline on the cover page.
 """
 
 from reportlab.lib import colors
 from reportlab.lib.units import mm
 
 from shared import (
-    PAGE_W, PAGE_H, MARGIN_LEFT, MARGIN_RIGHT, CONTENT_W,
-    DARK_SLATE, TABLE_SLATE, BORDER_GRAY, BORDER_LIGHT,
-    MUTED, TEXT_BLACK, BG_LIGHT, SUCCESS, SUCCESS_BG,
+    PAGE_W, MARGIN_LEFT, MARGIN_RIGHT, CONTENT_W,
+    TABLE_SLATE, BORDER_GRAY, MUTED, TEXT_BLACK, BG_LIGHT,
     ty,
-    draw_security_layers, draw_standard_footer, draw_common_header,
 )
 
 
-def draw_summary_page(c, data, serial, print_date, verify_url):
-    """Render the academic summary page."""
+def draw_summary_table(c, data, top_y, max_rows=10):
+    """Draw the academic summary table starting at top_y (in mm, PDF coords).
+    Returns the bottom Y (in mm, PDF coords) of the drawn table.
+    """
 
-    draw_security_layers(c, watermark_text="ACADEMIC SUMMARY")
-    draw_common_header(c, serial, print_date)
+    regs = data.get("registrations") or []
+    courses_by_sem = data.get("coursesBySemester") or {}
 
-    bio = data.get("biography", {}) or {}
-    regs = data.get("registrations", []) or []
-    courses_by_sem = data.get("coursesBySemester", {}) or {}
+    if not regs:
+        return top_y
 
-    # ---------- Title ----------
-    c.setFillColor(TEXT_BLACK)
-    c.setFont("Helvetica-Bold", 14)
-    c.drawCentredString(PAGE_W / 2, ty(40), "ACADEMIC SUMMARY")
+    # Adapt row height if many semesters
+    n_rows = len(regs) + 1  # +1 for TOTAL
+    row_h = 6.2
+    if n_rows > 8:
+        row_h = 5.4
+    if n_rows > 10:
+        row_h = 4.6
 
-    c.setFillColor(MUTED)
-    c.setFont("Helvetica", 8.5)
-    c.drawCentredString(PAGE_W / 2, ty(46),
-                        "All semesters at a glance — official BDU record")
+    # Column widths (mm), normalized so their sum == CONTENT_W / mm
+    col_w_mm_raw = [8, 20, 30, 22, 22, 20, 20, 30]
+    total_raw = sum(col_w_mm_raw)
+    content_w_mm = CONTENT_W / mm
+    col_w_mm = [w * content_w_mm / total_raw for w in col_w_mm_raw]
 
-    # ---------- Student info strip ----------
-    y_ptr = 54
-    c.setFillColor(TEXT_BLACK)
-    c.setFont("Helvetica-Bold", 9)
-    c.drawString(MARGIN_LEFT, ty(y_ptr), "Student:")
-    c.drawString(110 * mm, ty(y_ptr), "Student ID:")
-
-    c.setFont("Helvetica", 9)
-    c.drawString(30 * mm, ty(y_ptr), str(bio.get("fullName", "—"))[:40])
-    c.drawString(130 * mm, ty(y_ptr), str(bio.get("studentId", "—"))[:20])
-
-    y_ptr += 5
-    c.setFont("Helvetica-Bold", 9)
-    c.drawString(MARGIN_LEFT, ty(y_ptr), "Program:")
-    c.drawString(110 * mm, ty(y_ptr), "Total Semesters:")
-    c.setFont("Helvetica", 9)
-    c.drawString(30 * mm, ty(y_ptr), str(data.get("program", "—"))[:40])
-    c.drawString(130 * mm, ty(y_ptr), str(len(regs)))
-
-    # ---------- Column layout ----------
-    # Columns: #, Semester, Academic Year, Courses, Credits, SGPA, CGPA, Status
-    col_w = [8, 20, 30, 22, 22, 20, 20, 30]  # in mm, sums to ~172mm (fits CONTENT_W ~176)
-    # Normalize to CONTENT_W
-    total_w = sum(col_w)
-    scale = CONTENT_W / (total_w * mm)
-    col_w_mm = [w * mm * scale for w in col_w]
     headers = ["#", "Semester", "Academic Year", "Courses", "Credits", "SGPA", "CGPA", "Status"]
 
-    # ---------- Header band ----------
-    table_top = 68
-    header_h = 7
+    # --- Section label above the table ---
+    c.setFillColor(TEXT_BLACK)
+    c.setFont("Helvetica-Bold", 9.5)
+    c.drawString(MARGIN_LEFT + 2 * mm, ty(top_y - 2), "ACADEMIC SUMMARY")
+
+    # --- Header band ---
+    header_h = 6
+    header_top = top_y + 3
     c.setFillColor(TABLE_SLATE)
-    c.rect(MARGIN_LEFT, ty(table_top + header_h), CONTENT_W, header_h * mm,
+    c.rect(MARGIN_LEFT, ty(header_top + header_h), CONTENT_W, header_h * mm,
            fill=1, stroke=0)
 
     c.setFillColor(colors.white)
-    c.setFont("Helvetica-Bold", 7.5)
+    c.setFont("Helvetica-Bold", 7)
     x = MARGIN_LEFT + 2 * mm
     for w, h in zip(col_w_mm, headers):
-        c.drawString(x, ty(table_top + 4.8), h)
+        c.drawString(x, ty(header_top + 3.8), h)
         x += w
 
-    # ---------- Data rows ----------
-    row_h = 6.2
-    y = table_top + header_h + 5.5
+    # --- Data rows ---
+    y = header_top + header_h + 4.2
     total_credits = 0
     total_courses = 0
 
@@ -97,14 +78,14 @@ def draw_summary_page(c, data, serial, print_date, verify_url):
         total_credits += n_credits
         total_courses += n_courses
 
-        # Row background alternate
+        # Alternating background
         if i % 2 == 0:
             c.setFillColor(BG_LIGHT)
-            c.rect(MARGIN_LEFT, ty(y + 2), CONTENT_W, row_h * mm,
+            c.rect(MARGIN_LEFT, ty(y + 1.5), CONTENT_W, row_h * mm,
                    fill=1, stroke=0)
 
         c.setFillColor(TEXT_BLACK)
-        c.setFont("Helvetica", 8)
+        c.setFont("Helvetica", 7.5)
         x = MARGIN_LEFT + 2 * mm
         vals = [str(i), sem_id, ac_year, str(n_courses),
                 str(int(n_credits)) if n_credits == int(n_credits) else f"{n_credits:.1f}",
@@ -115,11 +96,11 @@ def draw_summary_page(c, data, serial, print_date, verify_url):
 
         y += row_h
 
-    # ---------- Total row ----------
+    # --- TOTAL row ---
     c.setFillColor(TABLE_SLATE)
-    c.rect(MARGIN_LEFT, ty(y + 2), CONTENT_W, row_h * mm, fill=1, stroke=0)
+    c.rect(MARGIN_LEFT, ty(y + 1.5), CONTENT_W, row_h * mm, fill=1, stroke=0)
     c.setFillColor(colors.white)
-    c.setFont("Helvetica-Bold", 8)
+    c.setFont("Helvetica-Bold", 7.5)
     x = MARGIN_LEFT + 2 * mm
     final_cgpa = regs[-1].get("cgpa", "—") if regs else "—"
     totals = ["", "TOTAL", "", str(total_courses),
@@ -129,19 +110,10 @@ def draw_summary_page(c, data, serial, print_date, verify_url):
         c.drawString(x, ty(y), str(v))
         x += w
 
-    # ---------- Bottom border ----------
+    # Bottom border
     c.setStrokeColor(BORDER_GRAY)
     c.setLineWidth(0.5)
-    c.line(MARGIN_LEFT, ty(y - 1), MARGIN_RIGHT, ty(y - 1))
+    c.line(MARGIN_LEFT, ty(y), MARGIN_RIGHT, ty(y))
 
-    # ---------- Footnote ----------
-    footnote_y = y + 12
-    c.setFillColor(MUTED)
-    c.setFont("Helvetica-Oblique", 7.5)
-    c.drawString(MARGIN_LEFT, ty(footnote_y),
-                 "Cumulative GPA shown is the running CGPA reported by the portal for each semester.")
-    c.drawString(MARGIN_LEFT, ty(footnote_y + 4),
-                 "For official confirmation of any record, verify this document via the QR code on the cover page.")
-
-    draw_standard_footer(c)
-    c.showPage()
+    # Return bottom Y (mm)
+    return y - 2

@@ -28,7 +28,6 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from page1 import draw_page_one
 from page2 import draw_page_two
 from page3 import draw_page_three
-from page_summary import draw_summary_page
 
 
 def generate_pdf(data):
@@ -81,9 +80,8 @@ def generate_pdf(data):
         # Nothing to render — fall back to a single page so the doc isn't blank
         draw_page_two(c, data, serial, print_date, verify_url)
     else:
-        # Summary page only when 2+ semesters
-        if len(populated) > 1:
-            draw_summary_page(c, data, serial, print_date, verify_url)
+        # Summary table now appears inline on the cover page (page1.py).
+        # No standalone summary page.
 
         # One page per semester
         for reg, sem_id, sem_courses in populated:

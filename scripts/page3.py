@@ -226,8 +226,13 @@ def _draw_metadata_panel(c, top_y, serial, print_date, print_mode, data):
     for (lbl, val) in left_items:
         c.setFont("Helvetica-Bold", 8)
         c.drawString(box_x + 5 * mm, ty(y_item), lbl)
-        c.setFont("Helvetica", 8)
-        c.drawString(box_x + 30 * mm, ty(y_item), val[:45])
+        # Use smaller font for Document ID so the full serial fits
+        if lbl == "Document ID:":
+            c.setFont("Helvetica", 6.5)
+            c.drawString(box_x + 30 * mm, ty(y_item), val)
+        else:
+            c.setFont("Helvetica", 8)
+            c.drawString(box_x + 30 * mm, ty(y_item), val[:60])
         y_item += 4.5
 
     y_item = top_y + 12
@@ -235,7 +240,7 @@ def _draw_metadata_panel(c, top_y, serial, print_date, print_mode, data):
         c.setFont("Helvetica-Bold", 8)
         c.drawString(box_x + 100 * mm, ty(y_item), lbl)
         c.setFont("Helvetica", 8)
-        c.drawString(box_x + 125 * mm, ty(y_item), val[:40])
+        c.drawString(box_x + 125 * mm, ty(y_item), val)
         y_item += 4.5
 
 
