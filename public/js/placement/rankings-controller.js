@@ -16,15 +16,15 @@
     document.querySelectorAll('.tab-switch-btn').forEach(function(b) {
       b.classList.toggle('active', b.dataset.tab === tab);
     });
-    // Show/hide content
+    // Show/hide content (class-based; .hidden is defined in shared CSS)
     const deptSection = document.getElementById('tab-departments');
     const rankSection = document.getElementById('tab-rankings');
     const prioSection = document.getElementById('tab-priorities');
     if (!deptSection || !rankSection) return;
-    deptSection.style.display = (tab === 'departments') ? '' : 'none';
-    rankSection.style.display = (tab === 'rankings') ? '' : 'none';
+    deptSection.classList.toggle('hidden', tab !== 'departments');
+    rankSection.classList.toggle('hidden', tab !== 'rankings');
     if (prioSection) {
-      prioSection.style.display = (tab === 'priorities') ? '' : 'none';
+      prioSection.classList.toggle('hidden', tab !== 'priorities');
     }
 
     // Update hash (without jumping)
