@@ -26,7 +26,7 @@
 }
 
 .course-row:hover {
-  background: var(--body-bg);
+  background: var(--bg-body);
   box-shadow: 0 4px 12px rgba(0,0,0,0.06);
   transform: translateX(4px);
 }

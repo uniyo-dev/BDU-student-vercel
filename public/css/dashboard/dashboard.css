@@ -1,5 +1,5 @@
 /* Dashboard Styles */
-#page-dashboard { background: var(--body-bg); padding-bottom: 96px; }
+#page-dashboard { background: var(--bg-body); padding-bottom: 96px; }
 
 .dash-header {
   background: linear-gradient(135deg,
@@ -34,7 +34,7 @@
 
 .dash-program-card {
   display: flex; align-items: flex-start; gap: 12px;
-  background: var(--card-bg); border-radius: 18px; padding: 16px;
+  background: var(--bg-card); border-radius: 18px; padding: 16px;
   border: 1px solid var(--border-light); box-shadow: var(--shadow-md);
   margin-bottom: 16px;
 }
@@ -52,7 +52,7 @@
 .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
 
 .stat-card {
-  background: var(--card-bg); border-radius: 18px; padding: 16px;
+  background: var(--bg-card); border-radius: 18px; padding: 16px;
   border: 1px solid var(--border-light); box-shadow: var(--shadow-md);
 }
 
@@ -84,7 +84,7 @@
 .section-title { font-size: 18px; font-weight: 700; color: var(--text-1); margin-bottom: 12px; padding: 0 4px; }
 
 .quick-link {
-  background: var(--card-bg); border-radius: 18px; padding: 16px;
+  background: var(--bg-card); border-radius: 18px; padding: 16px;
   display: flex; align-items: center; gap: 16px;
   border: 1px solid var(--border-light); box-shadow: var(--shadow-sm);
   cursor: pointer; transition: transform 0.15s;

@@ -177,7 +177,7 @@
 }
 
 .gpa-stat-item {
-  background: var(--card-bg);
+  background: var(--bg-card);
   border-radius: 12px;
   padding: 12px;
   text-align: center;

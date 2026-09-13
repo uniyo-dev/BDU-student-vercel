@@ -1,5 +1,5 @@
 /* Results Styles */
-#page-results { background: var(--body-bg); padding-bottom: 96px; }
+#page-results { background: var(--bg-body); padding-bottom: 96px; }
 
 .results-header {
   background: linear-gradient(135deg, var(--primary-lighter), var(--primary-light));
@@ -44,7 +44,7 @@
 }
 
 .gpa-card-secondary {
-  background: var(--card-bg); border-radius: 18px; padding: 16px;
+  background: var(--bg-card); border-radius: 18px; padding: 16px;
   border: 1px solid var(--border-light);
   display: flex; flex-direction: column; justify-content: space-between;
 }
@@ -57,7 +57,7 @@
 }
 
 .course-card {
-  background: var(--card-bg); border-radius: 14px; padding: 14px;
+  background: var(--bg-card); border-radius: 14px; padding: 14px;
   border: 1px solid var(--border-light);
   display: flex; align-items: center;
   justify-content: space-between; gap: 12px; margin-bottom: 10px;
@@ -69,7 +69,7 @@
 
 .course-code {
   font-size: 10px; font-family: 'Courier New', monospace;
-  font-weight: 700; color: var(--text-muted); background: var(--body-bg);
+  font-weight: 700; color: var(--text-muted); background: var(--bg-body);
   padding: 2px 8px; border-radius: 6px;
 }
 .course-credits { font-size: 10px; color: var(--text-muted); }
@@ -97,7 +97,7 @@
 }
 .toggle-btn {
   padding: 10px 20px; border-radius: 40px; border: 2px solid var(--border);
-  background: var(--card-bg); font-weight: 700; font-size: 13px; cursor: pointer;
+  background: var(--bg-card); font-weight: 700; font-size: 13px; cursor: pointer;
   color: var(--text-2); transition: all 0.2s;
 }
 .toggle-btn.active {
@@ -110,7 +110,7 @@
 .course-meta { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
 .course-code {
   font-size: 10px; font-family: 'Courier New', monospace;
-  font-weight: 700; color: var(--text-muted); background: var(--body-bg);
+  font-weight: 700; color: var(--text-muted); background: var(--bg-body);
   padding: 2px 8px; border-radius: 6px;
 }
 .course-credits { font-size: 10px; color: var(--text-muted); }

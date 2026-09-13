@@ -1,5 +1,5 @@
 /* Profile Styles */
-#page-profile { background: var(--body-bg); padding-bottom: 96px; }
+#page-profile { background: var(--bg-body); padding-bottom: 96px; }
 
 .profile-header {
   background: linear-gradient(135deg, var(--text-2), var(--text-1));
@@ -35,7 +35,7 @@
 }
 
 .profile-card {
-  background: var(--card-bg); border-radius: 18px;
+  background: var(--bg-card); border-radius: 18px;
   border: 1px solid var(--border-light); box-shadow: var(--shadow-sm);
   padding: 4px 0; margin-bottom: 24px;
 }

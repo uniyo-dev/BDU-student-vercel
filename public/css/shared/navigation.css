@@ -9,7 +9,7 @@
   display: flex;
   justify-content: space-around;
   padding: var(--spacing-md) var(--spacing-sm) 14px;
-  background: var(--card-bg);
+  background: var(--bg-card);
   border-top: 1px solid var(--border);
   z-index: var(--z-nav);
   box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
