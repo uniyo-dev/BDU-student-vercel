@@ -28,6 +28,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from page1 import draw_page_one
 from page2 import draw_page_two
 from page3 import draw_page_three
+from page_summary import draw_summary_page
 
 
 def generate_pdf(data):
@@ -55,7 +56,56 @@ def generate_pdf(data):
     c.setAuthor("BD Buddy")
 
     draw_page_one(c, data, serial, print_date, verify_url)
-    draw_page_two(c, data, serial, print_date, verify_url)
+
+    # ---------- Multi-semester handling ----------
+    registrations = data.get("registrations") or []
+    courses_by_sem = data.get("coursesBySemester") or {}
+
+    if not registrations:
+        # Backward compat: single-semester payload
+        legacy_reg = data.get("registration") or {}
+        legacy_courses = data.get("courses") or []
+        if legacy_reg:
+            registrations = [legacy_reg]
+            courses_by_sem = {str(legacy_reg.get("semester", "I")): legacy_courses}
+
+    # Filter to semesters that actually have courses
+    populated = []
+    for reg in registrations:
+        sem_id = str(reg.get("semester", "I"))
+        sem_courses = courses_by_sem.get(sem_id) or []
+        if sem_courses:
+            populated.append((reg, sem_id, sem_courses))
+
+    if not populated:
+        # Nothing to render — fall back to a single page so the doc isn't blank
+        draw_page_two(c, data, serial, print_date, verify_url)
+    else:
+        # Summary page only when 2+ semesters
+        if len(populated) > 1:
+            draw_summary_page(c, data, serial, print_date, verify_url)
+
+        # One page per semester
+        for reg, sem_id, sem_courses in populated:
+            total_credits = sum(float(x.get("credit", 0) or 0) for x in sem_courses)
+            page_data = {
+                "biography": data.get("biography", {}),
+                "registration": {
+                    "program": reg.get("program") or data.get("program") or "—",
+                    "acYear": reg.get("acYear", "—"),
+                    "semester": sem_id,
+                    "status": reg.get("status", "Pass"),
+                },
+                "courses": sem_courses,
+                "summary": {
+                    "totalCredits": total_credits,
+                    "cumulativeGPA": reg.get("cgpa", "—"),
+                    "sgpa": reg.get("sgpa", "—"),
+                },
+                "printMode": "Semester " + sem_id,
+            }
+            draw_page_two(c, page_data, serial, print_date, verify_url)
+
     draw_page_three(c, data, serial, print_date, verify_url)
 
     return buf.getvalue()

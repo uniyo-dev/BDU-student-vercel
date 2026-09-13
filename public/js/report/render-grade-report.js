@@ -346,9 +346,14 @@
         return;
       }
 
-      // Build payload
+      // === M5: multi-semester payload ===
+      // Send ALL registrations + a per-semester course map.
+      // Legacy single-registration fields kept for backward compat.
       const bio = this.reportData.biography || {};
-      const reg = this.currentRegistration();
+      const regs = this.reportData.registrations || [];
+      const allCoursesFlat = this.reportData.courses || [];
+
+      const reg = this.currentRegistration();  // legacy: selected semester
       const courses = this.currentCourses().map(c => ({
         code: c.code, title: c.title, credit: c.credit,
         grade: c.grade, points: c.points, percentage: c.percentage,
@@ -365,12 +370,38 @@
         semester: reg.semester || '—',
         status: reg.status || 'Pass',
       };
+
+      // Build registrations[] — all, in original (chronological) order
+      const registrations = regs.map(r => ({
+        semester: r.semester || '—',
+        acYear: r.acYear || '—',
+        status: r.status || 'Pass',
+        sgpa: r.sgpa || '—',
+        cgpa: r.cgpa || '—',
+        program: this.reportData.program || '—',
+      }));
+
+      // Build coursesBySemester — { "I": [courses], "II": [...] }
+      const coursesBySemester = {};
+      allCoursesFlat.forEach(entry => {
+        const sem = String(entry.semester || 'I');
+        coursesBySemester[sem] = (entry.courses || []).map(c => ({
+          code: c.code, title: c.title, credit: c.credit,
+          grade: c.grade, points: c.points, percentage: c.percentage,
+          semester: sem,
+        }));
+      });
+
       const serial = await this.getSerial();
       const verifyUrl = this.getVerifyUrl(bio.studentId);
       const printMode = 'Semester ' + (reg.semester || 'I');
 
       const payload = {
         biography: bio,
+        // New multi-semester shape
+        registrations: registrations,
+        coursesBySemester: coursesBySemester,
+        // Legacy single-semester shape (for backward compat)
         registration, courses, summary,
         serial, verifyUrl, printMode,
       };
