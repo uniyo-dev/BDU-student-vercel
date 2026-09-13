@@ -1,0 +1,60 @@
+/* BD Buddy — Shared custom dropdown
+   Replaces native <select> popup with a themed panel.
+   Native <select> stays in the DOM (hidden) so change events
+   and form submission work unchanged.
+   Usage:  <select data-dropdown>...</select>
+           <select class="form-select">...</select>   (auto-detected)
+   Init:   BDDropdown.init(root)  — scan a subtree */
+
+.bd-dd { position: relative; display: block; width: 100%; }
+.bd-dd > select { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.bd-dd-trigger {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 10px; width: 100%; padding: 10px 12px;
+  background: var(--bg-card); color: var(--text-primary);
+  border: 1px solid var(--border-light); border-radius: 10px;
+  font-family: inherit; font-size: 13px; text-align: left; cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.bd-dd-trigger:hover { border-color: var(--primary); }
+.bd-dd-trigger:focus-visible {
+  outline: none; border-color: var(--primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 20%, transparent);
+}
+.bd-dd.is-open .bd-dd-trigger { border-color: var(--primary); }
+.bd-dd-label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bd-dd-label.is-placeholder { color: var(--text-muted); }
+.bd-dd-arrow {
+  display: inline-flex; width: 16px; height: 16px;
+  color: var(--text-muted); flex-shrink: 0;
+  transition: transform 0.15s ease;
+}
+.bd-dd.is-open .bd-dd-arrow { transform: rotate(180deg); }
+.bd-dd-arrow svg { width: 100%; height: 100%; stroke: currentColor; }
+.bd-dd-panel {
+  position: absolute; z-index: 1000; left: 0; right: 0;
+  max-height: 260px; overflow-y: auto; margin-top: 6px; padding: 6px;
+  background: var(--bg-card); border: 1px solid var(--border-light);
+  border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  opacity: 0; transform: translateY(-6px); pointer-events: none;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+.bd-dd.is-open .bd-dd-panel { opacity: 1; transform: translateY(0); pointer-events: auto; }
+.bd-dd-panel--up { margin-top: 0; margin-bottom: 6px; transform: translateY(6px); }
+.bd-dd.is-open .bd-dd-panel--up { transform: translateY(0); }
+.bd-dd-option {
+  display: block; width: 100%; padding: 9px 12px;
+  background: transparent; color: var(--text-primary);
+  border: 0; border-radius: 8px; font-family: inherit; font-size: 13px;
+  text-align: left; cursor: pointer;
+  transition: background 0.15s ease;
+}
+.bd-dd-option:hover, .bd-dd-option.is-hover { background: var(--bg-hover); }
+.bd-dd-option.is-selected {
+  background: color-mix(in srgb, var(--primary) 12%, transparent);
+  color: var(--primary); font-weight: 700;
+}
+.bd-dd-option.is-placeholder { color: var(--text-muted); }
+[data-theme="dark"] .bd-dd-option.is-selected {
+  background: color-mix(in srgb, var(--primary) 22%, transparent);
+}
