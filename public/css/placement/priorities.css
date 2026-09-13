@@ -18,7 +18,7 @@
 .priorities-section-head {
   font-size: 13px;
   font-weight: 800;
-  color: var(--text-1);
+  color: var(--text-primary);
   text-transform: uppercase;
   letter-spacing: 0.4px;
   margin-bottom: 14px;
@@ -71,7 +71,7 @@
 .priorities-dept-name {
   font-size: 22px;
   font-weight: 800;
-  color: var(--text-1);
+  color: var(--text-primary);
   margin-bottom: 4px;
 }
 
@@ -95,7 +95,7 @@
 }
 
 .priorities-other-dept {
-  color: var(--text-1);
+  color: var(--text-primary);
   font-weight: 600;
 }
 
@@ -124,7 +124,7 @@
 
 .priorities-criteria-name {
   font-size: 12px;
-  color: var(--text-2);
+  color: var(--text-secondary);
   font-weight: 600;
 }
 
@@ -137,7 +137,7 @@
 .priorities-criteria-score {
   font-size: 13px;
   font-weight: 800;
-  color: var(--text-1);
+  color: var(--text-primary);
   font-variant-numeric: tabular-nums;
   min-width: 60px;
   text-align: right;
@@ -181,7 +181,7 @@
   height: 36px;
   border-radius: 10px;
   background: var(--bg-elevated);
-  color: var(--text-2);
+  color: var(--text-secondary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -203,7 +203,7 @@
 .priorities-dept {
   font-size: 13px;
   font-weight: 700;
-  color: var(--text-1);
+  color: var(--text-primary);
 }
 
 .priorities-score {
@@ -252,7 +252,7 @@
   justify-content: space-between;
   padding: 6px 0;
   font-size: 12px;
-  color: var(--text-2);
+  color: var(--text-secondary);
 }
 
 .priorities-sim-status {
@@ -274,7 +274,7 @@
 .priorities-action-list {
   padding-left: 20px;
   font-size: 13px;
-  color: var(--text-2);
+  color: var(--text-secondary);
   line-height: 1.8;
   margin-bottom: 14px;
 }
@@ -306,4 +306,243 @@
   text-align: center;
   color: var(--text-muted);
   font-size: 13px;
+}
+
+
+/* ===== M5 Priorities additions ===== */
+
+/* --- Section head with SVG icon --- */
+.priorities-section-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.priorities-head-icon {
+  display: inline-flex;
+  width: 18px;
+  height: 18px;
+  color: var(--primary);
+  flex-shrink: 0;
+}
+.priorities-head-icon svg {
+  width: 100%;
+  height: 100%;
+  stroke: currentColor;
+}
+
+/* --- Result badges (replaces old .priorities-badge-selected/pending) --- */
+.priorities-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 40px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+}
+.priorities-badge-icon {
+  display: inline-flex;
+  width: 14px;
+  height: 14px;
+}
+.priorities-badge-icon svg { width: 100%; height: 100%; stroke: currentColor; }
+.priorities-badge--selected {
+  background: var(--success-bg);
+  color: var(--success);
+  border: 1px solid var(--success-border);
+}
+.priorities-badge--pending {
+  background: var(--warning-bg);
+  color: var(--warning);
+  border: 1px solid var(--warning-border);
+}
+
+/* --- Copy button --- */
+.priorities-copy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 8px 14px;
+  background: color-mix(in srgb, var(--primary) 10%, transparent);
+  color: var(--primary);
+  border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent);
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+}
+.priorities-copy-icon { display: inline-flex; width: 14px; height: 14px; }
+.priorities-copy-icon svg { width: 100%; height: 100%; stroke: currentColor; }
+
+/* --- Others list heading --- */
+.priorities-others-head {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 8px;
+}
+
+/* --- Other-row status colors --- */
+.priorities-other-row--selected .priorities-other-status { color: var(--success); }
+.priorities-other-row--not_selected .priorities-other-status { color: var(--danger); }
+.priorities-other-row--pending .priorities-other-status { color: var(--warning); }
+.priorities-other-row--unknown .priorities-other-status { color: var(--text-muted); }
+
+/* --- Score breakdown: 4 columns, responsive --- */
+.priorities-criteria-row,
+.priorities-criteria-total {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  gap: 10px;
+  align-items: center;
+}
+.priorities-criteria-contrib {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--primary);
+  font-variant-numeric: tabular-nums;
+  min-width: 52px;
+  text-align: right;
+}
+.priorities-breakdown-note {
+  margin-top: 10px;
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* On narrow screens, stack score under the name */
+@media (max-width: 480px) {
+  .priorities-criteria-row,
+  .priorities-criteria-total {
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "name  score"
+      "weight contrib";
+    row-gap: 4px;
+  }
+  .priorities-criteria-name   { grid-area: name; }
+  .priorities-criteria-score  { grid-area: score; text-align: right; }
+  .priorities-criteria-weight { grid-area: weight; font-size: 10px; }
+  .priorities-criteria-contrib { grid-area: contrib; text-align: right; }
+}
+
+/* --- Priority card status variants --- */
+.priorities-card--selected     { background: var(--success-bg); border-color: var(--success-border); }
+.priorities-card--not_selected { background: var(--danger-bg);  border-color: var(--danger-border); }
+.priorities-card--pending      { background: var(--warning-bg); border-color: var(--warning-border); }
+.priorities-card--unknown      { background: var(--bg-body); }
+
+.priorities-status--selected     { background: var(--success-bg); color: var(--success); }
+.priorities-status--not_selected { background: var(--danger-bg);  color: var(--danger); }
+.priorities-status--pending      { background: var(--warning-bg); color: var(--warning); }
+.priorities-status--rejected     { background: var(--danger-bg);  color: var(--danger); }
+.priorities-status--unknown      { background: var(--bg-elevated); color: var(--text-muted); }
+
+/* --- Simulator (sliders) --- */
+.priorities-sim-note-top {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-bottom: 14px;
+}
+.priorities-sim-control {
+  margin-bottom: 16px;
+}
+.priorities-sim-control-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+.priorities-sim-value {
+  font-variant-numeric: tabular-nums;
+  color: var(--primary);
+  font-weight: 800;
+}
+.priorities-sim-range {
+  width: 100%;
+  accent-color: var(--primary);
+  height: 6px;
+  cursor: pointer;
+}
+.priorities-sim-scale {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+.priorities-sim-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  background: color-mix(in srgb, var(--primary) 10%, transparent);
+  border-radius: 12px;
+  margin-top: 8px;
+}
+.priorities-sim-total-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+.priorities-sim-total-value {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--primary);
+  font-variant-numeric: tabular-nums;
+}
+.priorities-sim-disclaimer {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  margin-top: 12px;
+  padding: 10px 12px;
+  background: var(--warning-bg);
+  border: 1px solid var(--warning-border);
+  border-radius: 10px;
+  font-size: 11px;
+  color: var(--warning);
+  line-height: 1.5;
+}
+.priorities-sim-disclaimer-icon {
+  display: inline-flex;
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.priorities-sim-disclaimer-icon svg { width: 100%; height: 100%; stroke: currentColor; }
+
+/* --- Empty state --- */
+.priorities-empty-icon {
+  display: inline-flex;
+  width: 40px;
+  height: 40px;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+.priorities-empty-icon svg { width: 100%; height: 100%; stroke: currentColor; }
+.priorities-empty-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+.priorities-empty-desc {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.5;
 }
