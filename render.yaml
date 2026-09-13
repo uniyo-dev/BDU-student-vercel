@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: bdu-portal
+    runtime: node
+    buildCommand: "npm install && pip install --upgrade pip && pip install -r requirements.txt"
+    startCommand: "node server.js"
+    envVars:
+      - key: HMAC_SECRET
+        sync: false

@@ -33,6 +33,7 @@
 
       // Render
       this.renderHero();
+      this.renderSemesterPicker();
       this.renderSummary();
       this.renderCourses();
       this.renderVerification();
@@ -95,6 +96,51 @@
     currentRegistration() {
       const regs = this.reportData.registrations || [];
       return regs[this.currentSemesterIndex] || regs[0] || {};
+    },
+
+    // ===== Semester picker (M5) =====
+    renderSemesterPicker() {
+      const picker = document.getElementById('semester-picker');
+      if (!picker) return;
+
+      const regs = this.reportData.registrations || [];
+      if (!regs.length) {
+        picker.innerHTML = '<option value="">No semesters</option>';
+        picker.disabled = true;
+        return;
+      }
+
+      // Latest semester first (most useful default)
+      const indexed = regs.map((r, i) => ({ reg: r, idx: i }));
+      indexed.reverse();
+
+      let html = '';
+      indexed.forEach(item => {
+        const r = item.reg;
+        const label = 'Semester ' + (r.semester || '?') + ' \u00b7 ' + (r.acYear || '—');
+        const sel = (item.idx === this.currentSemesterIndex) ? ' selected' : '';
+        html += '<option value="' + item.idx + '"' + sel + '>' + this.esc(label) + '</option>';
+      });
+      picker.innerHTML = html;
+
+      // Wire once
+      if (!picker.dataset.wired) {
+        picker.addEventListener('change', () => {
+          const idx = parseInt(picker.value, 10);
+          if (isNaN(idx)) return;
+          this.currentSemesterIndex = idx;
+          // Re-render all the semester-dependent parts
+          this.renderHero();
+          this.renderSummary();
+          this.renderCourses();
+        });
+        picker.dataset.wired = '1';
+      }
+
+      // Init custom dropdown wrapper (if not already wrapped)
+      if (window.BDDropdown && typeof window.BDDropdown.init === 'function') {
+        window.BDDropdown.init(picker.parentNode);
+      }
     },
 
     currentCourses() {
