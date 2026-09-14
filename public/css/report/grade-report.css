@@ -841,3 +841,36 @@
   background: rgba(37, 99, 235, 0.12);
   color: #1e40af;
 }
+
+
+/* ===== Dual download buttons (M5) ===== */
+.dl-btn-group {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.dl-btn-group .btn-download {
+  flex: 1;
+  margin: 0;
+}
+.btn-download--primary {
+  background: var(--gr-brand-violet, #6D28D9);
+  color: #fff;
+  border-color: var(--gr-brand-violet, #6D28D9);
+}
+.btn-download--primary:hover {
+  opacity: 0.9;
+}
+.btn-download--secondary {
+  background: transparent;
+  color: var(--gr-brand-violet, #6D28D9);
+  border: 2px solid var(--gr-brand-violet, #6D28D9);
+}
+.btn-download--secondary:hover {
+  background: rgba(109, 40, 217, 0.08);
+}
+@media (max-width: 480px) {
+  .dl-btn-group {
+    flex-direction: column;
+  }
+}

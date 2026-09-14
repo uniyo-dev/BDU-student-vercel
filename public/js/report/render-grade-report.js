@@ -41,8 +41,10 @@
       // Bind download buttons (main + sticky)
       const btn = document.getElementById('btn-print');
       const btnSticky = document.getElementById('btn-print-sticky');
-      if (btn) btn.addEventListener('click', () => this.downloadPDF(btn));
-      if (btnSticky) btnSticky.addEventListener('click', () => this.downloadPDF(btnSticky));
+      const btnCurrent = document.getElementById('btn-download-current');
+      if (btn) btn.addEventListener('click', () => this.downloadPDF(btn, 'all'));
+      if (btnSticky) btnSticky.addEventListener('click', () => this.downloadPDF(btnSticky, 'all'));
+      if (btnCurrent) btnCurrent.addEventListener('click', () => this.downloadPDF(btnCurrent, 'current'));
 
       // Show sticky bar after scrolling past hero
       const stickyBar = document.getElementById('sticky-dl');
@@ -133,6 +135,7 @@
           this.renderHero();
           this.renderSummary();
           this.renderCourses();
+          this.updateCurrentButtonLabel();
         });
         picker.dataset.wired = '1';
       }
@@ -339,7 +342,7 @@
     },
 
     // ---------- PDF download ----------
-    async downloadPDF(btn) {
+    async downloadPDF(btn, scope) {
       const loader = window.BDPdfLoader;
       if (!loader) {
         alert('Loader not loaded. Please refresh.');
@@ -404,6 +407,7 @@
         // Legacy single-semester shape (for backward compat)
         registration, courses, summary,
         serial, verifyUrl, printMode,
+        printScope: scope || 'all',
       };
 
       // Show modal (password step)

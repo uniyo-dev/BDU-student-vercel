@@ -76,7 +76,26 @@ def generate_pdf(data):
         if sem_courses:
             populated.append((reg, sem_id, sem_courses))
 
-    if not populated:
+    # ---------- printScope: 'current' vs 'all' ----------
+    print_scope = data.get("printScope", "all")
+
+    if print_scope == "current":
+        # Client-selected semester only — no grouping, no cumulative.
+        cur_reg = data.get("registration") or {}
+        cur_courses = data.get("courses") or []
+        if cur_reg and cur_courses:
+            page_data = {
+                "biography": data.get("biography", {}),
+                "registration": cur_reg,
+                "courses": cur_courses,
+                "summary": data.get("summary", {}),
+                "printMode": "Semester " + str(cur_reg.get("semester", "I")),
+            }
+            draw_page_two(c, page_data, serial, print_date, verify_url)
+        else:
+            # Fallback if legacy fields missing
+            draw_page_two(c, data, serial, print_date, verify_url)
+    elif not populated:
         # Nothing to render — fall back to a single page so the doc isn't blank
         draw_page_two(c, data, serial, print_date, verify_url)
     else:
