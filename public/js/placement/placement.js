@@ -50,135 +50,69 @@ document.addEventListener('DOMContentLoaded', function() {
   });
   
   // VERIFIED BDU Departments List (from official registrar)
-  const commonDepartments = [
-    // Bahir Dar Institute of Technology (BiT) - 4 Schools
-    // School of Civil & Water Resources Engineering
-    'Civil Engineering',
-    'Water Resources and Irrigation Engineering',
-    'Hydraulics and Environmental Engineering',
-    // School of Mechanical & Industrial Engineering
-    'Mechanical Engineering',
-    'Industrial Engineering',
-    'Automotive Engineering',
-    'Mechatronics Engineering',
-    // School of Computing & Electrical Engineering
-    'Electrical and Computer Engineering',
-    'Software Engineering',
-    'Computer Science',
-    'Information Technology',
-    // School of Chemical & Food Engineering
-    'Chemical Engineering',
-    'Food Engineering and Process Technology',
-    // Ethiopian Institute of Textile and Fashion - BSc
-    'Textile Engineering',
-    'Garment Engineering',
-    'Fashion Design',
-    'Leather Engineering',
-    // College of Medicine and Health Sciences - MD/BSc
-    'Medicine (MD)',
-    'Pharmacy',
-    'Anesthesia',
-    'Optometry',
-    'Medical Laboratory Science',
-    'Public Health',
-    'Comprehensive Nursing',
-    'Midwifery',
-    'Psychiatry Nursing',
-    'Pediatric and Child Health Nursing',
-    'Surgical Nursing',
-    'Medical Radiology Technology',
-    'Environmental Health',
-    // College of Business and Economics - BA
-    'Accounting and Finance',
-    'Economics',
-    'Management',
-    'Marketing Management',
-    'Logistics and Supply Chain Management',
-    'Public Administration',
-    'Tourism and Hotel Management',
-    // College of Science - BSc
-    'Biology',
-    'Chemistry',
-    'Physics',
-    'Mathematics',
-    'Statistics',
-    'Biotechnology',
-    'Geology',
-    // College of Agriculture - BSc
-    'Plant Sciences',
-    'Animal Sciences',
-    'Horticulture',
-    'Natural Resources Management',
-    'Soil Resource Management',
-    'Forestry',
-    'Agricultural Economics',
-    'Rural Development',
-    'Fisheries and Wildlife Management',
-    // College of Humanities and Social Sciences - BA
-    'English Language and Literature',
-    'Amharic Language and Literature',
-    'History and Heritage Management',
-    'Geography and Environmental Studies',
-    'Sociology',
-    'Social Work',
-    'Political Science and International Relations',
-    'Journalism and Communication',
-    'Civics and Ethical Studies',
-    // College of Education - BA/BEd
-    'Psychology',
-    'Educational Planning and Management',
-    'Special Needs and Inclusive Education',
-    'Adult Education',
-    'Early Childhood Care and Education',
-    // School of Law
-    'Law (LLB)',
-    // Institute of Land Administration - BSc
-    'Land Administration',
-    'Geomatics and Land Surveying',
-    'Real Estate Valuation',
-    // Academy of Sport - BSc
-    'Sport Science',
-    'Football Coaching',
-    // Institute of Disaster Risk Management - BSc
-    'Disaster Risk Management',
-    'Food Security and Development',
-    // Ethiopian Maritime Academy
-    'Marine Engineering',
-    'Soil Resource Management',
-    'Forestry',
-    // College of Humanities and Social Sciences
-    'English Language and Literature',
-    'Amharic Language and Literature',
-    'History and Heritage Management',
-    'Geography and Environmental Studies',
-    'Sociology',
-    'Social Work',
-    'Political Science and International Relations',
-    'Journalism and Communication',
-    'Civics and Ethical Studies',
-    'Philosophy',
-    // College of Education and Behavioral Sciences
-    'Psychology',
-    'Educational Planning and Management',
-    'Special Needs and Inclusive Education',
-    'Adult Education',
-    'Early Childhood Care and Education',
-    // School of Law
-    'Law (LL.B)',
-    // Institute of Land Administration
-    'Land Administration and Surveying',
-    'Real Estate Management',
-    'Geomatics and GIS',
-    // Sport Academy
-    'Sport Science',
-    'Football Coaching',
-    // Institute of Disaster Risk Management
-    'Disaster Risk Management',
-    'Food Security and Development',
-    // Ethiopian Maritime Academy
-    'Marine Engineering',
-    'Nautical Science',
-  ];
+  // Real department list — derived at runtime.
+// Primary source: the student's loaded placement data (allStudents[].department)
+// Fallback: real BDU departments captured from the official portal (Sep 2026)
+const COMMON_DEPARTMENTS_FALLBACK = [
+  'Accounting and Finance',
+  'Afan Oromo, Literature and Communication',
+  'Amharic',
+  'Amharic Education',
+  'Cinema and Theatre Arts',
+  'Civics and Ethical Studies',
+  'Civics and Ethical Studies Education',
+  'Economics',
+  'Educational Planning and Management',
+  'English',
+  'English Education',
+  'Gender and Development Studies',
+  'Geography',
+  'Geography Education',
+  "Ge'ez Language and Literature",
+  'History',
+  'History Education',
+  'Journalism & Communications',
+  'Logistics and Supply Chain Management',
+  'Management',
+  'Marketing Management',
+  'Music Arts',
+  'Political Science and International Studies',
+  'Psychology',
+  'Public Administration and Development Management',
+  'Social Anthropology',
+  'Social Work',
+  'Sociology',
+  'Special Needs and Inclusive Education',
+  'Tourism and Hotel Management'
+];
+
+function computeCommonDepartments() {
+  try {
+    var raw = sessionStorage.getItem('bdu_student_data');
+    if (raw) {
+      var data = JSON.parse(raw);
+      var allStudents = (data && data.placement && data.placement.allStudents) || [];
+      var seen = {};
+      var out = [];
+      allStudents.forEach(function (s) {
+        var d = s && s.department;
+        if (d) {
+          d = String(d).trim();
+          if (d && !seen[d]) { seen[d] = 1; out.push(d); }
+        }
+      });
+      if (out.length > 0) {
+        out.sort();
+        return out;
+      }
+    }
+  } catch (e) {
+    console.warn('computeCommonDepartments: falling back', e.message);
+  }
+  return COMMON_DEPARTMENTS_FALLBACK.slice();
+}
+
+const commonDepartments = computeCommonDepartments();
   // Expose for other placement modules (priorities planner)
   window.BDU_DEPARTMENTS = commonDepartments;
   
