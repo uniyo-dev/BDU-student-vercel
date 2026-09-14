@@ -736,6 +736,10 @@
     html += '</div>';
 
     html += '<div class="priorities-planner-actions">';
+    html += '<button type="button" class="priorities-planner-copy" data-plan-copy>' +
+              '<span class="priorities-planner-copy-icon">' + ICONS.copy + '</span>' +
+              esc(t('planner_copy', 'Copy my list for the portal')) +
+            '</button>';
     html += '<button type="button" class="priorities-planner-reset" data-plan-reset>' +
               esc(t('planner_reset', 'Reset to my submitted order')) +
             '</button>';
@@ -831,6 +835,36 @@
         var selects = section.querySelectorAll('[data-plan-select]');
         selects.forEach(function (sel, i) { sel.value = defaults[i] || ''; });
         refreshButtons(defaults);
+      });
+    }
+
+    // Wire copy-list button
+    var copyBtn = section.querySelector('[data-plan-copy]');
+    if (copyBtn) {
+      copyBtn.addEventListener('click', function () {
+        var plan = getPlanFromDOM().filter(function (x) { return x; });
+        var text;
+        if (plan.length === 0) {
+          text = 'My BD Buddy priority list is empty.';
+        } else {
+          text =
+            'My BDU department priority order:\n\n' +
+            plan.map(function (dept, i) { return (i + 1) + '. ' + dept; }).join('\n') +
+            '\n\nSubmit on the official portal:\n' +
+            'https://studentportal.bdu.edu.et/DepartmentPlacment/DepartmentSelection';
+        }
+        var done = function () {
+          var orig = copyBtn.innerHTML;
+          copyBtn.innerHTML = esc(t('planner_copied', 'Copied!'));
+          setTimeout(function () { copyBtn.innerHTML = orig; }, 1500);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(done).catch(function () {
+            window.prompt('Copy manually:', text);
+          });
+        } else {
+          window.prompt('Copy manually:', text);
+        }
       });
     }
 
