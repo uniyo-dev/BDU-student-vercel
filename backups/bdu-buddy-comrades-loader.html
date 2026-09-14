@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0B0F19">
+  <title>BDU & BD Buddy — Comrades in Academia Loader</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0B0F19;
+      --bdu-blue: #1E88E5;
+      --bdu-blue-glow: rgba(30, 136, 229, 0.45);
+      --buddy-violet: #D628D9;
+      --buddy-violet-glow: rgba(214, 40, 217, 0.45);
+      --accent-gold: #FCD34D;
+      --accent-gold-glow: rgba(252, 211, 77, 0.4);
+      --text-1: #F8FAFC;
+      --text-muted: #94A3B8;
+      --border: rgba(255, 255, 255, 0.1);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-1);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow-x: hidden;
+      padding: 24px;
+    }
+
+    /* Ambient background grid */
+    .ambient-bg {
+      position: fixed;
+      inset: 0;
+      background-image: 
+        radial-gradient(circle at 35% 45%, rgba(30, 136, 229, 0.12) 0%, transparent 45%),
+        radial-gradient(circle at 65% 55%, rgba(214, 40, 217, 0.12) 0%, transparent 45%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Loader Card Container */
+    .loader-stage {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 540px;
+      background: rgba(19, 26, 43, 0.85);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 44px 32px 36px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(30, 136, 229, 0.08);
+      backdrop-filter: blur(20px);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Top Badge */
+    .comrades-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(90deg, rgba(30, 136, 229, 0.15), rgba(214, 40, 217, 0.15));
+      border: 1px solid rgba(252, 211, 77, 0.35);
+      padding: 6px 18px;
+      border-radius: 50px;
+      font-size: 11.5px;
+      font-weight: 800;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--accent-gold);
+      margin-bottom: 28px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .comrades-badge .dot-live {
+      width: 6px;
+      height: 6px;
+      background: var(--accent-gold);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--accent-gold);
+      animation: pulseDot 1.6s infinite ease-in-out;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { opacity: 0.4; transform: scale(0.8); }
+      50% { opacity: 1; transform: scale(1.3); }
+    }
+
+    /* THE VISUAL STORY: Dual Nodes & The Bridge */
+    .synergy-system {
+      position: relative;
+      width: 320px;
+      height: 150px;
+      margin: 10px 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Energy Bridge connecting both sides */
+    .bridge-svg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .energy-stream {
+      fill: none;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-dasharray: 8, 14;
+      animation: energyFlow 1.4s linear infinite;
+    }
+
+    .energy-stream-a {
+      stroke: url(#streamBlueToViolet);
+    }
+
+    .energy-stream-b {
+      stroke: url(#streamVioletToBlue);
+      animation-direction: reverse;
+      opacity: 0.8;
+    }
+
+    @keyframes energyFlow {
+      to { stroke-dashoffset: -44; }
+    }
+
+    /* Glowing Nodes */
+    .node {
+      position: relative;
+      z-index: 2;
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    /* Node A: BDU Official */
+    .node-bdu {
+      background: radial-gradient(circle at 35% 35%, #2563EB, #0F172A);
+      border: 2px solid var(--bdu-blue);
+      box-shadow: 0 0 30px var(--bdu-blue-glow), inset 0 0 15px rgba(30, 136, 229, 0.5);
+      animation: floatNodeA 4s ease-in-out infinite;
+    }
+
+    /* Node B: BD Buddy */
+    .node-buddy {
+      background: radial-gradient(circle at 35% 35%, #D628D9, #3B0764);
+      border: 2px solid var(--buddy-violet);
+      box-shadow: 0 0 30px var(--buddy-violet-glow), inset 0 0 15px rgba(214, 40, 217, 0.5);
+      animation: floatNodeB 4s ease-in-out infinite 0.4s;
+    }
+
+    @keyframes floatNodeA {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-7px) rotate(-2deg); }
+    }
+
+    @keyframes floatNodeB {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(7px) rotate(2deg); }
+    }
+
+    /* Inner Orbit Rings */
+    .orbit-ring {
+      position: absolute;
+      inset: -8px;
+      border-radius: 50%;
+      border: 1px dashed rgba(255, 255, 255, 0.3);
+      animation: spinRing 9s linear infinite;
+    }
+
+    .node-bdu .orbit-ring { border-color: rgba(30, 136, 229, 0.5); }
+    .node-buddy .orbit-ring { border-color: rgba(214, 40, 217, 0.5); animation-direction: reverse; }
+
+    @keyframes spinRing {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Center Union Catalyst (Handshake Core) */
+    .union-core {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(11, 15, 25, 0.9);
+      border: 2px solid var(--accent-gold);
+      box-shadow: 0 0 20px var(--accent-gold-glow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 3;
+      animation: pulseCore 2s infinite ease-in-out;
+    }
+
+    @keyframes pulseCore {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 15px var(--accent-gold-glow); }
+      50% { transform: translate(-50%, -50%) scale(1.15); box-shadow: 0 0 25px rgba(252, 211, 77, 0.7); }
+    }
+
+    .union-core svg {
+      width: 22px;
+      height: 22px;
+      color: var(--accent-gold);
+    }
+
+    /* Node Icons */
+    .node svg {
+      width: 46px;
+      height: 46px;
+      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));
+    }
+
+    /* Dynamic Narrative Text Section */
+    .story-section {
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .alliance-title {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      margin-bottom: 6px;
+      background: linear-gradient(135deg, #FFF 30%, #93C5FD 70%, #F5D0FE 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .status-narrative {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      line-height: 1.5;
+      min-height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 500;
+      transition: opacity 0.3s ease;
+    }
+
+    /* Step Indicators */
+    .synergy-progress {
+      width: 100%;
+      margin-top: 18px;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 30%;
+      background: linear-gradient(90deg, var(--bdu-blue), var(--accent-gold), var(--buddy-violet));
+      border-radius: 10px;
+      transition: width 0.4s ease;
+      box-shadow: 0 0 15px rgba(214, 40, 217, 0.6);
+    }
+
+    .progress-meta {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .progress-meta .bold-step {
+      color: var(--accent-gold);
+      font-weight: 700;
+    }
+
+    /* Interactive Demo Controls */
+    .demo-controls {
+      margin-top: 28px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+      z-index: 10;
+    }
+
+    .btn-ctrl {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border);
+      color: var(--text-1);
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+
+    .btn-ctrl:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: var(--buddy-violet);
+    }
+
+    .btn-primary-ctrl {
+      background: var(--buddy-violet);
+      border-color: var(--buddy-violet);
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="ambient-bg"></div>
+
+  <main class="loader-stage">
+    
+    <!-- Alliance Tag -->
+    <div class="comrades-badge">
+      <span class="dot-live"></span>
+      <span>Harmonized Alliance</span>
+    </div>
+
+    <!-- The Synergy Graphic -->
+    <div class="synergy-system">
+      
+      <!-- Energy Streams & Circuit Bridges -->
+      <svg class="bridge-svg" viewBox="0 0 320 150">
+        <defs>
+          <linearGradient id="streamBlueToViolet" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#1E88E5"/>
+            <stop offset="50%" stop-color="#FCD34D"/>
+            <stop offset="100%" stop-color="#D628D9"/>
+          </linearGradient>
+          <linearGradient id="streamVioletToBlue" x1="100%" y1="0%" x2="0%" y2="0%">
+            <stop offset="0%" stop-color="#D628D9"/>
+            <stop offset="50%" stop-color="#FCD34D"/>
+            <stop offset="100%" stop-color="#1E88E5"/>
+          </linearGradient>
+        </defs>
+
+        <!-- Upper Flowing Stream -->
+        <path class="energy-stream energy-stream-a" d="M 50,75 C 100,25 220,25 270,75"/>
+        <!-- Lower Flowing Stream -->
+        <path class="energy-stream energy-stream-b" d="M 50,75 C 100,125 220,125 270,75"/>
+        <!-- Central Direct Conduit -->
+        <line x1="85" y1="75" x2="235" y2="75" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" stroke-dasharray="3 3"/>
+      </svg>
+
+      <!-- Left Node: Bahir Dar University (Wisdom Heritage) -->
+      <div class="node node-bdu" title="Bahir Dar University — Source of Wisdom">
+        <div class="orbit-ring"></div>
+        <!-- BDU Torch & Sun Motif -->
+        <div class="photo-column">
+            <img src="public/images/launchericon-192x192.png" alt="bdu">
+      </div>
+
+      <!-- Center Synergy Union / Handshake Catalyst -->
+      <div class="union-core" title="Bond of Mutual Trust & Collaboration">
+        <!-- Handshake / Infinity Union Icon -->
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m11 17 2 2a1 1 0 0 0 1.4 0l4.3-4.3a1 1 0 0 0 0-1.4l-2-2a1 1 0 0 0-1.4 0l-4.3 4.3a1 1 0 0 0 0 1.4Z"/>
+          <path d="m13 7-2-2a1 1 0 0 0-1.4 0L5.3 9.3a1 1 0 0 0 0 1.4l2 2a1 1 0 0 0 1.4 0l4.3-4.3a1 1 0 0 0 0-1.4Z"/>
+          <circle cx="12" cy="12" r="9" stroke="var(--accent-gold)" stroke-width="1" stroke-dasharray="2 2"/>
+        </svg>
+      </div>
+
+      <!-- Right Node: BD Buddy (Academic Companion) -->
+      <div class="node node-buddy" title="BD Buddy — Student Companion">
+        <div class="orbit-ring"></div>
+        <!-- BD Buddy Cap Motif -->
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 10v6M2 10l10-5 10 5-10 5z" stroke="#FDE047"/>
+          <path d="M6 12v5c3 3 9 3 12 0v-5" stroke="#FFFFFF"/>
+          <circle cx="12" cy="5" r="1.5" fill="#FCD34D"/>
+        </svg>
+      </div>
+
+    </div>
+
+    <!-- Dynamic Storyteller Text -->
+    <div class="story-section">
+      <h2 class="alliance-title">Bahir Dar University &amp; BD Buddy</h2>
+      <p class="status-narrative" id="statusMessage">
+        Establishing handshake with official BDU portal...
+      </p>
+    </div>
+
+    <!-- Progress Indicator -->
+    <div class="synergy-progress">
+      <div class="progress-track">
+        <div class="progress-fill" id="progressBar"></div>
+      </div>
+      <div class="progress-meta">
+        <span id="stepLabel" class="bold-step">PHASE 1/4</span>
+        <span id="subLabel">HANDSHAKE_INIT</span>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Interactive Demo Controls (Easily remove in production) -->
+  <div class="demo-controls">
+    <button class="btn-ctrl btn-primary-ctrl" onclick="replaySimulation()">↻ Replay Story</button>
+    <button class="btn-ctrl" onclick="triggerComplete()">✔ Instant Ready</button>
+  </div>
+
+  <script>
+    // Narrative Sequence: Telling the story of cooperation & comradeship
+    const storyNarratives = [
+      {
+        text: "Connecting to studentportal.bdu.edu.et — Honoring institutional authenticity...",
+        step: "PHASE 1/4",
+        meta: "AUTHENTICATING_SOURCE",
+        percent: "25%"
+      },
+      {
+        text: "Two entities, one shared purpose: Empowering every BDU student with clarity.",
+        step: "PHASE 2/4",
+        meta: "SYNERGY_BRIDGE_ACTIVE",
+        percent: "55%"
+      },
+      {
+        text: "Bahir Dar University & BD Buddy — Comrades in learning, innovation & truth.",
+        step: "PHASE 3/4",
+        meta: "RECORDS_SYNCHRONIZED",
+        percent: "85%"
+      },
+      {
+        text: "Academic records verified. Walking hand-in-hand for student success!",
+        step: "COMPLETED",
+        meta: "HARMONY_READY",
+        percent: "100%"
+      }
+    ];
+
+    let currentStep = 0;
+    let timer = null;
+
+    const statusEl = document.getElementById('statusMessage');
+    const barEl = document.getElementById('progressBar');
+    const stepLabel = document.getElementById('stepLabel');
+    const subLabel = document.getElementById('subLabel');
+
+    function updateStoryStep(index) {
+      const item = storyNarratives[index];
+      
+      // Smooth fade transition
+      statusEl.style.opacity = '0';
+      setTimeout(() => {
+        statusEl.textContent = item.text;
+        statusEl.style.opacity = '1';
+      }, 200);
+
+      barEl.style.width = item.percent;
+      stepLabel.textContent = item.step;
+      subLabel.textContent = item.meta;
+    }
+
+    function runSimulation() {
+      currentStep = 0;
+      updateStoryStep(currentStep);
+
+      timer = setInterval(() => {
+        currentStep++;
+        if (currentStep < storyNarratives.length) {
+          updateStoryStep(currentStep);
+        } else {
+          clearInterval(timer);
+        }
+      }, 2200);
+    }
+
+    function replaySimulation() {
+      clearInterval(timer);
+      runSimulation();
+    }
+
+    function triggerComplete() {
+      clearInterval(timer);
+      updateStoryStep(storyNarratives.length - 1);
+    }
+
+    // Auto-launch simulation on load
+    runSimulation();
+  </script>
+</body>
+</html>

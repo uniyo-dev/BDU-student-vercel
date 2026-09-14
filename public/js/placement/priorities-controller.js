@@ -611,25 +611,56 @@
   var PLAN_KEY = 'bd_priority_plan';
   var PLAN_SLOTS = 10;
 
-  function getAllDepartments() {
-    var fromGlobal = (window.BDU_DEPARTMENTS || []).slice();
-    if (fromGlobal.length > 0) return fromGlobal;
+  // Real department list.
+  // Primary source: unique departments from placement.allStudents[] (BDU's own data).
+  // Fallback: the 30 departments from the official BDU portal screenshot.
+  function getAllDepartments(placement) {
+    // 1. Derive from allStudents[] — real BDU data
+    var allStudents = (placement && placement.allStudents) || [];
+    var fromData = [];
+    allStudents.forEach(function (s) {
+      var d = s && s.department;
+      if (d) {
+        d = String(d).trim();
+        if (d && fromData.indexOf(d) === -1) fromData.push(d);
+      }
+    });
+    fromData.sort();
+
+    if (fromData.length > 0) return fromData;
+
+    // 2. Fallback: real list captured from official portal (Sep 2026)
     return [
-      'Civil Engineering',
-      'Mechanical Engineering',
-      'Electrical and Computer Engineering',
-      'Software Engineering',
-      'Computer Science',
-      'Information Technology',
-      'Chemical Engineering',
-      'Textile Engineering',
-      'Medicine (MD)',
-      'Pharmacy',
-      'Law',
+      'Accounting and Finance',
+      'Afan Oromo, Literature and Communication',
+      'Amharic',
+      'Amharic Education',
+      'Cinema and Theatre Arts',
+      'Civics and Ethical Studies',
+      'Civics and Ethical Studies Education',
       'Economics',
-      'Accounting & Finance',
+      'Educational Planning and Management',
+      'English',
+      'English Education',
+      'Gender and Development Studies',
+      'Geography',
+      'Geography Education',
+      'Ge\'ez Language and Literature',
+      'History',
+      'History Education',
+      'Journalism & Communications',
+      'Logistics and Supply Chain Management',
       'Management',
-      'Marketing'
+      'Marketing Management',
+      'Music Arts',
+      'Political Science and International Studies',
+      'Psychology',
+      'Public Administration and Development Management',
+      'Social Anthropology',
+      'Social Work',
+      'Sociology',
+      'Special Needs and Inclusive Education',
+      'Tourism and Hotel Management'
     ];
   }
 
@@ -662,7 +693,7 @@
     return plan;
   }
 
-  function renderChoicePlanner(results) {
+  function renderChoicePlanner(results, placement) {
     var plan = loadPlan();
     var isDefault = false;
     if (!plan) {
@@ -671,7 +702,7 @@
     }
     while (plan.length < PLAN_SLOTS) plan.push('');
 
-    var depts = getAllDepartments();
+    var depts = getAllDepartments(placement);
 
     var html = '<div class="priorities-section priorities-planner-section">';
     html += '<div class="priorities-section-head">' +
@@ -848,7 +879,7 @@
       html += renderSimulator(criteria);
       html += renderActionGuide();
       html += renderPreSubmitChecklist();
-      html += renderChoicePlanner(results);
+      html += renderChoicePlanner(results, placement);
       html += renderSnapshotPanel(placement);
 
       container.innerHTML = html;
