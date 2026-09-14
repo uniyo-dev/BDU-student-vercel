@@ -592,6 +592,79 @@ const server = http.createServer(async (req, res) => {
   }
 
   
+  // DEBUG: /api/debug-python — remove after diagnosis
+  // Runs the PDF generator with a fixed payload and returns raw results.
+  if (req.url === '/api/debug-python' && req.method === 'GET') {
+    const { spawn } = require('child_process');
+    const testPayload = JSON.stringify({
+      biography: { studentId: 'test', fullName: 'Test Student' },
+      registration: { program: 'Test', acYear: '2024/2025', semester: 'I', status: 'Pass' },
+      courses: [{ code: 'MTH101', title: 'Calculus', credit: 3, grade: 'A', points: 4.0, percentage: '92%', semester: 'I' }],
+      summary: { totalCredits: 3, cumulativeGPA: '4.00', sgpa: '4.00' },
+      registrations: [{ semester: 'I', acYear: '2024/2025', status: 'Pass', sgpa: '4.00', cgpa: '4.00', program: 'Test' }],
+      coursesBySemester: { I: [{ code: 'MTH101', title: 'Calculus', credit: 3, grade: 'A', points: 4.0, percentage: '92%', semester: 'I' }] },
+      serial: 'BDU-GR-test-1-abc-xyz',
+      verifyUrl: 'https://example.com',
+      printMode: 'Cumulative',
+      printScope: 'all'
+    });
+
+    const diag = {
+      pythonPath: null,
+      pythonVersion: null,
+      scriptPath: path.join(__dirname, 'scripts', 'grade_report.py'),
+      scriptExists: null,
+      nodeVersion: process.version,
+      cwd: process.cwd(),
+    };
+
+    try {
+      const fs = require('fs');
+      diag.scriptExists = fs.existsSync(diag.scriptPath);
+    } catch (e) {
+      diag.scriptExists = 'error: ' + e.message;
+    }
+
+    // Check what `python3` resolves to
+    const { execSync } = require('child_process');
+    try {
+      diag.pythonPath = execSync('which python3', { encoding: 'utf8' }).trim();
+    } catch (e) {
+      diag.pythonPath = 'error: ' + e.message;
+    }
+    try {
+      diag.pythonVersion = execSync('python3 --version', { encoding: 'utf8' }).trim();
+    } catch (e) {
+      diag.pythonVersion = 'error: ' + e.message;
+    }
+
+    const py = spawn('python3', [diag.scriptPath]);
+    let stdout = [];
+    let stderr = [];
+    py.stdout.on('data', c => stdout.push(c));
+    py.stderr.on('data', c => stderr.push(c));
+    py.on('close', code => {
+      const outBuf = Buffer.concat(stdout);
+      const errBuf = Buffer.concat(stderr);
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({
+        diag: diag,
+        exitCode: code,
+        stdoutBytes: outBuf.length,
+        stdoutHeader: outBuf.slice(0, 16).toString('utf8'),
+        stderrBytes: errBuf.length,
+        stderr: errBuf.toString('utf8').slice(0, 3000),
+      }, null, 2));
+    });
+    py.on('error', err => {
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ spawnError: err.message, diag: diag }));
+    });
+    py.stdin.write(testPayload);
+    py.stdin.end();
+    return;
+  }
+
   // ============================================================
   // Serial generation endpoint
   // GET /api/serial/new?studentId=<id>
