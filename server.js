@@ -537,14 +537,41 @@ const server = http.createServer(async (req, res) => {
       py.stderr.on('data', c => errChunks.push(c));
       
       py.on('close', code => {
+        const pdf = Buffer.concat(pdfChunks);
+        const stderr = Buffer.concat(errChunks).toString();
+
+        // ─── Diagnostic logging ────────────────────────────────
+        console.log('[PDF] exit code:', code);
+        console.log('[PDF] stdout bytes:', pdf.length);
+        console.log('[PDF] stderr bytes:', stderr.length);
+        if (stderr) {
+          console.log('[PDF] stderr (first 2000 chars):');
+          console.log(stderr.slice(0, 2000));
+        }
+        if (pdf.length > 0) {
+          console.log('[PDF] stdout first 8 bytes:', pdf.slice(0, 8).toString());
+        }
+
         if (code !== 0) {
           res.writeHead(500, { 'Content-Type': 'application/json' });
-          return res.end(JSON.stringify({ 
-            success: false, 
-            error: Buffer.concat(errChunks).toString() 
+          return res.end(JSON.stringify({
+            success: false,
+            error: 'Python exited with code ' + code + ': ' + stderr.slice(0, 800)
           }));
         }
-        const pdf = Buffer.concat(pdfChunks);
+
+        // ─── Validate PDF output ───────────────────────────────
+        const header = pdf.slice(0, 4).toString('ascii');
+        if (pdf.length === 0 || header !== '%PDF') {
+          res.writeHead(500, { 'Content-Type': 'application/json' });
+          return res.end(JSON.stringify({
+            success: false,
+            error: 'Python produced invalid output (length=' + pdf.length +
+                   ', header="' + header + '"). ' +
+                   'stderr: ' + stderr.slice(0, 600)
+          }));
+        }
+
         res.writeHead(200, {
           'Content-Type': 'application/pdf',
           'Content-Disposition': 'attachment; filename="BDU-Grade-Report.pdf"',
