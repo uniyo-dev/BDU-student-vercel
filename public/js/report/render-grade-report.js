@@ -451,7 +451,19 @@
           const url = URL.createObjectURL(blob);
           const a = document.createElement('a');
           a.href = url;
-          a.download = 'BDU-Grade-Report-' + (bio.studentId || 'Unknown') + '-' + serial + '.pdf';
+          // Build a clean filename: BDU-{id}-{scope}-{serial12}.pdf
+          const _sid = String(bio.studentId || 'Unknown').trim() || 'Unknown';
+          const _ser = String(serial || 'noserial');
+          const _ser12 = _ser.length > 12 ? _ser.slice(-12) : _ser;
+          let _scopeLabel;
+          if (scope === 'current') {
+            const _reg = this.currentRegistration() || {};
+            const _sem = String(_reg.semester || 'I');
+            _scopeLabel = (_sem === 'II') ? 'S2' : 'S1';
+          } else {
+            _scopeLabel = 'AllYears';
+          }
+          a.download = 'BDU-' + _sid + '-' + _scopeLabel + '-' + _ser12 + '.pdf';
           document.body.appendChild(a);
           a.click();
           document.body.removeChild(a);
