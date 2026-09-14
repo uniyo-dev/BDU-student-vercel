@@ -693,6 +693,116 @@
     return plan;
   }
 
+  // ===== M5 5.3c: department fill status =====
+
+  // Compute per-department statistics from allStudents[]
+  // Returns array of { department, applied, selected, pending, avgScore, topScore }
+  function computeDepartmentStats(placement) {
+    var allStudents = (placement && placement.allStudents) || [];
+    if (!allStudents.length) return [];
+
+    var byDept = {};
+    allStudents.forEach(function (s) {
+      var d = s && s.department;
+      if (!d) return;
+      d = String(d).trim();
+      if (!d) return;
+      if (!byDept[d]) {
+        byDept[d] = { department: d, applied: 0, selected: 0, pending: 0, scores: [] };
+      }
+      byDept[d].applied++;
+      var cat = statusCategory(s.status);
+      if (cat === 'selected') byDept[d].selected++;
+      else if (cat === 'pending') byDept[d].pending++;
+      var sc = numOrNull(s.totalScore);
+      if (sc !== null) byDept[d].scores.push(sc);
+    });
+
+    var out = [];
+    Object.keys(byDept).forEach(function (key) {
+      var rec = byDept[key];
+      var scores = rec.scores.slice().sort(function (a, b) { return b - a; });
+      out.push({
+        department: rec.department,
+        applied: rec.applied,
+        selected: rec.selected,
+        pending: rec.pending,
+        topScore: scores.length ? scores[0] : null,
+        minScore: scores.length ? scores[scores.length - 1] : null
+      });
+    });
+
+    // Sort by applied count (highest first)
+    out.sort(function (a, b) { return b.applied - a.applied; });
+
+    return out;
+  }
+
+  function renderDepartmentStatus(placement) {
+    var stats = computeDepartmentStats(placement);
+    if (!stats.length) return '';
+
+    var totalApplied = stats.reduce(function (sum, d) { return sum + d.applied; }, 0);
+    var totalSelected = stats.reduce(function (sum, d) { return sum + d.selected; }, 0);
+
+    var html = '<div class="priorities-section priorities-dept-status-section">';
+    html += '<div class="priorities-section-head">' +
+              '<span class="priorities-head-icon">' + ICONS.chart + '</span>' +
+              esc(t('dept_status_head', 'Department Status')) +
+            '</div>';
+    html += '<div class="priorities-dept-status-note">' +
+              esc(t('dept_status_note', 'Live summary of applications per department, based on the data currently available from BDU. Results may change until placement is final.')) +
+            '</div>';
+
+    html += '<div class="priorities-dept-status-summary">';
+    html += '<div class="priorities-dept-status-stat">';
+    html += '<div class="priorities-dept-status-stat-value">' + totalApplied + '</div>';
+    html += '<div class="priorities-dept-status-stat-label">' + esc(t('dept_status_applied_total', 'Applications')) + '</div>';
+    html += '</div>';
+    if (totalSelected > 0) {
+      html += '<div class="priorities-dept-status-stat">';
+      html += '<div class="priorities-dept-status-stat-value">' + totalSelected + '</div>';
+      html += '<div class="priorities-dept-status-stat-label">' + esc(t('dept_status_selected_total', 'Selected')) + '</div>';
+      html += '</div>';
+    }
+    html += '<div class="priorities-dept-status-stat">';
+    html += '<div class="priorities-dept-status-stat-value">' + stats.length + '</div>';
+    html += '<div class="priorities-dept-status-stat-label">' + esc(t('dept_status_dept_total', 'Departments')) + '</div>';
+    html += '</div>';
+    html += '</div>';
+
+    // Table
+    html += '<div class="priorities-dept-status-table">';
+    html += '<div class="priorities-dept-status-row priorities-dept-status-row--head">';
+    html += '<div class="priorities-dept-status-cell priorities-dept-status-cell--name">' + esc(t('dept_status_col_name', 'Department')) + '</div>';
+    html += '<div class="priorities-dept-status-cell priorities-dept-status-cell--num">' + esc(t('dept_status_col_applied', 'Applied')) + '</div>';
+    if (totalSelected > 0) {
+      html += '<div class="priorities-dept-status-cell priorities-dept-status-cell--num">' + esc(t('dept_status_col_selected', 'Selected')) + '</div>';
+    }
+    html += '<div class="priorities-dept-status-cell priorities-dept-status-cell--num">' + esc(t('dept_status_col_top', 'Top score')) + '</div>';
+    html += '</div>';
+
+    stats.forEach(function (d) {
+      html += '<div class="priorities-dept-status-row">';
+      html += '<div class="priorities-dept-status-cell priorities-dept-status-cell--name">' + esc(d.department) + '</div>';
+      html += '<div class="priorities-dept-status-cell priorities-dept-status-cell--num">' + d.applied + '</div>';
+      if (totalSelected > 0) {
+        html += '<div class="priorities-dept-status-cell priorities-dept-status-cell--num">' + d.selected + '</div>';
+      }
+      html += '<div class="priorities-dept-status-cell priorities-dept-status-cell--num">' + (d.topScore !== null ? d.topScore.toFixed(2) : '—') + '</div>';
+      html += '</div>';
+    });
+    html += '</div>';
+
+    html += '<div class="priorities-dept-status-disclaimer">' +
+              '<span class="priorities-sim-disclaimer-icon">' + ICONS.info + '</span>' +
+              esc(t('dept_status_disclaimer', 'Statistics computed from BDU data at the time of your login. Confirm final status on the official portal.')) +
+            '</div>';
+
+    html += '</div>';
+    return html;
+  }
+
   function renderChoicePlanner(results, placement) {
     var plan = loadPlan();
     var isDefault = false;
