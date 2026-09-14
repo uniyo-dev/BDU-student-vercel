@@ -91,9 +91,23 @@ function computeCommonDepartments() {
     var raw = sessionStorage.getItem('bdu_student_data');
     if (raw) {
       var data = JSON.parse(raw);
-      var allStudents = (data && data.placement && data.placement.allStudents) || [];
+      var placement = (data && data.placement) || {};
+
+      // 1. Real departments from BDU's GetPlacementSelectionOption
+      var opts = placement.selectionOptions || [];
       var seen = {};
       var out = [];
+      opts.forEach(function (o) {
+        var d = o && o.department;
+        if (d) {
+          d = String(d).trim();
+          if (d && !seen[d]) { seen[d] = 1; out.push(d); }
+        }
+      });
+      if (out.length > 0) { out.sort(); return out; }
+
+      // 2. Fallback: derive from allStudents[]
+      var allStudents = placement.allStudents || [];
       allStudents.forEach(function (s) {
         var d = s && s.department;
         if (d) {
@@ -101,10 +115,7 @@ function computeCommonDepartments() {
           if (d && !seen[d]) { seen[d] = 1; out.push(d); }
         }
       });
-      if (out.length > 0) {
-        out.sort();
-        return out;
-      }
+      if (out.length > 0) { out.sort(); return out; }
     }
   } catch (e) {
     console.warn('computeCommonDepartments: falling back', e.message);

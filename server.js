@@ -218,33 +218,21 @@ async function handleLogin(req, res) {
       rawAllStudents = JSON.parse(allStudentsRes.body).data || [];
       rawSelectionPriority = JSON.parse(selectionRes.body).data || [];
       // Capture DepartmentSelection response for debugging
+      // ─── Real department list from BDU ───
+      // Returns {"data":[{...}],"totalCount":N}
+      // Empty data[] until BDU opens placement for the student.
+      let rawSelectionOptions = [];
+      let rawPriorities = [];
       try {
-        console.log('[BDU] Probing real data endpoints...');
-
-        // Probe the three config-referenced endpoints
-        const probeUrls = [
-          '/Placement/GetPlacementSelectionOption',
-          '/Placement/GetPlacementPriority',
-          '/Placement/GetStudentBasicInfo'
-        ];
-
-        for (const url of probeUrls) {
-          try {
-            const r = await makeRequest(url, { headers: apiHeaders });
-            const body = r.body || '';
-            console.log('[BDU-PROBE] ' + url);
-            console.log('[BDU-PROBE]   status=' + r.statusCode + ' length=' + body.length + ' ct=' + ((r.headers && r.headers['content-type']) || ''));
-            console.log('[BDU-PROBE]   body:');
-            // Dump up to 3000 chars in one line per chunk
-            const chunkSize = 3000;
-            for (let i = 0; i < Math.min(body.length, 12000); i += chunkSize) {
-              console.log('[BDU-PROBE-2] ' + body.slice(i, i + chunkSize));
-            }
-          } catch (e) {
-            console.log('[BDU-PROBE] ' + url + ' ERROR: ' + e.message);
-          }
-        }
-      } catch (e) { console.error('[BDU] probe error', e.message); }
+        const [selOptRes, prioRes] = await Promise.all([
+          makeRequest('/Placement/GetPlacementSelectionOption', { headers: apiHeaders }),
+          makeRequest('/Placement/GetPlacementPriority', { headers: apiHeaders }),
+        ]);
+        try { rawSelectionOptions = JSON.parse(selOptRes.body).data || []; } catch(e){}
+        try { rawPriorities = JSON.parse(prioRes.body).data || []; } catch(e){}
+      } catch (e) {
+        console.error('[BDU] selection fetch error:', e.message);
+      }
     } catch(e) {}
     
     const biography = {
@@ -327,7 +315,23 @@ async function handleLogin(req, res) {
         program: rawCurr.CurrDetail || '',
         registrations,
         courses,
-        placement: { results: placementResults, criteria: placementCriteria, allStudents: allStudentsList },
+        placement: {
+          results: placementResults,
+          criteria: placementCriteria,
+          allStudents: allStudentsList,
+          selectionOptions: rawSelectionOptions.map(o => ({
+            department: o.DestinationDepartment || o.DepartmentName || o.Name || o.Department || '',
+            code: o.DepartmentCode || o.Code || '',
+            capacity: o.IntakeCapacity || o.Capacity || null,
+            applyStart: o.ApplicationStartDate || o.StartDate || '',
+            applyEnd: o.ApplicationEndDate || o.EndDate || '',
+            applied: o.StudentAppliedStatus || o.AppliedStatus || '',
+          })).filter(o => o.department),
+          priorities: rawPriorities.map(p => ({
+            name: p.PriorityName,
+            label: p.PriorityDescription || p.PriorityName + 'th' || '',
+          }))
+        },
         summary: { 
           totalSemesters: registrations.length, 
           totalCredits, 

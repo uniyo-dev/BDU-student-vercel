@@ -615,7 +615,20 @@
   // Primary source: unique departments from placement.allStudents[] (BDU's own data).
   // Fallback: the 30 departments from the official BDU portal screenshot.
   function getAllDepartments(placement) {
-    // 1. Derive from allStudents[] — real BDU data
+    // 1. Real departments from BDU's GetPlacementSelectionOption
+    var selectionOptions = (placement && placement.selectionOptions) || [];
+    var fromBDU = [];
+    selectionOptions.forEach(function (o) {
+      var d = o && o.department;
+      if (d) {
+        d = String(d).trim();
+        if (d && fromBDU.indexOf(d) === -1) fromBDU.push(d);
+      }
+    });
+    fromBDU.sort();
+    if (fromBDU.length > 0) return fromBDU;
+
+    // 2. Fallback: derive from allStudents[]
     var allStudents = (placement && placement.allStudents) || [];
     var fromData = [];
     allStudents.forEach(function (s) {
