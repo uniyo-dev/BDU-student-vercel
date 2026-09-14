@@ -303,7 +303,7 @@ async function handleLogin(req, res) {
       maximum: c.MaximumResult || '',
     }));
     
-    const totalCredits = courses.reduce((sum, sem) => sum + sem.courses.reduce((s, c) => s + (c.credit || 0), 0), 0);
+    const totalCredits = courses.reduce((sum, sem) => sum + (sem.courses || []).reduce((s, c) => s + (c.credit || 0), 0), 0);
     const latestCGPA = registrations.length > 0 ? registrations[registrations.length - 1].cgpa : null;
     
     res.writeHead(200, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
@@ -318,7 +318,7 @@ async function handleLogin(req, res) {
           results: placementResults,
           criteria: placementCriteria,
           allStudents: allStudentsList,
-          selectionOptions: rawSelectionOptions.map(o => ({
+          selectionOptions: (Array.isArray(rawSelectionOptions) ? rawSelectionOptions : []).map(o => ({
             department: o.DestinationDepartment || o.DepartmentName || o.Name || o.Department || '',
             code: o.DepartmentCode || o.Code || '',
             capacity: o.IntakeCapacity || o.Capacity || null,
@@ -326,7 +326,7 @@ async function handleLogin(req, res) {
             applyEnd: o.ApplicationEndDate || o.EndDate || '',
             applied: o.StudentAppliedStatus || o.AppliedStatus || '',
           })).filter(o => o.department),
-          priorities: rawPriorities.map(p => ({
+          priorities: (Array.isArray(rawPriorities) ? rawPriorities : []).map(p => ({
             name: p.PriorityName,
             label: p.PriorityDescription || p.PriorityName + 'th' || '',
           }))
@@ -338,7 +338,7 @@ async function handleLogin(req, res) {
           gradeBreakdown: (function() {
             var breakdown = { Aplus: 0, A: 0, Bplus: 0, B: 0, Cplus: 0, C: 0, D: 0, F: 0, P: 0 };
             courses.forEach(function(sem) {
-              sem.courses.forEach(function(c) {
+              (sem.courses || []).forEach(function(c) {
                 var g = c.grade || '';
                 if (g === 'A+') breakdown.Aplus++;
                 else if (g === 'A') breakdown.A++;
@@ -356,7 +356,7 @@ async function handleLogin(req, res) {
           rankScore: (function() {
             var score = 0;
             courses.forEach(function(sem) {
-              sem.courses.forEach(function(c) {
+              (sem.courses || []).forEach(function(c) {
                 var g = c.grade || '';
                 if (g === 'A+') score += 5;
                 else if (g === 'A') score += 4;
@@ -375,8 +375,13 @@ async function handleLogin(req, res) {
     }));
     
   } catch (error) {
-    res.writeHead(500, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
-    return res.end(JSON.stringify({ success: false, error: error.message }));
+    console.error('[LOGIN-ERROR]', error.stack || error.message);
+    if (!res.headersSent) {
+      res.writeHead(500, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
+      return res.end(JSON.stringify({ success: false, error: error.message }));
+    }
+    console.error('[LOGIN-ERROR] headers already sent, cannot respond');
+    return;
   }
 }
 
