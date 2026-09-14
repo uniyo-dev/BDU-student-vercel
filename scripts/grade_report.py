@@ -163,6 +163,10 @@ def generate_pdf(data):
 
     draw_page_three(c, data, serial, print_date, verify_url)
 
+    # Commit the canvas to the buffer. Without this, buf.getvalue()
+    # returns b'' even though all pages were drawn.
+    c.save()
+
     return buf.getvalue()
 
 
