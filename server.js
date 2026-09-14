@@ -242,10 +242,25 @@ async function handleLogin(req, res) {
           console.log('[BDU] Around "History":');
           console.log(html.slice(start, end));
         } else if (jsonIdx > 0) {
+          // Dump a bigger window around DestinationDepartment
           const start = Math.max(0, jsonIdx - 500);
-          const end = Math.min(html.length, jsonIdx + 3000);
-          console.log('[BDU] Around "DestinationDepartment":');
+          const end = Math.min(html.length, jsonIdx + 8000);
+          console.log('[BDU] Around "DestinationDepartment" (' + start + ' to ' + end + '):');
           console.log(html.slice(start, end));
+
+          // Also look for URLs and configuration keys
+          const urls = html.match(/"(?:loadUrl|url|Url|action|Action)"\s*:\s*"([^"]+)"/g);
+          if (urls) {
+            console.log('[BDU] URLs in HTML config:');
+            urls.forEach(u => console.log('  ', u));
+          }
+
+          // Look for embedded JSON arrays
+          const jsonArrayStart = html.indexOf('dataSource', jsonIdx - 3000);
+          if (jsonArrayStart > 0) {
+            console.log('[BDU] dataSource at:', jsonArrayStart);
+            console.log(html.slice(jsonArrayStart, jsonArrayStart + 2000));
+          }
         } else if (gridIdx > 0) {
           const start = Math.max(0, gridIdx - 500);
           const end = Math.min(html.length, gridIdx + 3000);
