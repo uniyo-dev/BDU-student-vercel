@@ -19,6 +19,7 @@
   <link rel="stylesheet" href="/css/shared/utilities.css">
   <link rel="stylesheet" href="/css/login/login.css">
 <link rel="stylesheet" href="/css/shared/dropdown.css">
+<link rel="stylesheet" href="/css/shared/modal.css">
 </head>
 <body>
 
@@ -207,5 +208,45 @@
 </div>
 <script src="/js/index/index.js"></script>
 <script src="/js/shared/dropdown.js"></script>
+
+<!-- ═══════════ Forgot Password Modal ═══════════ -->
+<div id="forgot-password-modal" class="bd-modal hidden" role="dialog" aria-modal="true" aria-labelledby="forgot-title">
+  <div class="bd-modal-backdrop" data-modal-close></div>
+  <div class="bd-modal-panel">
+    <button class="bd-modal-close" data-modal-close type="button" aria-label="Close">×</button>
+    <div class="bd-modal-title" id="forgot-title">Reset Your BDU Password</div>
+    <div class="bd-modal-body">
+
+      <p class="forgot-intro">BD Buddy cannot reset your password. Your credentials belong to BDU. To reset it:</p>
+
+      <ol class="forgot-steps">
+        <li>Visit the BDU IT Department office in person</li>
+        <li>Show your Student ID card</li>
+        <li>Request a password reset</li>
+      </ol>
+
+      <div class="forgot-or">OR</div>
+
+      <div class="forgot-contact">
+        <strong>Registrar Office</strong>
+        <div>Phone: +251 58 220 0137</div>
+        <div>Email: registrar@bdu.edu.et</div>
+      </div>
+
+      <div class="forgot-note">
+        <strong>Note:</strong> For security reasons, passwords cannot be reset online.
+      </div>
+
+      <a class="forgot-portal-link" href="https://studentportal.bdu.edu.et" target="_blank" rel="noopener noreferrer">
+        <span>Open Official BDU Portal</span>
+        <span aria-hidden="true">→</span>
+      </a>
+
+    </div>
+    <button class="bd-modal-dismiss" data-modal-close type="button">Got it</button>
+  </div>
+</div>
+
+<script src="/js/shared/modal.js"></script>
 </body>
 </html>
