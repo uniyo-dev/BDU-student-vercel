@@ -219,11 +219,43 @@ async function handleLogin(req, res) {
       rawSelectionPriority = JSON.parse(selectionRes.body).data || [];
       // Capture DepartmentSelection response for debugging
       try {
+        const html = deptSelectionRes.body || '';
         console.log('[BDU] DepartmentSelection status:', deptSelectionRes.statusCode);
-        console.log('[BDU] DepartmentSelection length:', (deptSelectionRes.body || '').length);
+        console.log('[BDU] DepartmentSelection length:', html.length);
         console.log('[BDU] DepartmentSelection contentType:', deptSelectionRes.headers['content-type'] || '');
-        console.log('[BDU] DepartmentSelection first 2000 chars:');
-        console.log((deptSelectionRes.body || '').slice(0, 2000));
+
+        // Try to find the department list in the HTML
+        // DevExpress grids usually render a <table> or embed data as JSON in a <script>
+        const tableIdx = html.indexOf('<table');
+        const gridIdx = html.indexOf('dxgvTable');
+        const jsonIdx = html.indexOf('DestinationDepartment');
+        const historyIdx = html.indexOf('History');
+        console.log('[BDU] First <table> at:', tableIdx);
+        console.log('[BDU] dxgvTable at:', gridIdx);
+        console.log('[BDU] DestinationDepartment at:', jsonIdx);
+        console.log('[BDU] "History" at:', historyIdx);
+
+        // Log the region around "History" (which should be the department list)
+        if (historyIdx > 0) {
+          const start = Math.max(0, historyIdx - 500);
+          const end = Math.min(html.length, historyIdx + 3000);
+          console.log('[BDU] Around "History":');
+          console.log(html.slice(start, end));
+        } else if (jsonIdx > 0) {
+          const start = Math.max(0, jsonIdx - 500);
+          const end = Math.min(html.length, jsonIdx + 3000);
+          console.log('[BDU] Around "DestinationDepartment":');
+          console.log(html.slice(start, end));
+        } else if (gridIdx > 0) {
+          const start = Math.max(0, gridIdx - 500);
+          const end = Math.min(html.length, gridIdx + 3000);
+          console.log('[BDU] Around "dxgvTable":');
+          console.log(html.slice(start, end));
+        } else {
+          // Fallback — dump the middle section where the table lives
+          console.log('[BDU] No marker found. Dumping chars 8000-14000:');
+          console.log(html.slice(8000, 14000));
+        }
       } catch (e) { console.error('[BDU] dept log error', e.message); }
     } catch(e) {}
     
