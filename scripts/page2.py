@@ -13,9 +13,15 @@ from shared import (
     BORDER_GRAY, BORDER_LIGHT, MUTED, TEXT_BLACK,
     SUCCESS, SUCCESS_BG, NAVY_BG, BADGE_GOLD,
     HOLOGRAM_GOLD, BG_LIGHT,
+    # Design system tokens (M5 brand refresh)
+    T_H1, T_H2, T_H3, T_LABEL, T_BODY, T_BODY_SM, T_CAPTION, T_MICRO, T_TINY,
+    RHYTHM_XS, RHYTHM_SM, RHYTHM_MD, RHYTHM_LG,
+    RADIUS_SM, RADIUS_MD, RADIUS_LG,
+    STROKE_HAIR, STROKE_THIN, STROKE_MED, STROKE_BOLD,
     ty, logo_path, signature_registrar_path, signature_dean_path, stamp_path,
     make_qr, make_barcode,
     draw_security_layers, draw_standard_footer, draw_common_header,
+    draw_section_band, draw_card, draw_divider, draw_kv_row,
 )
 
 
@@ -38,60 +44,78 @@ def filter_courses(courses, print_mode):
 # SINGLE-COLUMN COURSE TABLE
 # ============================================================
 def draw_single_column_table(c, courses, top_y):
-    """Draws a single-column course table; returns bottom Y."""
+    """Single-column course table with zebra rows + right-aligned numerics."""
     header_h = 6
-    row_h = 5.0
-    font_size = 8.5
+    row_h = 5.4
+    font_size = T_BODY_SM
 
     if len(courses) > 14:
-        row_h = max(3.5, 65.0 / max(1, len(courses)))
-        font_size = max(7.0, 8.5 * (row_h / 5.0))
+        row_h = max(3.8, 65.0 / max(1, len(courses)))
+        font_size = max(7.0, T_BODY_SM * (row_h / 5.4))
 
-    col_x = [
-        MARGIN_LEFT + 2 * mm,
-        MARGIN_LEFT + 22 * mm,
-        105 * mm,
-        112 * mm,
-        130 * mm,
-        150 * mm,
+    # Column x-positions — right edge for the numeric columns
+    col_left = [
+        MARGIN_LEFT + 2 * mm,        # Code
+        MARGIN_LEFT + 22 * mm,       # Course Title
+    ]
+    col_right = [
+        118 * mm,                    # Cr   (right)
+        128 * mm,                    # Gr   (right)
+        145 * mm,                    # Pts  (right)
+        160 * mm,                    # %    (right)
     ]
     headers = ["Code", "Course Title", "Cr", "Gr", "Pts", "%"]
 
-    # Header band
+    # ─── Header band ───────────────────────────────────────
     c.setFillColor(TABLE_SLATE)
-    c.rect(MARGIN_LEFT, ty(top_y + header_h), CONTENT_W, header_h * mm, fill=1, stroke=0)
+    c.rect(MARGIN_LEFT, ty(top_y + header_h), CONTENT_W, header_h * mm,
+           fill=1, stroke=0)
     c.setFillColor(colors.white)
-    c.setFont("Helvetica-Bold", 8)
-    for x, h in zip(col_x, headers):
-        c.drawString(x, ty(top_y + 4), h)
+    c.setFont("Helvetica-Bold", T_CAPTION)
 
-    # Rows
+    # Left-aligned headers
+    c.drawString(col_left[0], ty(top_y + 4), headers[0])
+    c.drawString(col_left[1], ty(top_y + 4), headers[1])
+
+    # Right-aligned headers
+    c.drawRightString(col_right[0], ty(top_y + 4), headers[2])
+    c.drawRightString(col_right[1], ty(top_y + 4), headers[3])
+    c.drawRightString(col_right[2], ty(top_y + 4), headers[4])
+    c.drawRightString(col_right[3], ty(top_y + 4), headers[5])
+
+    # ─── Rows ──────────────────────────────────────────────
     y = top_y + header_h + 4
-    c.setFillColor(TEXT_BLACK)
-    for crs in courses:
+    for i, crs in enumerate(courses):
+        # Zebra striping (alternate rows)
+        if i % 2 == 1:
+            c.setFillColor(BG_LIGHT)
+            c.rect(MARGIN_LEFT, ty(y + row_h * 0.75),
+                   CONTENT_W, row_h * mm, fill=1, stroke=0)
+
+        # Left-aligned cells
+        c.setFillColor(TEXT_BLACK)
         c.setFont("Helvetica", font_size)
-        c.drawString(col_x[0], ty(y), str(crs.get('code', '')))
-        c.drawString(col_x[1], ty(y), str(crs.get('title', ''))[:45])
-        c.drawString(col_x[2], ty(y), str(crs.get('credit', '')))
+        c.drawString(col_left[0], ty(y), str(crs.get('code', '')))
+        c.drawString(col_left[1], ty(y), str(crs.get('title', ''))[:45])
+
+        # Numeric cells — right-aligned
+        c.drawRightString(col_right[0], ty(y), str(crs.get('credit', '')))
 
         c.setFont("Helvetica-Bold", font_size)
-        c.drawString(col_x[3], ty(y), str(crs.get('grade', '')))
+        c.drawRightString(col_right[1], ty(y), str(crs.get('grade', '')))
 
         c.setFont("Helvetica", font_size)
-        c.drawString(col_x[4], ty(y), str(crs.get('points', '')))
+        c.drawRightString(col_right[2], ty(y), str(crs.get('points', '')))
 
         pct = crs.get('percentage', '')
-        c.drawString(col_x[5], ty(y), str(pct) if pct else "-")
+        c.drawRightString(col_right[3], ty(y), str(pct) if pct else "-")
 
-        c.setStrokeColor(BORDER_LIGHT)
-        c.setLineWidth(0.3)
-        c.line(MARGIN_LEFT, ty(y + 2), MARGIN_RIGHT, ty(y + 2))
         y += row_h
 
-    # Bottom border
-    bottom = y + 2
+    # ─── Bottom border ─────────────────────────────────────
+    bottom = y + 1
     c.setStrokeColor(BORDER_GRAY)
-    c.setLineWidth(0.5)
+    c.setLineWidth(STROKE_MED)
     c.line(MARGIN_LEFT, ty(bottom), MARGIN_RIGHT, ty(bottom))
     return bottom
 
@@ -240,15 +264,18 @@ def draw_page_two(c, data, serial, print_date, verify_url):
     ]
 
     for lbl_l, val_l, lbl_r, val_r in info_rows:
-        c.setFont("Helvetica-Bold", 9)
-        c.setFillColor(TEXT_BLACK)
-        c.drawString(lbl_x1, ty(y_ptr), lbl_l)
-        c.drawString(lbl_x2, ty(y_ptr), lbl_r)
+        # Labels — small, muted, bold
+        c.setFont("Helvetica-Bold", T_CAPTION)
+        c.setFillColor(MUTED)
+        c.drawString(lbl_x1, ty(y_ptr), lbl_l.upper())
+        c.drawString(lbl_x2, ty(y_ptr), lbl_r.upper())
 
-        c.setFont("Helvetica", 10)
+        # Values — bold, dark
+        c.setFont("Helvetica-Bold", T_BODY)
+        c.setFillColor(TEXT_BLACK)
         c.drawString(val_x1, ty(y_ptr), str(val_l)[:38])
         c.drawString(val_x2, ty(y_ptr), str(val_r)[:38])
-        y_ptr += 5.5
+        y_ptr += RHYTHM_MD - 1
 
     # ---------- Semester band ----------
     band_text = f"Semester {reg.get('semester', '-')} ({reg.get('acYear', '-')})"
@@ -281,9 +308,11 @@ def draw_page_two(c, data, serial, print_date, verify_url):
         table_bottom = draw_single_column_table(c, courses, table_top)
 
     # ---------- SGPA / CGPA summary ----------
-    sgpa_y = table_bottom + 7
+    sgpa_y = table_bottom + 8
+    # Thin divider above the summary row
+    draw_divider(c, y=sgpa_y - 4, weight=STROKE_HAIR)
     c.setFillColor(TEXT_BLACK)
-    c.setFont("Helvetica-Bold", 10)
+    c.setFont("Helvetica-Bold", T_H3)
     c.drawString(MARGIN_LEFT, ty(sgpa_y), f"SGPA: {summary.get('sgpa', '-')}")
     c.drawString(MARGIN_LEFT + 45 * mm, ty(sgpa_y), f"CGPA: {summary.get('cumulativeGPA', '-')}")
     c.drawRightString(MARGIN_RIGHT, ty(sgpa_y), f"Status: {reg.get('status', '-')}")
