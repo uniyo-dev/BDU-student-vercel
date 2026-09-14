@@ -217,23 +217,22 @@ async function handleLogin(req, res) {
       rawResults = JSON.parse(resultRes.body).data || [];
       rawAllStudents = JSON.parse(allStudentsRes.body).data || [];
       rawSelectionPriority = JSON.parse(selectionRes.body).data || [];
-      // Capture DepartmentSelection response for debugging
-      // ─── Real department list from BDU ───
-      // Returns {"data":[{...}],"totalCount":N}
-      // Empty data[] until BDU opens placement for the student.
-      let rawSelectionOptions = [];
-      let rawPriorities = [];
-      try {
-        const [selOptRes, prioRes] = await Promise.all([
-          makeRequest('/Placement/GetPlacementSelectionOption', { headers: apiHeaders }),
-          makeRequest('/Placement/GetPlacementPriority', { headers: apiHeaders }),
-        ]);
-        try { rawSelectionOptions = JSON.parse(selOptRes.body).data || []; } catch(e){}
-        try { rawPriorities = JSON.parse(prioRes.body).data || []; } catch(e){}
-      } catch (e) {
-        console.error('[BDU] selection fetch error:', e.message);
-      }
     } catch(e) {}
+
+    // ─── Real department list + priorities from BDU ───
+    // Declared OUTSIDE the try above so they're in scope for the response.
+    let rawSelectionOptions = [];
+    let rawPriorities = [];
+    try {
+      const [selOptRes, prioRes] = await Promise.all([
+        makeRequest('/Placement/GetPlacementSelectionOption', { headers: apiHeaders }),
+        makeRequest('/Placement/GetPlacementPriority', { headers: apiHeaders }),
+      ]);
+      try { rawSelectionOptions = JSON.parse(selOptRes.body).data || []; } catch(e){}
+      try { rawPriorities = JSON.parse(prioRes.body).data || []; } catch(e){}
+    } catch (e) {
+      console.error('[BDU] selection fetch error:', e.message);
+    }
     
     const biography = {
       fullName: `${rawBio.FirstName || ''} ${rawBio.FatherName || ''} ${rawBio.GFatherName || ''}`.trim(),
