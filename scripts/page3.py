@@ -12,8 +12,14 @@ from shared import (
     BORDER_GRAY, BORDER_LIGHT, MUTED, TEXT_BLACK,
     NAVY_BG, BADGE_GOLD, BG_LIGHT,
     DISCLAIMER_BG, DISCLAIMER_BORDER, DISCLAIMER_TITLE, DISCLAIMER_BODY,
+    # Design system tokens (M5 brand refresh)
+    T_H1, T_H2, T_H3, T_LABEL, T_BODY, T_BODY_SM, T_CAPTION, T_MICRO, T_TINY,
+    RHYTHM_XS, RHYTHM_SM, RHYTHM_MD, RHYTHM_LG,
+    RADIUS_SM, RADIUS_MD, RADIUS_LG,
+    STROKE_HAIR, STROKE_THIN, STROKE_MED, STROKE_BOLD,
     ty, make_qr,
     draw_security_layers, draw_standard_footer, draw_common_header,
+    draw_section_band, draw_card, draw_divider, draw_kv_row,
 )
 
 
@@ -35,39 +41,38 @@ GRADES = [
 # GRADING TABLE (single row)
 # ============================================================
 def _draw_grading_table(c, top_y):
+    """Simplified grading table — three rows, subtle dividers, no gridlines."""
     cell_w = CONTENT_W / 10.0
     table_x = MARGIN_LEFT
     table_h = 16
 
-    # Outer border
+    # Outer border (thin)
     c.setStrokeColor(BORDER_GRAY)
-    c.setLineWidth(0.4)
-    c.rect(table_x, ty(top_y + table_h), CONTENT_W, table_h * mm, fill=0, stroke=1)
+    c.setLineWidth(STROKE_THIN)
+    c.rect(table_x, ty(top_y + table_h), CONTENT_W, table_h * mm,
+           fill=0, stroke=1)
 
-    # Horizontal dividers
-    for offset in [6, 11]:
-        c.line(table_x, ty(top_y + offset), table_x + CONTENT_W, ty(top_y + offset))
+    # Two horizontal dividers separating the three logical rows
+    c.setStrokeColor(BORDER_LIGHT)
+    c.setLineWidth(STROKE_HAIR)
+    c.line(table_x, ty(top_y + 5.5), table_x + CONTENT_W, ty(top_y + 5.5))
+    c.line(table_x, ty(top_y + 10.5), table_x + CONTENT_W, ty(top_y + 10.5))
 
-    # Vertical dividers
-    for i in range(1, 10):
-        x = table_x + i * cell_w
-        c.line(x, ty(top_y), x, ty(top_y + table_h))
-
-    # Content
+    # Content — no vertical lines, just spacing
     for i, (grade, points, rng) in enumerate(GRADES):
         cx = table_x + i * cell_w + cell_w / 2
 
         c.setFillColor(BRAND_VIOLET)
-        c.setFont("Helvetica-Bold", 10)
-        c.drawCentredString(cx, ty(top_y + 4.5), grade)
+        c.setFont("Helvetica-Bold", T_H3)
+        c.drawCentredString(cx, ty(top_y + 3.8), grade)
 
         c.setFillColor(TABLE_SLATE)
-        c.setFont("Helvetica", 8)
-        c.drawCentredString(cx, ty(top_y + 9.5), points)
+        c.setFont("Helvetica-Bold", T_CAPTION)
+        c.drawCentredString(cx, ty(top_y + 8.5), points)
 
         c.setFillColor(MUTED)
-        c.setFont("Helvetica", 7)
-        c.drawCentredString(cx, ty(top_y + 14.5), rng)
+        c.setFont("Helvetica", T_MICRO)
+        c.drawCentredString(cx, ty(top_y + 13.5), rng)
 
 
 # ============================================================
@@ -167,14 +172,14 @@ def _draw_disclaimer(c, top_y, height):
     ]
 
     c.setFillColor(DISCLAIMER_BODY)
-    c.setFont("Helvetica", 8)
+    c.setFont("Helvetica", T_CAPTION)
 
     y_body = top_y + 8
     for _label, lines in body_blocks:
         for line in lines:
             c.drawString(content_x, ty(y_body), line)
-            y_body += 3.4
-        y_body += 1.5  # block spacing
+            y_body += 3.2
+        y_body += 1.4  # block spacing
 
 
 # ============================================================
@@ -224,24 +229,29 @@ def _draw_metadata_panel(c, top_y, serial, print_date, print_mode, data):
     y_item = top_y + 12
 
     for (lbl, val) in left_items:
-        c.setFont("Helvetica-Bold", 8)
-        c.drawString(box_x + 5 * mm, ty(y_item), lbl)
-        # Use smaller font for Document ID so the full serial fits
+        c.setFont("Helvetica-Bold", T_CAPTION)
+        c.setFillColor(MUTED)
+        c.drawString(box_x + 5 * mm, ty(y_item), lbl.upper())
+        # Document ID uses monospace (Courier) for alignment
         if lbl == "Document ID:":
-            c.setFont("Helvetica", 6.5)
-            c.drawString(box_x + 30 * mm, ty(y_item), val)
+            c.setFont("Courier", T_MICRO + 0.5)
+            c.setFillColor(TEXT_BLACK)
+            c.drawString(box_x + 32 * mm, ty(y_item), val)
         else:
-            c.setFont("Helvetica", 8)
-            c.drawString(box_x + 30 * mm, ty(y_item), val[:60])
-        y_item += 4.5
+            c.setFont("Helvetica-Bold", T_BODY_SM)
+            c.setFillColor(TEXT_BLACK)
+            c.drawString(box_x + 32 * mm, ty(y_item), val[:60])
+        y_item += RHYTHM_MD - 2
 
     y_item = top_y + 12
     for (lbl, val) in right_items:
-        c.setFont("Helvetica-Bold", 8)
-        c.drawString(box_x + 100 * mm, ty(y_item), lbl)
-        c.setFont("Helvetica", 8)
+        c.setFont("Helvetica-Bold", T_CAPTION)
+        c.setFillColor(MUTED)
+        c.drawString(box_x + 100 * mm, ty(y_item), lbl.upper())
+        c.setFont("Helvetica-Bold", T_BODY_SM)
+        c.setFillColor(TEXT_BLACK)
         c.drawString(box_x + 125 * mm, ty(y_item), val)
-        y_item += 4.5
+        y_item += RHYTHM_MD - 2
 
 
 # ============================================================
@@ -374,21 +384,20 @@ def draw_page_three(c, data, serial, print_date, verify_url):
     # Grading table
     _draw_grading_table(c, top_y=57)
 
-    # Disclaimer (Option C)
-    _draw_disclaimer(c, top_y=80, height=55)
+    # Disclaimer — compressed height (was 55mm)
+    _draw_disclaimer(c, top_y=78, height=45)
 
-    # Metadata panel
+    # Metadata panel — pulls up to fill the saved space
     print_mode = data.get("printMode", "Cumulative")
-    _draw_metadata_panel(c, top_y=140, serial=serial,
+    _draw_metadata_panel(c, top_y=128, serial=serial,
                          print_date=print_date, print_mode=print_mode, data=data)
 
     # About + Contact side-by-side
-    _draw_about_contact(c, top_y=172, height=28)
+    _draw_about_contact(c, top_y=160, height=28)
 
     # QR gateway
-    _draw_qr_gateway(c, top_y=205, verify_url=verify_url)
+    _draw_qr_gateway(c, top_y=193, verify_url=verify_url)
 
     # Footer
     draw_standard_footer(c)
     c.showPage()
-    c.save()
