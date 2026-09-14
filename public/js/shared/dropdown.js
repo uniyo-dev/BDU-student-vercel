@@ -162,7 +162,13 @@
     if (e.key === 'Escape') closeAll();
   });
   window.addEventListener('resize', closeAll, { passive: true });
-  window.addEventListener('scroll', closeAll, { passive: true, capture: true });
+  window.addEventListener('scroll', function (e) {
+    // Don't close dropdowns when the scroll originates INSIDE a panel —
+    // that's the user scrolling to see more options.
+    var t = e.target;
+    if (t && t.closest && t.closest('.bd-dd-panel')) return;
+    closeAll();
+  }, { passive: true, capture: true });
 
   window.BDDropdown = {
     init: function (root) {
