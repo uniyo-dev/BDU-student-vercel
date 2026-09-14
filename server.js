@@ -660,8 +660,58 @@ const server = http.createServer(async (req, res) => {
       res.writeHead(500, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ spawnError: err.message, diag: diag }));
     });
-    py.stdin.write(testPayload);
-    py.stdin.end();
+    // ─── Replicate the real endpoint's body handling ────────
+    const diag2 = {};
+    let modifiedBody = testPayload;
+    try {
+      const parsed = JSON.parse(testPayload);
+      diag2.parsedOK = true;
+      diag2.hasBiography = !!(parsed && parsed.biography);
+      diag2.hasStudentId = !!(parsed && parsed.biography && parsed.biography.studentId);
+
+      if (parsed && parsed.biography && parsed.biography.studentId) {
+        parsed.serial = generateSerial(parsed.biography.studentId);
+        diag2.serialGenerated = parsed.serial;
+        modifiedBody = JSON.stringify(parsed);
+        diag2.modifiedLength = modifiedBody.length;
+      } else {
+        diag2.skippedSerial = true;
+      }
+    } catch (err) {
+      diag2.parseError = err.message;
+    }
+
+    // Return the diag BEFORE spawning, so we know what we're sending
+    console.log('[DEBUG-PY] diag2:', JSON.stringify(diag2));
+    console.log('[DEBUG-PY] modifiedBody length:', modifiedBody.length);
+    console.log('[DEBUG-PY] modifiedBody first 200:', modifiedBody.slice(0, 200));
+
+    // Now spawn with the modified body (same as real endpoint)
+    const py2 = spawn('python3', [diag.scriptPath]);
+    let stdout2 = [];
+    let stderr2 = [];
+    py2.stdout.on('data', c => stdout2.push(c));
+    py2.stderr.on('data', c => stderr2.push(c));
+    py2.on('close', code => {
+      const outBuf = Buffer.concat(stdout2);
+      const errBuf = Buffer.concat(stderr2);
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({
+        diag: diag,
+        diag2: diag2,
+        exitCode: code,
+        stdoutBytes: outBuf.length,
+        stdoutHeader: outBuf.slice(0, 16).toString('utf8'),
+        stderrBytes: errBuf.length,
+        stderr: errBuf.toString('utf8').slice(0, 3000),
+      }, null, 2));
+    });
+    py2.on('error', err => {
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ spawnError2: err.message, diag: diag, diag2: diag2 }));
+    });
+    py2.stdin.write(modifiedBody);
+    py2.stdin.end();
     return;
   }
 
