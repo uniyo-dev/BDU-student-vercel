@@ -360,3 +360,101 @@ def draw_bd_buddy_logo(c, x_mm, y_mm, scale=1.0):
     # Return total width consumed
     return text_x_offset + 40 * scale
 
+# ═══════════════════════════════════════════════════════════════
+# DESIGN SYSTEM (Brand Refresh M5)
+# ═══════════════════════════════════════════════════════════════
+
+# ─── Typography scale (points) ─────────────────────────────────
+T_H1        = 15      # Page title (BAHIR DAR UNIVERSITY)
+T_H2        = 12      # Subtitle
+T_H3        = 10      # Section headers, band text
+T_LABEL     = 9       # Form labels
+T_BODY      = 9       # Body text
+T_BODY_SM   = 8       # Small body
+T_CAPTION   = 7.5     # Captions, footnotes
+T_MICRO     = 6       # Micro-text, disclaimers
+T_TINY      = 5       # Ultra-small
+
+# ─── Layout rhythm (mm) ────────────────────────────────────────
+RHYTHM_XS   = 2       # 2mm
+RHYTHM_SM   = 4       # 4mm
+RHYTHM_MD   = 8       # 8mm
+RHYTHM_LG   = 12      # 12mm
+RHYTHM_XL   = 16      # 16mm
+
+# ─── Radii (mm) ────────────────────────────────────────────────
+RADIUS_SM   = 1.5
+RADIUS_MD   = 3
+RADIUS_LG   = 4
+
+# ─── Stroke weights ────────────────────────────────────────────
+STROKE_HAIR = 0.3
+STROKE_THIN = 0.4
+STROKE_MED  = 0.6
+STROKE_BOLD = 0.8
+
+
+# ─── Reusable component: section band ──────────────────────────
+def draw_section_band(c, top_y, text, height=6, fill=TABLE_SLATE, text_color=None):
+    """Draw a full-width dark band with a title. Returns bottom Y (mm)."""
+    from reportlab.lib import colors as _c
+
+    if text_color is None:
+        text_color = _c.white
+
+    c.setFillColor(fill)
+    c.rect(MARGIN_LEFT, ty(top_y + height), CONTENT_W, height * mm,
+           fill=1, stroke=0)
+
+    c.setFillColor(text_color)
+    c.setFont("Helvetica-Bold", T_H3)
+    c.drawString(MARGIN_LEFT + 3 * mm, ty(top_y + height * 0.68), text)
+
+    return top_y + height
+
+
+# ─── Reusable component: card ──────────────────────────────────
+def draw_card(c, top_y, height, fill=BG_LIGHT, stroke=BORDER_GRAY,
+              stroke_w=STROKE_THIN, radius=RADIUS_LG):
+    """Draw a rounded card. Returns bottom Y (mm)."""
+    c.setFillColor(fill)
+    c.setStrokeColor(stroke)
+    c.setLineWidth(stroke_w)
+    c.roundRect(MARGIN_LEFT, ty(top_y + height), CONTENT_W, height * mm,
+                radius * mm, fill=1, stroke=1)
+    return top_y + height
+
+
+# ─── Reusable component: divider ───────────────────────────────
+def draw_divider(c, y, color=BORDER_GRAY, weight=STROKE_THIN):
+    """Draw a horizontal divider across the content width."""
+    c.setStrokeColor(color)
+    c.setLineWidth(weight)
+    c.line(MARGIN_LEFT, ty(y), MARGIN_RIGHT, ty(y))
+
+
+# ─── Reusable component: key-value row ─────────────────────────
+def draw_kv_row(c, y, label, value, label_x_mm=10, value_x_mm=55,
+                label_size=T_LABEL, value_size=T_BODY,
+                label_color=None, value_color=None):
+    """Draw a label-value pair in one line. Returns next Y (mm)."""
+    if label_color is None:
+        label_color = TEXT_BLACK
+    if value_color is None:
+        value_color = TEXT_BLACK
+
+    c.setFillColor(label_color)
+    c.setFont("Helvetica-Bold", label_size)
+    c.drawString(MARGIN_LEFT + label_x_mm * mm, ty(y), label)
+
+    c.setFillColor(value_color)
+    c.setFont("Helvetica", value_size)
+    c.drawString(MARGIN_LEFT + value_x_mm * mm, ty(y), str(value))
+
+    return y
+
+
+# ─── Reusable component: header (moved here from bottom) ───────
+# NOTE: existing draw_common_header, draw_standard_footer,
+# draw_security_layers, draw_bd_buddy_logo remain below unchanged.
+# The next patch will refactor them to use these primitives.
