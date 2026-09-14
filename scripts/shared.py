@@ -186,11 +186,10 @@ def draw_security_layers(c, watermark_text="OFFICIAL VERIFIED"):
 # COMMON FOOTER
 # ============================================================
 def draw_standard_footer(c):
-    c.setStrokeColor(BORDER_GRAY)
-    c.setLineWidth(0.4)
-    c.line(MARGIN_LEFT, ty(282), MARGIN_RIGHT, ty(282))
+    """Common footer. Uses the design system.  # ── REFACTORED: uses design system ──"""
+    draw_divider(c, y=282, weight=STROKE_THIN)
 
-    c.setFont("Helvetica", 8)
+    c.setFont("Helvetica", T_BODY_SM)
     c.setFillColor(FOOTER_GRAY)
     c.drawCentredString(PAGE_W / 2, ty(287),
         "Official Academic Document Issued By Bahir Dar University —")
@@ -202,15 +201,16 @@ def draw_standard_footer(c):
 # COMMON HEADER (all pages)
 # ============================================================
 def draw_common_header(c, serial, print_date):
+    """Common header drawn on every page. Uses the design system.  # ── REFACTORED: uses design system ──"""
     # Micro-text line
-    c.setFont("Helvetica", 4)
+    c.setFont("Helvetica", T_TINY)
     c.setFillColor(MUTED_LIGHT)
     c.drawCentredString(PAGE_W / 2, ty(10),
         "BAHIR DAR UNIVERSITY OFFICIAL ACADEMIC DOCUMENT — "
         "TAMPER PROOF SECURITY FEATURE — BAHIR DAR UNIVERSITY")
 
     # Serial number
-    c.setFont("Courier-Bold", 8.5)
+    c.setFont("Courier-Bold", T_BODY)
     c.setFillColor(TABLE_SLATE)
     c.drawRightString(MARGIN_RIGHT, ty(14), f"Serial: {serial}")
 
@@ -225,16 +225,14 @@ def draw_common_header(c, serial, print_date):
 
     # RIGHT: Print Date
     c.setFillColor(MUTED)
-    c.setFont("Helvetica", 6)
+    c.setFont("Helvetica", T_MICRO)
     c.drawRightString(MARGIN_RIGHT, ty(20), "PRINT DATE")
     c.setFillColor(BDU_BLUE)
-    c.setFont("Helvetica-Bold", 9)
+    c.setFont("Helvetica-Bold", T_BODY)
     c.drawRightString(MARGIN_RIGHT, ty(23.5), print_date)
 
     # Divider
-    c.setStrokeColor(BORDER_GRAY)
-    c.setLineWidth(0.6)
-    c.line(MARGIN_LEFT, ty(31), MARGIN_RIGHT, ty(31))
+    draw_divider(c, y=31, weight=STROKE_MED)
 
 
 # ============================================================
@@ -272,7 +270,7 @@ def draw_bd_buddy_logo(c, x_mm, y_mm, scale=1.0):
         ty(y_mm + badge_size),
         badge_size * mm,
         badge_size * mm,
-        radius=2.5 * mm,
+        radius=RADIUS_MD * mm,
         fill=1, stroke=0
     )
 
@@ -284,7 +282,7 @@ def draw_bd_buddy_logo(c, x_mm, y_mm, scale=1.0):
         ty(y_mm + badge_size * 0.55),
         badge_size * mm,
         badge_size * 0.55 * mm,
-        radius=2.5 * mm,
+        radius=RADIUS_MD * mm,
         fill=1, stroke=0
     )
     c.setFillAlpha(1)
@@ -299,7 +297,7 @@ def draw_bd_buddy_logo(c, x_mm, y_mm, scale=1.0):
         ty(y_mm + badge_size - ring_inset),
         (badge_size - 2 * ring_inset) * mm,
         (badge_size - 2 * ring_inset) * mm,
-        radius=1.8 * mm,
+        radius=RADIUS_SM * mm,
         fill=0, stroke=1
     )
     c.setStrokeAlpha(1)
