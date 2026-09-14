@@ -206,16 +206,25 @@ async function handleLogin(req, res) {
     let rawAllStudents = [];
     let rawSelectionPriority = [];
     try {
-      const [criteriaRes, resultRes, allStudentsRes, selectionRes] = await Promise.all([
+      const [criteriaRes, resultRes, allStudentsRes, selectionRes, deptSelectionRes] = await Promise.all([
         makeRequest('/Placement/GetPlacementCriteria', { headers: apiHeaders }),
         makeRequest('/Placement/GetPlacementResultSummary', { headers: apiHeaders }),
         makeRequest('/Placement/GetDepartmentApplicationSummary', { headers: apiHeaders }),
         makeRequest('/Placement/GetSelectionPriority', { headers: apiHeaders }),
+        makeRequest('/DepartmentPlacment/DepartmentSelection', { headers: apiHeaders }),
       ]);
       rawCriteria = JSON.parse(criteriaRes.body).data || [];
       rawResults = JSON.parse(resultRes.body).data || [];
       rawAllStudents = JSON.parse(allStudentsRes.body).data || [];
       rawSelectionPriority = JSON.parse(selectionRes.body).data || [];
+      // Capture DepartmentSelection response for debugging
+      try {
+        console.log('[BDU] DepartmentSelection status:', deptSelectionRes.statusCode);
+        console.log('[BDU] DepartmentSelection length:', (deptSelectionRes.body || '').length);
+        console.log('[BDU] DepartmentSelection contentType:', deptSelectionRes.headers['content-type'] || '');
+        console.log('[BDU] DepartmentSelection first 2000 chars:');
+        console.log((deptSelectionRes.body || '').slice(0, 2000));
+      } catch (e) { console.error('[BDU] dept log error', e.message); }
     } catch(e) {}
     
     const biography = {
@@ -499,89 +508,6 @@ const server = http.createServer(async (req, res) => {
           success: true,
           data: { results, criteria, allStudents },
         }));
-      } catch (err) {
-        res.writeHead(500, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ success: false, error: err.message }));
-      }
-    });
-    return;
-  }
-
-  // DEBUG: /api/debug-endpoints — POST { username, password }
-  // Probes every BDU endpoint we know about and returns status + body preview.
-  // REMOVE AFTER DIAGNOSIS.
-  if (req.url === '/api/debug-endpoints' && req.method === 'POST') {
-    let body = '';
-    req.on('data', chunk => body += chunk);
-    req.on('end', async () => {
-      try {
-        const { username, password } = JSON.parse(body);
-        if (!username || !password) {
-          res.writeHead(400, { 'Content-Type': 'application/json' });
-          return res.end(JSON.stringify({ success: false, error: 'username and password required' }));
-        }
-
-        // ─── Reuse the same login logic as /api/login ───
-        const loginPageRes = await makeRequest('/Account/Login', {});
-        const tokenMatch = (loginPageRes.body || '').match(/__RequestVerificationToken[^>]*value="([^"]+)"/);
-        const token = tokenMatch ? tokenMatch[1] : null;
-        const cookies1 = (loginPageRes.headers['set-cookie'] || []).map(c => c.split(';')[0]);
-
-        const formData = new URLSearchParams();
-        formData.append('Input.UserName', username);
-        formData.append('Input.Password', password);
-        if (token) formData.append('__RequestVerificationToken', token);
-
-        const loginRes = await makeRequest('/Account/Login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Cookie': cookies1.join('; '),
-            'Origin': 'http://studentportal.bdu.edu.et',
-            'Referer': 'http://studentportal.bdu.edu.et/Account/Login',
-          },
-          body: formData.toString(),
-        });
-
-        const cookies2 = (loginRes.headers['set-cookie'] || []).map(c => c.split(';')[0]);
-        const cookieHeader = [...cookies1, ...cookies2].join('; ');
-        const apiHeaders = { 'Cookie': cookieHeader, 'Accept': 'application/json, text/plain, */*', 'X-Requested-With': 'XMLHttpRequest' };
-
-        // ─── Probe every endpoint ───
-        const endpoints = [
-          '/DepartmentPlacment/DepartmentSelection',
-          '/DepartmentPlacment/PlacementPrioritySummary',
-          '/DepartmentPlacment/SelectionResultSummary',
-          '/DepartmentPlacment/PlacementGuideline',
-          '/Placement/GetPlacementCriteria',
-          '/Placement/GetPlacementResultSummary',
-          '/Placement/GetDepartmentApplicationSummary',
-          '/Placement/GetSelectionPriority',
-          '/Placement/GetDestinationDepartment',
-          '/Placement/GetDepartmentApplicationDetail',
-          '/RegistrationSummary/GetCurriculumInfo',
-          '/RegistrationSummary/GetStudentBasicInfo',
-        ];
-
-        const results = [];
-        for (const ep of endpoints) {
-          try {
-            const r = await makeRequest(ep, { headers: apiHeaders });
-            const bodyText = r.body || '';
-            results.push({
-              path: ep,
-              status: r.status,
-              length: bodyText.length,
-              contentType: (r.headers && r.headers['content-type']) || '',
-              preview: bodyText.slice(0, 400),
-            });
-          } catch (e) {
-            results.push({ path: ep, error: e.message });
-          }
-        }
-
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ success: true, endpoints: results }, null, 2));
       } catch (err) {
         res.writeHead(500, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ success: false, error: err.message }));
