@@ -264,7 +264,14 @@
     if (applyBtn) {
       applyBtn.addEventListener('click', function () {
         _currentPage = 1;
-        fetchRanking();
+        // Show spinner on the button
+        var originalHtml = applyBtn.innerHTML;
+        applyBtn.disabled = true;
+        applyBtn.innerHTML = '<span class="refresh-spinner"></span> Loading…';
+        fetchRanking().finally(function () {
+          applyBtn.innerHTML = originalHtml;
+          applyBtn.disabled = false;
+        });
       });
     }
     if (clearBtn) {
@@ -345,14 +352,14 @@
 
   function fetchRanking() {
     var section = document.getElementById('leaderboard-section');
-    if (!section) return;
+    if (!section) return Promise.resolve();
 
     var sid = sessionStorage.getItem('bd_session_id');
     if (!sid) {
       section.innerHTML = '<div class="rankings-section">' +
         '<div class="rankings-empty-inline">Session expired. Please log out and log back in.</div>' +
       '</div>';
-      return;
+      return Promise.resolve();
     }
 
     var payload = {
@@ -365,7 +372,7 @@
       term: _filters.term || ''
     };
 
-    fetch('/api/placement/rankings', {
+    return fetch('/api/placement/rankings', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
@@ -442,8 +449,11 @@
       else if (s.placementStatus === 'Not Decided') statusClass = 'rankings-status--pending';
 
       html += '<tr' + (isMe ? ' class="rankings-tr--me"' : '') + '>';
-      html += '<td class="rankings-td--num">' + (i + 1) + (isMe ? ' <span class="rankings-you-chip">YOU</span>' : '') + '</td>';
-      html += '<td class="rankings-td--mono">' + esc(s.studentId || '—') + '</td>';
+      html += '<td class="rankings-td--num">' + (i + 1) + '</td>';
+      if (isMe) {
+        // Insert a YOU marker on the ID cell
+      }
+      html += '<td class="rankings-td--mono">' + esc(s.studentId || '—') + (isMe ? ' <span class="rankings-you-chip">YOU</span>' : '') + '</td>';
       html += '<td class="rankings-td--num">' + esc(s.highschoolExam || '—') + '</td>';
       html += '<td class="rankings-td--num">' + esc(s.programExam || '—') + '</td>';
       html += '<td class="rankings-td--num rankings-td--bold">' + esc(s.totalScore || '—') + '</td>';
@@ -676,11 +686,12 @@
             }
             _lookups = data.data;
 
-            // Re-apply defaults only if filters are empty
-            if (!_filters.academicYear && _lookups.acYears.length > 0) _filters.academicYear = String(_lookups.acYears[0]);
-            if (!_filters.semester && _lookups.semesters.length > 0) _filters.semester = String(_lookups.semesters[0]);
-            if (!_filters.year && _lookups.years.length > 0) _filters.year = String(_lookups.years[0]);
-            if (!_filters.term && _lookups.terms.length > 0) _filters.term = String(_lookups.terms[0]);
+            // Pre-fill academic year/semester/term when BDU offers only one value;
+            // leave year as "Any" by default so students can filter freely.
+            if (!_filters.academicYear && _lookups.acYears.length === 1) _filters.academicYear = String(_lookups.acYears[0]);
+            if (!_filters.semester && _lookups.semesters.length === 1) _filters.semester = String(_lookups.semesters[0]);
+            if (!_filters.term && _lookups.terms.length === 1) _filters.term = String(_lookups.terms[0]);
+            // Year: leave empty by default
 
             // Re-render filter panel
             renderFilterPanel();
