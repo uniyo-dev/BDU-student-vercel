@@ -678,90 +678,11 @@
 }
 
 
-/* ===== M5 5.3b: choice planner ===== */
-
-.priorities-planner-note {
-  font-size: 12px;
-  color: var(--text-muted);
-  line-height: 1.5;
-  margin-bottom: 14px;
-}
-.priorities-planner-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.priorities-planner-row {
-  display: grid;
-  grid-template-columns: 32px 1fr auto;
-  gap: 10px;
-  align-items: center;
-  padding: 10px 12px;
-  background: var(--bg-body);
-  border: 1px solid var(--border-light);
-  border-radius: 12px;
-}
-.priorities-planner-num {
-  width: 32px;
-  height: 32px;
-  border-radius: 10px;
-  background: color-mix(in srgb, var(--primary) 12%, transparent);
-  color: var(--primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 13px;
-  font-weight: 800;
-}
-.priorities-planner-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-.priorities-planner-btn {
-  width: 30px;
-  height: 22px;
-  padding: 0;
-  background: var(--bg-elevated);
-  color: var(--text-secondary);
-  border: 1px solid var(--border-light);
-  border-radius: 6px;
-  font-size: 10px;
-  cursor: pointer;
-  font-family: inherit;
-  line-height: 1;
-}
 .priorities-planner-btn:hover:not(:disabled) {
   background: var(--primary);
   color: #fff;
   border-color: var(--primary);
 }
-.priorities-planner-btn:disabled {
-  opacity: 0.35;
-  cursor: not-allowed;
-}
-.priorities-planner-actions {
-  margin-top: 14px;
-  display: flex;
-  justify-content: flex-end;
-}
-.priorities-planner-reset {
-  padding: 8px 14px;
-  background: transparent;
-  border: 1px solid var(--border-light);
-  border-radius: 10px;
-  color: var(--text-muted);
-  font-size: 12px;
-  font-weight: 700;
-  cursor: pointer;
-  font-family: inherit;
-}
-.priorities-planner-reset:hover {
-  color: var(--primary);
-  border-color: var(--primary);
-}
-
-
 /* ===== M5 5.3c: department status ===== */
 .priorities-dept-status-note {
   font-size: 12px;
@@ -1165,45 +1086,10 @@
   }
 }
 
-/* ===== M5 Patch D: 30-slot planner toggle ===== */
-.priorities-planner-row--hidden {
-  display: none;
-}
-
-.priorities-planner-toggle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  width: 100%;
-  margin-top: 10px;
-  padding: 12px 16px;
-  background: var(--bg-body);
-  border: 1px dashed var(--border-light);
-  border-radius: 12px;
-  color: var(--primary);
-  font-family: inherit;
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background 0.15s ease, border-color 0.15s ease;
-}
-.priorities-planner-toggle:hover {
-  background: color-mix(in srgb, var(--primary) 8%, var(--bg-body));
-  border-color: var(--primary);
-}
 .priorities-planner-toggle.is-expanded {
   border-style: solid;
 }
-.priorities-planner-toggle-arrow {
-  font-size: 10px;
-  transition: transform 0.2s ease;
-}
-.priorities-planner-toggle.is-expanded .priorities-planner-toggle-arrow {
-  transform: rotate(180deg);
-}
-
-/* ===== Where You Stand — dual state additions ===== */
+.priorities-planner-toggle.is-expanded /* ===== Where You Stand — dual state additions ===== */
 .priorities-standing-hero--waiting {
   background: linear-gradient(135deg,
     color-mix(in srgb, var(--primary) 14%, transparent),

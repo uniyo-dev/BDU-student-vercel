@@ -498,36 +498,6 @@
         }
       }, 30);
 
-      // Placement priorities
-      const prioritySection = document.getElementById('priority-section');
-      if (prioritySection) {
-        if (results.length > 0) {
-          let html = '<div class="priority-list">';
-          results.forEach(function(r) {
-            const isSel = String(r.status).toLowerCase().indexOf('selected') !== -1;
-            html +=
-              '<div class="priority-card' + (isSel ? ' is-selected' : '') + '">' +
-                '<div class="priority-num">' + esc(r.priority || '—') + '</div>' +
-                '<div>' +
-                  '<div class="priority-dept">' + esc(r.department || '—') + '</div>' +
-                  '<div class="priority-score">Score: ' + esc(r.totalScore || '—') + '</div>' +
-                '</div>' +
-                '<div class="priority-status ' + (isSel ? 'selected' : 'rejected') + '">' + esc(r.status || '—') + '</div>' +
-              '</div>';
-          });
-          html += '</div>';
-          prioritySection.innerHTML =
-            '<div class="rankings-section">' +
-              '<div class="rankings-section-head">' +
-                '<svg viewBox="0 0 24 24"><path d="M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11M12 2L2 7h20L12 2z"/></svg>' +
-                '<span>Placement Priorities</span>' +
-              '</div>' + html +
-            '</div>';
-        } else {
-          prioritySection.innerHTML = '';
-        }
-      }
-
       // Criteria — split active (scored) from inactive (blank/"---")
       const criteriaSection = document.getElementById('criteria-section');
       if (criteriaSection) {

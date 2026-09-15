@@ -338,56 +338,11 @@
   flex-shrink: 0;
 }
 
-.priority-list { display: flex; flex-direction: column; gap: 10px; }
-.priority-card {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 14px;
-  background: var(--bg-body);
-  border-radius: 12px;
-  border: 1px solid var(--border-light);
-}
-.priority-num {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  background: var(--bg-elevated);
-  color: var(--text-2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 13px;
-  font-weight: 800;
-  flex-shrink: 0;
-}
 .priority-card.is-selected {
   background: var(--success-bg);
   border-color: var(--success-border);
 }
-.priority-card.is-selected .priority-num {
-  background: var(--success);
-  color: #fff;
-}
-.priority-dept {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--text-1);
-}
-.priority-score {
-  font-size: 11px;
-  color: var(--text-muted);
-  margin-top: 2px;
-}
-.priority-status {
-  margin-left: auto;
-  font-size: 10px;
-  font-weight: 800;
-  padding: 3px 10px;
-  border-radius: 100px;
-  text-transform: uppercase;
-}
-.priority-status.selected { background: var(--success-bg); color: var(--success); }
+.priority-card.is-selected .priority-status.selected { background: var(--success-bg); color: var(--success); }
 .priority-status.rejected { background: var(--danger-bg); color: var(--danger); }
 
 .criteria-list { display: flex; flex-direction: column; gap: 8px; }
