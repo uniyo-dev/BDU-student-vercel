@@ -214,6 +214,66 @@
     });
   }
 
+  function fetchPopularDepartments(callback) {
+    var sid = sessionStorage.getItem('bd_session_id');
+    if (!sid) { callback(null); return; }
+
+    fetch('/api/placement/popular', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sessionId: sid })
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (!data.success) { callback(null); return; }
+        callback(data.data || []);
+      })
+      .catch(function () { callback(null); });
+  }
+
+  function renderPopularSection(list) {
+    if (!list || list.length < 3) return '';
+
+    var top5 = list.slice(0, 5);
+    var maxCount = top5[0].count || 1;
+
+    var html = '<div class="dept-popular-section">';
+    html += '<div class="dept-popular-head">';
+    html += '<span class="dept-popular-head-icon">' +
+              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>' +
+            '</span>';
+    html += '<span class="dept-popular-head-title">Most Popular</span>';
+    html += '<span class="dept-popular-head-sub">by 1st choice applicants</span>';
+    html += '</div>';
+
+    html += '<div class="dept-popular-list">';
+    top5.forEach(function (d, i) {
+      var tier = i === 0 ? 'gold' : (i === 1 ? 'silver' : (i === 2 ? 'bronze' : 'standard'));
+      var pct = maxCount > 0 ? Math.round((d.count / maxCount) * 100) : 0;
+
+      html += '<div class="dept-popular-card dept-popular-card--' + tier + '">';
+      html += '<div class="dept-popular-rank"><span class="dept-popular-rank-num">' + (i + 1) + '</span></div>';
+      html += '<div class="dept-popular-body">';
+      html += '<div class="dept-popular-name">' + esc(d.department) + '</div>';
+      html += '<div class="dept-popular-meta">';
+      html += '<span class="dept-popular-count">' + d.count + '</span> ranked 1st';
+      if (d.capacity) {
+        html += ' · <span class="dept-popular-cap">' + d.capacity + '</span> seats';
+      }
+      html += '</div>';
+      html += '<div class="dept-popular-bar"><div class="dept-popular-bar-fill dept-popular-bar-fill--' + tier + '" style="width:' + pct + '%"></div></div>';
+      html += '</div>';
+      if (i === 0) {
+        html += '<div class="dept-popular-hottest">Hottest</div>';
+      }
+      html += '</div>';
+    });
+    html += '</div>';
+    html += '<div class="dept-popular-note">Ranked by how many students picked each department as 1st choice. Live from BDU.</div>';
+    html += '</div>';
+    return html;
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
     if (!Auth.isLoggedIn()) { window.location.href = '/'; return; }
     var data = Auth.getStudentData();
@@ -232,9 +292,21 @@
 
     var html = '';
     html += renderScoreCard(score, results);
-    html += renderCatalog(catalog);
-
     container.innerHTML = html;
+
+    // Fetch popular departments asynchronously and prepend the section
+    var catalogHtml = renderCatalog(catalog);
+    fetchPopularDepartments(function (popular) {
+      var popularHtml = popular ? renderPopularSection(popular) : '';
+      var finalHtml = renderScoreCard(score, results) + popularHtml + catalogHtml;
+      container.innerHTML = finalHtml;
+      wireSearch();
+      window.BDU_DEPARTMENTS = catalog.list.map(function (d) { return d.dept; });
+    });
+
+    // Fallback — render everything except popular section immediately
+    var initialHtml = renderScoreCard(score, results) + catalogHtml;
+    container.innerHTML = initialHtml;
 
     wireSearch();
 

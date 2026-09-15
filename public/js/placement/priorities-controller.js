@@ -1045,7 +1045,6 @@
       html += renderResultCard(results);
       html += renderScoreBreakdown(criteria);
       html += renderStanding(placement, criteria);
-      html += renderDepartmentCatalog(placement);
       html += renderPriorityList(results);
       html += renderSimulator(criteria);
       html += renderActionGuide();

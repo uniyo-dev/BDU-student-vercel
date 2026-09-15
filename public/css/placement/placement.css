@@ -1089,3 +1089,213 @@
   color: var(--warning);
   font-weight: 700;
 }
+
+/* ===== Most Popular section ===== */
+.dept-popular-section {
+  margin: 0 0 16px;
+  padding: 18px 16px 14px;
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--primary) 8%, var(--bg-card)),
+    var(--bg-card));
+  border: 1px solid var(--border-light);
+  border-radius: 18px;
+}
+.dept-popular-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+.dept-popular-head-icon {
+  display: inline-flex;
+  width: 16px;
+  height: 16px;
+  color: var(--primary);
+}
+.dept-popular-head-icon svg { width: 100%; height: 100%; stroke: currentColor; }
+.dept-popular-head-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.dept-popular-head-sub {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-left: auto;
+}
+
+.dept-popular-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.dept-popular-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--bg-body);
+  border: 1px solid var(--border-light);
+  transition: transform 0.15s ease;
+}
+.dept-popular-card:hover { transform: translateY(-1px); }
+
+/* Rank 1 — gold with glow */
+.dept-popular-card--gold {
+  background: linear-gradient(135deg,
+    color-mix(in srgb, #FCD34D 22%, var(--bg-card)),
+    color-mix(in srgb, #FCD34D 6%, var(--bg-card)));
+  border-color: color-mix(in srgb, #FCD34D 60%, transparent);
+  box-shadow: 0 0 20px color-mix(in srgb, #FCD34D 40%, transparent);
+}
+
+/* Rank 2 — silver */
+.dept-popular-card--silver {
+  background: linear-gradient(135deg,
+    color-mix(in srgb, #94A3B8 18%, var(--bg-card)),
+    color-mix(in srgb, #94A3B8 6%, var(--bg-card)));
+  border-color: color-mix(in srgb, #94A3B8 45%, transparent);
+  box-shadow: 0 0 12px color-mix(in srgb, #94A3B8 25%, transparent);
+}
+
+/* Rank 3 — bronze */
+.dept-popular-card--bronze {
+  background: linear-gradient(135deg,
+    color-mix(in srgb, #D97706 15%, var(--bg-card)),
+    color-mix(in srgb, #D97706 5%, var(--bg-card)));
+  border-color: color-mix(in srgb, #D97706 40%, transparent);
+  box-shadow: 0 0 10px color-mix(in srgb, #D97706 20%, transparent);
+}
+
+/* Rank 4-5 — subtle */
+.dept-popular-card--standard {
+  border-color: color-mix(in srgb, var(--primary) 25%, transparent);
+}
+
+.dept-popular-rank {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--primary) 12%, transparent);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.dept-popular-card--gold .dept-popular-rank {
+  background: #FCD34D;
+  color: #78350F;
+}
+.dept-popular-card--silver .dept-popular-rank {
+  background: #CBD5E1;
+  color: #1E293B;
+}
+.dept-popular-card--bronze .dept-popular-rank {
+  background: #D97706;
+  color: #fff;
+}
+.dept-popular-rank-num {
+  font-size: 14px;
+  font-weight: 900;
+}
+.dept-popular-body { flex: 1; min-width: 0; }
+.dept-popular-name {
+  font-size: 13.5px;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.dept-popular-meta {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+.dept-popular-count, .dept-popular-cap {
+  font-weight: 800;
+  color: var(--text-primary);
+}
+.dept-popular-bar {
+  height: 4px;
+  background: color-mix(in srgb, var(--border) 40%, transparent);
+  border-radius: 100px;
+  overflow: hidden;
+}
+.dept-popular-bar-fill {
+  height: 100%;
+  border-radius: 100px;
+  transition: width 0.4s ease;
+}
+.dept-popular-bar-fill--gold { background: #FCD34D; }
+.dept-popular-bar-fill--silver { background: #94A3B8; }
+.dept-popular-bar-fill--bronze { background: #D97706; }
+.dept-popular-bar-fill--standard { background: var(--primary); }
+
+.dept-popular-hottest {
+  position: absolute;
+  top: -8px;
+  right: 12px;
+  padding: 3px 10px;
+  background: linear-gradient(135deg, #EF4444, #B91C1C);
+  color: #fff;
+  border-radius: 100px;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  box-shadow: 0 3px 10px rgba(239, 68, 68, 0.4);
+  text-transform: uppercase;
+}
+
+.dept-popular-note {
+  margin-top: 12px;
+  font-size: 10.5px;
+  color: var(--text-muted);
+  text-align: center;
+  line-height: 1.5;
+}
+
+/* ===== Rankings meta summary bar ===== */
+.rankings-meta-summary {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 10px 12px;
+  background: var(--bg-body);
+  border-radius: 10px;
+  margin-bottom: 12px;
+}
+.rankings-meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 80px;
+}
+.rankings-meta-item-value {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+}
+.rankings-meta-item-value.is-you {
+  color: var(--primary);
+}
+.rankings-meta-item-label {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}

@@ -984,6 +984,111 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  // Popular departments — count of students who ranked each dept #1
+  // POST /api/placement/popular  { sessionId }
+  // Fires 30 parallel requests, caches result per session for 15 min.
+  if (req.url === '/api/placement/popular' && req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => body += chunk);
+    req.on('end', async () => {
+      try {
+        const { sessionId } = JSON.parse(body || '{}');
+        const session = getBDUSession(sessionId);
+        if (!session) {
+          res.writeHead(401, { 'Content-Type': 'application/json' });
+          return res.end(JSON.stringify({ success: false, error: 'Session expired. Please log out and log back in.' }));
+        }
+
+        // Return cached result if fresh
+        const now = Date.now();
+        if (session.popularCache && session.popularCache.expiresAt > now) {
+          res.writeHead(200, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
+          return res.end(JSON.stringify({ success: true, data: session.popularCache.data, cached: true }));
+        }
+
+        const apiHeaders = {
+          'Cookie': session.cookies,
+          'Accept': 'application/json, text/plain, */*',
+          'X-Requested-With': 'XMLHttpRequest'
+        };
+
+        // Fetch lookups (dept + priority + acYear + sem + year + term)
+        const [deptRes, prioRes, acYearRes, semRes, yearRes, termRes] = await Promise.all([
+          makeRequest('/Placement/GetDestinationDepartment', { headers: apiHeaders }),
+          makeRequest('/Placement/GetSelectionPriority', { headers: apiHeaders }),
+          makeRequest('/Placement/GetAcYear', { headers: apiHeaders }),
+          makeRequest('/Placement/GetSemester', { headers: apiHeaders }),
+          makeRequest('/Placement/GetYear', { headers: apiHeaders }),
+          makeRequest('/Placement/GetTerm', { headers: apiHeaders }),
+        ]);
+
+        const departments = JSON.parse(deptRes.body || '{}').data || [];
+        const acYears = JSON.parse(acYearRes.body || '{}').data || [];
+        const semesters = JSON.parse(semRes.body || '{}').data || [];
+        const years = JSON.parse(yearRes.body || '{}').data || [];
+        const terms = JSON.parse(termRes.body || '{}').data || [];
+
+        const acYear = acYears[0] ? acYears[0].AcYear : '2025/2026';
+        const semester = semesters[0] ? semesters[0].Semester : 2;
+        const year = years[0] ? years[0].Year : 1;
+        const term = terms[0] ? terms[0].Term : 'II';
+
+        // Fire parallel requests for each department at priority=1
+        const promises = departments.map(function (d) {
+          const params = new URLSearchParams({
+            destinationCurriculumTblCode: d.DestinationCurriculumTblCode,
+            acYear: acYear,
+            batch: year,
+            semester: semester,
+            term: term,
+            priority: 1,
+          });
+          const url = '/Placement/GetDepartmentApplicationSummary?' + params.toString();
+          return makeRequest(url, { headers: apiHeaders })
+            .then(function (r) {
+              const arr = JSON.parse(r.body || '{}').data || [];
+              const nameOnly = String(d.DestProgam || '').split('->')[0].trim();
+              const capMatch = String(d.DestProgam || '').match(/Quota\s+(\d+)/i);
+              return {
+                department: nameOnly,
+                fullLabel: d.DestProgam || '',
+                code: d.DestinationCurriculumTblCode,
+                capacity: capMatch ? parseInt(capMatch[1], 10) : null,
+                count: arr.length,
+              };
+            })
+            .catch(function () {
+              return {
+                department: String(d.DestProgam || '').split('->')[0].trim(),
+                fullLabel: d.DestProgam || '',
+                code: d.DestinationCurriculumTblCode,
+                capacity: null,
+                count: 0,
+              };
+            });
+        });
+
+        const results = await Promise.all(promises);
+        results.sort(function (a, b) { return b.count - a.count; });
+        results.forEach(function (r, i) { r.rank = i + 1; });
+
+        // Cache for 15 min
+        session.popularCache = {
+          data: results,
+          expiresAt: Date.now() + 15 * 60 * 1000,
+        };
+
+        res.writeHead(200, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
+        res.end(JSON.stringify({ success: true, data: results, cached: false }));
+      } catch (err) {
+        console.error('[POPULAR]', err.stack || err.message);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: false, error: err.message }));
+      }
+    });
+    return;
+  }
+
   // PDF generation: POST /api/generate-grade-pdf
   if (req.url === '/api/generate-grade-pdf' && req.method === 'POST') {
     let body = '';
