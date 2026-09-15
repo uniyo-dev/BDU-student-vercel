@@ -837,6 +837,34 @@ const server = http.createServer(async (req, res) => {
           '/DepartmentPlacment/PlacementPrioritySummary',
         ];
 
+        // Special case: fetch the HTML page and dump its structure
+        let htmlDump = null;
+        try {
+          const htmlR = await makeRequest(
+            '/DepartmentPlacment/PlacementPrioritySummary?department=' + encodeURIComponent(d) + '&priority=' + p + '&academicYear=2025/2026&semester=2&year=1&term=II',
+            { headers: { 'Cookie': cookieHeader, 'Accept': 'text/html' } }
+          );
+          const html = htmlR.body || '';
+          htmlDump = {
+            status: htmlR.statusCode,
+            length: html.length,
+            // Extract any URLs in the HTML (loadUrl, ajax, callback)
+            urls: (html.match(/["'](?:loadUrl|url|Url|action|Action|ajaxUrl|callback)["']\s*[:=]\s*["']([^"']+)["']/g) || []).slice(0, 30),
+            // Find the first <table> block (first 1500 chars)
+            tablePreview: (function () {
+              const idx = html.indexOf('<table');
+              if (idx === -1) return 'NO TABLE FOUND';
+              return html.slice(idx, idx + 1500);
+            })(),
+            // Find any "GetPlacement" or "Placement/" URLs in the HTML
+            placementUrls: (html.match(/\/Placement\/[A-Za-z]+/g) || []).filter((v, i, a) => a.indexOf(v) === i).slice(0, 30),
+            // Find any URLs with GetXXX / GetYYY pattern
+            getUrls: (html.match(/\/Get[A-Z][A-Za-z]+/g) || []).filter((v, i, a) => a.indexOf(v) === i).slice(0, 30),
+          };
+        } catch (e) {
+          htmlDump = { error: e.message };
+        }
+
         const results = [];
         for (const url of candidates) {
           try {
@@ -859,6 +887,7 @@ const server = http.createServer(async (req, res) => {
           loginStatus: loginRes.statusCode,
           department: d,
           priority: p,
+          htmlDump: htmlDump,
           results: results,
         }, null, 2));
       } catch (err) {
