@@ -1072,6 +1072,15 @@ const server = http.createServer(async (req, res) => {
         results.sort(function (a, b) { return b.count - a.count; });
         results.forEach(function (r, i) { r.rank = i + 1; });
 
+        // ─── DEBUG: log the top 10 with their counts ───
+        console.log('[POPULAR] top 10 by count:');
+        results.slice(0, 10).forEach(function (r, i) {
+          console.log('  ' + (i + 1) + '. ' + r.department + ' = ' + r.count + ' (cap ' + r.capacity + ')');
+        });
+        // Also log the zero-count ones
+        const zeros = results.filter(function (r) { return r.count === 0; });
+        console.log('[POPULAR] departments with count 0: ' + zeros.length + '/' + results.length);
+
         // Cache for 15 min
         session.popularCache = {
           data: results,
