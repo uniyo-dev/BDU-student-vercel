@@ -1202,3 +1202,75 @@
 .priorities-planner-toggle.is-expanded .priorities-planner-toggle-arrow {
   transform: rotate(180deg);
 }
+
+/* ===== Where You Stand — dual state additions ===== */
+.priorities-standing-hero--waiting {
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--primary) 14%, transparent),
+    color-mix(in srgb, var(--primary) 4%, transparent));
+}
+
+.priorities-standing-row--single {
+  grid-template-columns: 1fr 1fr;
+}
+
+.priorities-standing-cell-value--sm {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.priorities-standing-waiting {
+  padding: 14px 16px;
+  background: color-mix(in srgb, var(--warning) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--warning) 25%, transparent);
+  border-radius: 12px;
+  margin-bottom: 12px;
+}
+.priorities-standing-waiting-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--warning);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 10px;
+}
+.priorities-standing-waiting-icon {
+  display: inline-flex;
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+.priorities-standing-waiting-icon svg {
+  width: 100%;
+  height: 100%;
+  stroke: currentColor;
+}
+.priorities-standing-waiting-list {
+  margin: 0 0 10px 0;
+  padding-left: 20px;
+  font-size: 12.5px;
+  color: var(--text-primary);
+  line-height: 1.7;
+}
+.priorities-standing-waiting-note {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.priorities-standing-note--link {
+  text-align: center;
+  font-size: 12px;
+}
+.priorities-standing-note--link a {
+  color: var(--primary);
+  font-weight: 700;
+  text-decoration: none;
+}
+.priorities-standing-note--link a:hover {
+  text-decoration: underline;
+}

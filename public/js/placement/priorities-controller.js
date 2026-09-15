@@ -683,43 +683,31 @@
   }
 
   function renderStanding(placement, criteria) {
-    // DEV PREVIEW: append ?standing=demo to the URL to see the
-    // panel with generated sample data. Never fires in production.
+    // DEV PREVIEW: ?standing=demo generates sample data
     if (_DEV_STANDING_DEMO && (placement.allStudents || []).length === 0) {
       placement = { allStudents: [] };
-      var _base = yourScore || 67.76;
+      var _base = 67.76;
       for (var _i = 0; _i < 200; _i++) {
         placement.allStudents.push({ totalScore: (_base - 20 + Math.random() * 35).toFixed(2) });
       }
     }
 
-    // Sum criteria contributions (same as dashboard)
+    // Sum criteria contributions
     var yourScore = 0;
+    var scored = 0;
     (criteria || []).forEach(function (c) {
-      var scored = parseFloat(c.scored);
-      var max = parseFloat(c.maximum);
-      var pct = parseFloat(c.percent);
-      if (!isNaN(scored) && !isNaN(max) && max > 0 && !isNaN(pct) && scored <= max) {
-        yourScore += (scored / max) * pct;
+      var sc = parseFloat(c.scored);
+      var mx = parseFloat(c.maximum);
+      var pc = parseFloat(c.percent);
+      if (!isNaN(sc) && !isNaN(mx) && mx > 0 && !isNaN(pc) && sc <= mx) {
+        yourScore += (sc / mx) * pc;
+        scored++;
       }
     });
 
     var st = computeStanding(placement, yourScore);
-
-    // When there's no data yet, still show the panel with a clear
-    // "waiting for BDU" message. Builds trust that the feature exists.
-    if (!st) {
-      var waitingHtml = '<div class="priorities-section priorities-standing-section">';
-      waitingHtml += '<div class="priorities-section-head">' +
-                '<span class="priorities-head-icon">' + ICONS.chart + '</span>' +
-                esc(t('standing_head', 'Where You Stand')) +
-              '</div>';
-      waitingHtml += '<div class="priorities-standing-waiting">' +
-                esc(t('standing_waiting', 'Rankings will appear once BDU publishes applicant data. Check back after placement results are released.')) +
-              '</div>';
-      waitingHtml += '</div>';
-      return waitingHtml;
-    }
+    var results = (placement && placement.results) || [];
+    var submitted = results.length;
 
     var html = '<div class="priorities-section priorities-standing-section">';
     html += '<div class="priorities-section-head">' +
@@ -727,32 +715,74 @@
               esc(t('standing_head', 'Where You Stand')) +
             '</div>';
 
-    html += '<div class="priorities-standing-hero">';
-    html += '<div class="priorities-standing-rank">#' + st.rank + '</div>';
-    html += '<div class="priorities-standing-sub">of ' + st.total + ' applicants</div>';
-    html += '<div class="priorities-standing-pct">' + st.percentile + 'th percentile</div>';
+    // ─── STATE A: Have BDU data → show rank ───
+    if (st) {
+      html += '<div class="priorities-standing-hero">';
+      html += '<div class="priorities-standing-rank">#' + st.rank + '</div>';
+      html += '<div class="priorities-standing-sub">of ' + st.total + ' applicants</div>';
+      html += '<div class="priorities-standing-pct">' + st.percentile + 'th percentile</div>';
+      html += '</div>';
+
+      html += '<div class="priorities-standing-row">';
+      html += '<div class="priorities-standing-cell"><div class="priorities-standing-cell-value">' + st.yourScore.toFixed(2) + '</div><div class="priorities-standing-cell-label">Your score</div></div>';
+      html += '<div class="priorities-standing-cell"><div class="priorities-standing-cell-value">' + st.highest.toFixed(2) + '</div><div class="priorities-standing-cell-label">Highest</div></div>';
+      html += '<div class="priorities-standing-cell"><div class="priorities-standing-cell-value">' + st.median.toFixed(2) + '</div><div class="priorities-standing-cell-label">Median</div></div>';
+      html += '</div>';
+
+      html += '<div class="priorities-standing-bar-wrap">';
+      html += '<div class="priorities-standing-bar">';
+      html += '<div class="priorities-standing-q q1" title="Top 25%">Q1</div>';
+      html += '<div class="priorities-standing-q q2" title="25-50%">Q2</div>';
+      html += '<div class="priorities-standing-q q3" title="50-75%">Q3</div>';
+      html += '<div class="priorities-standing-q q4" title="Bottom 25%">Q4</div>';
+      html += '<div class="priorities-standing-marker" style="left:' + (100 - st.percentile) + '%;"></div>';
+      html += '</div>';
+      html += '<div class="priorities-standing-scale"><span>Top</span><span>Middle</span><span>Bottom</span></div>';
+      html += '</div>';
+
+      html += '<div class="priorities-standing-note">' +
+                esc(t('standing_note', 'Rank computed from the placement data BDU has published so far. Will update as more results are released.')) +
+              '</div>';
+      html += '</div>';
+      return html;
+    }
+
+    // ─── STATE B: No BDU applicant data yet → show what we DO know ───
+
+    // Score hero
+    html += '<div class="priorities-standing-hero priorities-standing-hero--waiting">';
+    html += '<div class="priorities-standing-rank">' + yourScore.toFixed(2) + '</div>';
+    html += '<div class="priorities-standing-sub">YOUR PLACEMENT SCORE</div>';
     html += '</div>';
 
-    html += '<div class="priorities-standing-row">';
-    html += '<div class="priorities-standing-cell"><div class="priorities-standing-cell-value">' + st.yourScore.toFixed(2) + '</div><div class="priorities-standing-cell-label">Your score</div></div>';
-    html += '<div class="priorities-standing-cell"><div class="priorities-standing-cell-value">' + st.highest.toFixed(2) + '</div><div class="priorities-standing-cell-label">Highest</div></div>';
-    html += '<div class="priorities-standing-cell"><div class="priorities-standing-cell-value">' + st.median.toFixed(2) + '</div><div class="priorities-standing-cell-label">Median</div></div>';
+    // Submission summary
+    if (submitted > 0) {
+      html += '<div class="priorities-standing-row priorities-standing-row--single">';
+      html += '<div class="priorities-standing-cell"><div class="priorities-standing-cell-value">' + submitted + '</div><div class="priorities-standing-cell-label">choices submitted</div></div>';
+      var status = (results[0] || {}).status || 'Not Decided';
+      html += '<div class="priorities-standing-cell"><div class="priorities-standing-cell-value priorities-standing-cell-value--sm">' + esc(status) + '</div><div class="priorities-standing-cell-label">BDU status</div></div>';
+      html += '</div>';
+    }
+
+    // What we're waiting for
+    html += '<div class="priorities-standing-waiting">';
+    html += '<div class="priorities-standing-waiting-title">' +
+              '<span class="priorities-standing-waiting-icon">' + ICONS.info + '</span>' +
+              esc(t('standing_waiting_title', 'Waiting for BDU to publish')) +
+            '</div>';
+    html += '<ul class="priorities-standing-waiting-list">';
+    html += '<li>' + esc(t('standing_waiting_1', "Other students' scores")) + '</li>';
+    html += '<li>' + esc(t('standing_waiting_2', 'Cutoffs per department')) + '</li>';
+    html += '<li>' + esc(t('standing_waiting_3', 'Final placement decisions')) + '</li>';
+    html += '</ul>';
+    html += '<div class="priorities-standing-waiting-note">' +
+              esc(t('standing_waiting_note', 'Your rank and percentile will appear here automatically when BDU releases the data.')) +
+            '</div>';
     html += '</div>';
 
-    // Distribution bar with your marker
-    html += '<div class="priorities-standing-bar-wrap">';
-    html += '<div class="priorities-standing-bar">';
-    html += '<div class="priorities-standing-q q1" title="Top 25%">Q1</div>';
-    html += '<div class="priorities-standing-q q2" title="25-50%">Q2</div>';
-    html += '<div class="priorities-standing-q q3" title="50-75%">Q3</div>';
-    html += '<div class="priorities-standing-q q4" title="Bottom 25%">Q4</div>';
-    html += '<div class="priorities-standing-marker" style="left:' + (100 - st.percentile) + '%;"></div>';
-    html += '</div>';
-    html += '<div class="priorities-standing-scale"><span>Top</span><span>Middle</span><span>Bottom</span></div>';
-    html += '</div>';
-
-    html += '<div class="priorities-standing-note">' +
-              esc(t('standing_note', 'Rank computed from the placement data BDU has published so far. Will update as more results are released.')) +
+    html += '<div class="priorities-standing-note priorities-standing-note--link">' +
+              esc(t('standing_check_portal', 'Check the official portal:')) +
+              ' <a href="https://studentportal.bdu.edu.et" target="_blank" rel="noopener noreferrer">studentportal.bdu.edu.et</a>' +
             '</div>';
 
     html += '</div>';
