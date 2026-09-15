@@ -162,9 +162,16 @@ const commonDepartments = computeCommonDepartments();
     }
     
     // Sort by score descending
-    filteredList.sort(function(a, b) {
-      return parseFloat(b.totalScore) - parseFloat(a.totalScore);
-    });
+    if (usingResultsFallback) {
+      // Priority ascending — 1st choice first
+      filteredList.sort(function(a, b) {
+        return (parseInt(a.priority, 10) || 999) - (parseInt(b.priority, 10) || 999);
+      });
+    } else {
+      filteredList.sort(function(a, b) {
+        return parseFloat(b.totalScore) - parseFloat(a.totalScore);
+      });
+    }
   }
   
   function render() {
@@ -270,9 +277,16 @@ const commonDepartments = computeCommonDepartments();
       });
     }
     
-    filteredList.sort(function(a, b) {
-      return parseFloat(b.totalScore) - parseFloat(a.totalScore);
-    });
+    if (usingResultsFallback) {
+      // Priority ascending — 1st choice first
+      filteredList.sort(function(a, b) {
+        return (parseInt(a.priority, 10) || 999) - (parseInt(b.priority, 10) || 999);
+      });
+    } else {
+      filteredList.sort(function(a, b) {
+        return parseFloat(b.totalScore) - parseFloat(a.totalScore);
+      });
+    }
     
     currentPage = 1;
     render();
