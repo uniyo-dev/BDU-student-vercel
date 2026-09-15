@@ -176,13 +176,23 @@ const commonDepartments = computeCommonDepartments();
     const pageStudents = filteredList.slice(start, end);
     
     if (statsBar) {
-      statsBar.innerHTML = currentDept + ': ' + filteredList.length + ' students | Page ' + currentPage + ' of ' + Math.max(totalPages, 1);
+      var _label;
+      if (usingResultsFallback) {
+        _label = currentDept + ': your ' + filteredList.length + ' choice' + (filteredList.length === 1 ? '' : 's') + ' | Page ' + currentPage + ' of ' + Math.max(totalPages, 1);
+      } else {
+        _label = currentDept + ': ' + filteredList.length + ' students | Page ' + currentPage + ' of ' + Math.max(totalPages, 1);
+      }
+      statsBar.innerHTML = _label;
     }
     
     let html = '';
     
     if (pageStudents.length === 0) {
-      html = '<div class="dept-empty">No students in this department yet.<br>Results will appear when placement is released.</div>';
+      if (usingResultsFallback) {
+        html = '<div class="dept-empty">You did not rank this department.<br>Other students\' applications will appear here as BDU publishes them.</div>';
+      } else {
+        html = '<div class="dept-empty">No students in this department yet.<br>Results will appear when placement is released.</div>';
+      }
     } else {
       pageStudents.forEach(function(s, index) {
         const globalRank = start + index + 1;
