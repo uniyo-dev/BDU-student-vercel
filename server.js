@@ -856,6 +856,18 @@ const server = http.createServer(async (req, res) => {
               if (idx === -1) return 'NO TABLE FOUND';
               return html.slice(idx, idx + 1500);
             })(),
+            // Find the createStore block for GetDepartmentApplicationSummary
+            storeConfig: (function () {
+              const idx = html.indexOf('/Placement/GetDepartmentApplicationSummary');
+              if (idx === -1) return 'NOT FOUND';
+              return html.slice(Math.max(0, idx - 200), idx + 2500);
+            })(),
+            // Find any 'DataGrid' or grid definitions
+            gridConfig: (function () {
+              const idx = html.indexOf('dxDataGrid');
+              if (idx === -1) return 'NO GRID';
+              return html.slice(idx, idx + 2500);
+            })(),
             // Find any "GetPlacement" or "Placement/" URLs in the HTML
             placementUrls: (html.match(/\/Placement\/[A-Za-z]+/g) || []).filter((v, i, a) => a.indexOf(v) === i).slice(0, 30),
             // Find any URLs with GetXXX / GetYYY pattern
