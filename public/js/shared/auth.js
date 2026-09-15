@@ -5,6 +5,12 @@ const Auth = {
     return apiCall('login', {
       method: 'POST',
       body: JSON.stringify({ username, password }),
+    }).then(function (response) {
+      // Capture the short-lived sessionId for placement refresh
+      if (response && response.sessionId) {
+        sessionStorage.setItem('bd_session_id', response.sessionId);
+      }
+      return response;
     });
   },
 

@@ -24,6 +24,47 @@ try {
 }
 
 // ============================================================
+// In-memory BDU session store (for placement refresh)
+// Maps sessionId -> { cookies, username, expiresAt }
+// Entries expire after 15 minutes. NEVER written to disk.
+// ============================================================
+const BDU_SESSIONS = new Map();
+const SESSION_TTL_MS = 15 * 60 * 1000;
+
+function createBDUSession(cookies, username) {
+  const id = crypto.randomBytes(24).toString('hex');
+  BDU_SESSIONS.set(id, {
+    cookies: cookies,
+    username: username,
+    expiresAt: Date.now() + SESSION_TTL_MS,
+  });
+  return id;
+}
+
+function getBDUSession(id) {
+  if (!id) return null;
+  const s = BDU_SESSIONS.get(id);
+  if (!s) return null;
+  if (Date.now() > s.expiresAt) {
+    BDU_SESSIONS.delete(id);
+    return null;
+  }
+  return s;
+}
+
+function touchBDUSession(id) {
+  const s = BDU_SESSIONS.get(id);
+  if (s) s.expiresAt = Date.now() + SESSION_TTL_MS;
+}
+
+setInterval(function () {
+  const now = Date.now();
+  BDU_SESSIONS.forEach(function (s, id) {
+    if (now > s.expiresAt) BDU_SESSIONS.delete(id);
+  });
+}, 5 * 60 * 1000).unref();
+
+// ============================================================
 // HMAC-signed serials
 // ============================================================
 const crypto = require('crypto');
@@ -313,9 +354,13 @@ async function handleLogin(req, res) {
     const totalCredits = courses.reduce((sum, sem) => sum + (sem.courses || []).reduce((s, c) => s + (c.credit || 0), 0), 0);
     const latestCGPA = registrations.length > 0 ? registrations[registrations.length - 1].cgpa : null;
     
+    // Create a short-lived session for placement refresh
+    const sessionId = createBDUSession(cookieStr, username);
+
     res.writeHead(200, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
     return res.end(JSON.stringify({
       success: true,
+      sessionId: sessionId,
       data: {
         biography,
         program: rawCurr.CurrDetail || '',
@@ -472,6 +517,76 @@ const server = http.createServer(async (req, res) => {
       } catch (err) {
         res.writeHead(500, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ valid: false, error: err.message }));
+      }
+    });
+    return;
+  }
+
+  // Rankings refresh: POST /api/rankings/refresh — uses stored session cookies
+  if (req.url === '/api/rankings/refresh' && req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => body += chunk);
+    req.on('end', async () => {
+      try {
+        const { sessionId } = JSON.parse(body || '{}');
+        const session = getBDUSession(sessionId);
+        if (!session) {
+          res.writeHead(401, { 'Content-Type': 'application/json' });
+          return res.end(JSON.stringify({ success: false, error: 'Session expired. Please log out and log back in.' }));
+        }
+
+        const apiHeaders = {
+          'Cookie': session.cookies,
+          'Accept': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
+        };
+
+        const [resultRes, criteriaRes, allStudentsRes, selOptRes] = await Promise.all([
+          makeRequest('/Placement/GetPlacementResultSummary', { headers: apiHeaders }),
+          makeRequest('/Placement/GetPlacementCriteria', { headers: apiHeaders }),
+          makeRequest('/Placement/GetDepartmentApplicationSummary', { headers: apiHeaders }),
+          makeRequest('/Placement/GetPlacementSelectionOption', { headers: apiHeaders }),
+        ]);
+
+        const results = JSON.parse(resultRes.body || '{}').data || [];
+        const criteria = JSON.parse(criteriaRes.body || '{}').data || [];
+        const allStudentsRaw = JSON.parse(allStudentsRes.body || '{}').data || [];
+        const selectionOptionsRaw = JSON.parse(selOptRes.body || '{}').data || [];
+
+        const allStudents = allStudentsRaw.map(s => ({
+          studentId: s.StudentID || s.studentId || '',
+          fullName: s.FullName || s.fullName || ((s.FirstName || '') + ' ' + (s.FatherName || '')).trim(),
+          department: s.DestinationDepartment || s.Department || '',
+          priority: s.Priority || '',
+          totalScore: s.TotalResult || s.TotalScore || '',
+          status: s.ApplicationStatus || s.PlacementStatus || '',
+          highschoolExam: s.HighschoolExam || s.NonExamTotalResult || s.NoneExamTotalResult || '',
+          programExam: s.Exam || s.ExamResult || '',
+          gender: s.Gender || '',
+          academicStatus: s.AcademicStatus || s.AcademicStanding || s.AcademicResult || '',
+          applicationStatus: s.ApplicationStatus || '',
+          placementStatus: s.PlacementStatus || '',
+        }));
+
+        const selectionOptions = selectionOptionsRaw.map(o => ({
+          department: o.DestinationDepartment || o.DepartmentName || o.Name || o.Department || '',
+          code: o.DepartmentCode || o.Code || '',
+          capacity: o.IntakeCapacity || o.Capacity || null,
+          applyStart: o.ApplicationStartDate || o.StartDate || '',
+          applyEnd: o.ApplicationEndDate || o.EndDate || '',
+          applied: o.StudentAppliedStatus || o.AppliedStatus || '',
+        })).filter(o => o.department);
+
+        touchBDUSession(sessionId);
+
+        res.writeHead(200, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
+        res.end(JSON.stringify({
+          success: true,
+          data: { results, criteria, allStudents, selectionOptions },
+        }));
+      } catch (err) {
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: false, error: err.message }));
       }
     });
     return;

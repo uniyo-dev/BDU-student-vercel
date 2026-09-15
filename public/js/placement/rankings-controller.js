@@ -440,16 +440,61 @@
       }
     },
 
-    refresh: function(btn) {
-      const bio = this.data.biography || {};
-      const username = sessionStorage.getItem('bdu_username') || bio.studentId;
-      if (!username) {
-        alert('Session expired. Please log in again.');
-        window.location.replace('/');
+    refresh: async function(btn) {
+      const sid = sessionStorage.getItem('bd_session_id');
+      if (!sid) {
+        alert('Session expired. Please log out and log back in.');
         return;
       }
-      // Open the modal instead of native prompt
-      window.RankingModal.open(btn);
+
+      const originalHtml = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = '<span class="refresh-spinner"></span> Refreshing...';
+
+      try {
+        const res = await fetch('/api/rankings/refresh', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sessionId: sid })
+        });
+        const data = await res.json();
+
+        if (!data.success) {
+          if (res.status === 401) {
+            alert('Session expired. Please log out and log back in.');
+          } else {
+            alert(data.error || 'Refresh failed.');
+          }
+          btn.innerHTML = originalHtml;
+          btn.disabled = false;
+          return;
+        }
+
+        // Update stored data
+        const current = this.getData();
+        if (current && current.placement) {
+          current.placement.results = data.data.results || [];
+          current.placement.criteria = data.data.criteria || [];
+          current.placement.allStudents = data.data.allStudents || [];
+          current.placement.selectionOptions = data.data.selectionOptions || [];
+          sessionStorage.setItem('bdu_student_data', JSON.stringify(current));
+        }
+
+        // Re-render
+        this.data = current;
+        this.rendered = false;
+        this.render();
+
+        btn.innerHTML = '✓ Refreshed';
+        setTimeout(function () {
+          btn.innerHTML = originalHtml;
+          btn.disabled = false;
+        }, 1200);
+      } catch (err) {
+        alert('Network error: ' + err.message);
+        btn.innerHTML = originalHtml;
+        btn.disabled = false;
+      }
     }
   };
 

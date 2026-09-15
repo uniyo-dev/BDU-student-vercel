@@ -80,7 +80,7 @@ Your credentials never leave your device except to authenticate with BDU's offic
 2. BD Buddy forwards them to studentportal.bdu.edu.et through its server (never stored, never logged)
 3. BDU verifies your credentials
 4. BD Buddy receives and displays your data
-5. Nothing is stored on our servers
+5. Session cookies are held in memory for up to 15 minutes (to support Refresh Rankings). Your password is never stored.
 
 ### BD Buddy does NOT:
 - Store your password

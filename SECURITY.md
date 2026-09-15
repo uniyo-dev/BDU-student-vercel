@@ -77,3 +77,18 @@ The following are **not** security issues for BD Buddy:
 
 BD Buddy is a student-built project. It is **not** affiliated with Bahir Dar
 University. The maintainer provides it as a free, open tool without warranty.
+
+## Session cookies (added 2026-09-15)
+
+After you log in, BD Buddy's server keeps your **BDU session cookies** in memory
+for **up to 15 minutes** so that the "Refresh Rankings" button can re-fetch
+placement data without asking for your password again.
+
+- **What is stored:** Only the session cookies BDU itself issued (never your password).
+- **Where:** In the Node process's memory (RAM), never written to disk.
+- **Duration:** 15 minutes from your last refresh. Cleared automatically.
+- **What it can do:** Re-read your placement data from BDU.
+- **What it cannot do:** Change your password, submit anything, or modify your record.
+
+If this is not acceptable, do not use the Refresh Rankings button — data
+will still load when you log in fresh.
