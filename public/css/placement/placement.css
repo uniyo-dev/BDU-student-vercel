@@ -1048,3 +1048,30 @@
   line-height: 1.5;
   text-align: center;
 }
+
+/* ===== Rankings loading state ===== */
+.rankings-loading {
+  padding: 30px 20px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.rankings-loading .refresh-spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  margin-right: 8px;
+  vertical-align: -2px;
+}
+.rankings-status--selected {
+  color: var(--success);
+  font-weight: 800;
+}
+.rankings-status--not-selected {
+  color: var(--danger);
+  font-weight: 700;
+}
+.rankings-status--pending {
+  color: var(--warning);
+  font-weight: 700;
+}

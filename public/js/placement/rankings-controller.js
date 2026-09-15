@@ -272,47 +272,106 @@
                 '<span>Student Leaderboard</span>' +
               '</div>';
 
-    if (!allStudents || allStudents.length === 0) {
+    // Empty state if no filter selected
+    if (!_filters.department || !_filters.priority) {
       section.innerHTML = '<div class="rankings-section">' + head +
         '<div class="rankings-empty">' +
           '<div class="rankings-empty-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>' +
-          '<div class="rankings-empty-title">Not yet released</div>' +
-          '<div class="rankings-empty-text">Student rankings will appear here once BDU publishes them.</div>' +
+          '<div class="rankings-empty-title">Choose filters to see students</div>' +
+          '<div class="rankings-empty-text">Select a department and priority above, then tap <strong>Apply Filters</strong>.</div>' +
         '</div>' +
       '</div>';
       return;
     }
 
-    var filtered = applyFilters(allStudents);
-    var myId = (bio && bio.studentId) ? String(bio.studentId).toUpperCase() : '';
+    section.innerHTML = '<div class="rankings-section">' + head +
+      '<div class="rankings-loading"><div class="refresh-spinner"></div> Loading students from BDU…</div>' +
+    '</div>';
 
-    // Sort by totalScore descending
-    filtered.sort(function (a, b) {
-      var aS = parseFloat(String(a.totalScore).replace('%', '')) || 0;
-      var bS = parseFloat(String(b.totalScore).replace('%', '')) || 0;
-      return bS - aS;
+    fetchRanking();
+  }
+
+  function fetchRanking() {
+    var section = document.getElementById('leaderboard-section');
+    if (!section) return;
+
+    var sid = sessionStorage.getItem('bd_session_id');
+    if (!sid) {
+      section.innerHTML = '<div class="rankings-section">' +
+        '<div class="rankings-empty-inline">Session expired. Please log out and log back in.</div>' +
+      '</div>';
+      return;
+    }
+
+    var payload = {
+      sessionId: sid,
+      department: _filters.department,
+      priority: _filters.priority,
+      acYear: _filters.academicYear || '',
+      semester: _filters.semester || '',
+      year: _filters.year || '',
+      term: _filters.term || ''
+    };
+
+    fetch('/api/placement/rankings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (!data.success) {
+          section.innerHTML = '<div class="rankings-section">' +
+            '<div class="rankings-empty-inline">' + (data.error || 'Could not load rankings.') + '</div>' +
+          '</div>';
+          return;
+        }
+
+        // Store the fetched students for display
+        _fetchedStudents = data.data.students || [];
+        _fetchedTotal = data.data.total || 0;
+        renderFetchedRows(data.data, section);
+      })
+      .catch(function (err) {
+        section.innerHTML = '<div class="rankings-section">' +
+          '<div class="rankings-empty-inline">Network error: ' + err.message + '</div>' +
+        '</div>';
+      });
+  }
+
+  function renderFetchedRows(data, section) {
+    var bio = window.RankingsController.data.biography || {};
+    var myId = String(bio.studentId || '').toUpperCase();
+
+    var head = '<div class="rankings-section-head">' +
+                '<svg viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>' +
+                '<span>Student Leaderboard</span>' +
+              '</div>';
+
+    var students = data.students || [];
+    if (students.length === 0) {
+      section.innerHTML = '<div class="rankings-section">' + head +
+        '<div class="rankings-empty-inline">No students found for this combination.</div>' +
+      '</div>';
+      return;
+    }
+
+    // Sort by totalScore descending (already sorted by BDU, but be safe)
+    students.sort(function (a, b) {
+      return (parseFloat(b.totalScore) || 0) - (parseFloat(a.totalScore) || 0);
     });
 
     var html = '<div class="rankings-section">' + head;
     html += '<div class="rankings-table-meta">' +
-              (filtered.length === allStudents.length
-                ? 'Showing all ' + filtered.length
-                : 'Showing ' + filtered.length + ' of ' + allStudents.length) + ' students' +
+              students.length + ' students · ' +
+              (data.resolvedCodes ? data.resolvedCodes.department || '' : '') +
             '</div>';
-
-    if (filtered.length === 0) {
-      html += '<div class="rankings-empty-inline">No students match these filters.</div>';
-      html += '</div>';
-      section.innerHTML = html;
-      return;
-    }
 
     html += '<div class="rankings-table-wrap">';
     html += '<table class="rankings-table">';
     html += '<thead><tr>';
     html += '<th class="rankings-th--num">#</th>';
     html += '<th>ID</th>';
-    html += '<th>Dept</th>';
     html += '<th class="rankings-th--num">HS Exam</th>';
     html += '<th class="rankings-th--num">Program</th>';
     html += '<th class="rankings-th--num">Total</th>';
@@ -323,54 +382,34 @@
     html += '<th>Placement</th>';
     html += '</tr></thead><tbody>';
 
-    var totalPages = Math.max(1, Math.ceil(filtered.length / _pageSize));
-    if (_currentPage > totalPages) _currentPage = totalPages;
-    if (_currentPage < 1) _currentPage = 1;
-    var startIdx = (_currentPage - 1) * _pageSize;
-    var pageRows = filtered.slice(startIdx, startIdx + _pageSize);
-
-    pageRows.forEach(function (s, i) {
-      var globalIdx = startIdx + i + 1;
+    students.forEach(function (s, i) {
       var isMe = myId && String(s.studentId || '').toUpperCase() === myId;
+      var statusClass = '';
+      if (s.placementStatus === 'Selected') statusClass = 'rankings-status--selected';
+      else if (s.placementStatus === 'Not Selected') statusClass = 'rankings-status--not-selected';
+      else if (s.placementStatus === 'Not Decided') statusClass = 'rankings-status--pending';
+
       html += '<tr' + (isMe ? ' class="rankings-tr--me"' : '') + '>';
-      html += '<td class="rankings-td--num">' + globalIdx + (isMe ? ' <span class="rankings-you-chip">YOU</span>' : '') + '</td>';
+      html += '<td class="rankings-td--num">' + (i + 1) + (isMe ? ' <span class="rankings-you-chip">YOU</span>' : '') + '</td>';
       html += '<td class="rankings-td--mono">' + esc(s.studentId || '—') + '</td>';
-      html += '<td>' + esc(s.department || '—') + '</td>';
       html += '<td class="rankings-td--num">' + esc(s.highschoolExam || '—') + '</td>';
       html += '<td class="rankings-td--num">' + esc(s.programExam || '—') + '</td>';
       html += '<td class="rankings-td--num rankings-td--bold">' + esc(s.totalScore || '—') + '</td>';
       html += '<td>' + esc(s.gender || '—') + '</td>';
       html += '<td class="rankings-td--num">' + esc(s.priority || '—') + '</td>';
       html += '<td>' + esc(s.academicStatus || '—') + '</td>';
-      html += '<td>' + esc(s.applicationStatus || s.status || '—') + '</td>';
-      html += '<td>' + esc(s.placementStatus || '—') + '</td>';
+      html += '<td>' + esc(s.applicationStatus || '—') + '</td>';
+      html += '<td class="' + statusClass + '">' + esc(s.placementStatus || '—') + '</td>';
       html += '</tr>';
     });
 
     html += '</tbody></table>';
     html += '</div>';
-
-    // ─── Pagination controls ───
-    var totalPages = Math.max(1, Math.ceil(filtered.length / _pageSize));
-    if (_currentPage > totalPages) _currentPage = totalPages;
-
-    html += '<div class="rankings-pagination">';
-    html += '<div class="rankings-pagination-left">';
-    [250, 500, 1000].forEach(function (size) {
-      html += '<button type="button" class="rankings-page-size' + (size === _pageSize ? ' is-active' : '') + '" data-page-size="' + size + '">' + size + '</button>';
-    });
-    html += '</div>';
-    html += '<div class="rankings-pagination-right">';
-    html += '<button type="button" class="rankings-page-btn" data-page-prev' + (_currentPage <= 1 ? ' disabled' : '') + '>‹</button>';
-    html += '<span class="rankings-page-info">Page ' + _currentPage + ' of ' + totalPages + '</span>';
-    html += '<button type="button" class="rankings-page-btn" data-page-next' + (_currentPage >= totalPages ? ' disabled' : '') + '>›</button>';
-    html += '</div>';
-    html += '</div>';
-
     html += '</div>';
 
     section.innerHTML = html;
   }
+
 
   window.RankingsController = {
     rendered: false,
@@ -456,7 +495,8 @@
         var clearBtn = filterSection.querySelector('[data-filter-clear]');
         if (applyBtn) {
           applyBtn.addEventListener('click', function () {
-            renderLeaderboardTable(allStudents, bio);
+            _currentPage = 1;
+            fetchRanking();
           });
         }
         if (clearBtn) {
