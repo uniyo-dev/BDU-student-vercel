@@ -268,8 +268,10 @@ const commonDepartments = computeCommonDepartments();
     render();
   };
   
-  // Add real placement criteria
+  // Placement criteria was moved to the Priorities tab (Score Breakdown)
+  // This function is kept as a no-op for backward compatibility.
   function renderCriteria() {
+    return;
     const criteria = placement.criteria || [];
     
     if (criteria.length > 0) {
@@ -296,5 +298,5 @@ const commonDepartments = computeCommonDepartments();
   // Initial render
   renderTabs();
   render();
-  renderCriteria();
+  // renderCriteria();  // Moved to Priorities tab
 });

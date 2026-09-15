@@ -716,3 +716,53 @@
   font-size: 13px;
   color: var(--accent);
 }
+
+/* ===== Collapsed inactive criteria (rankings) ===== */
+.criteria-inactive {
+  margin-top: 6px;
+  border-radius: 10px;
+  background: var(--bg-body);
+  overflow: hidden;
+}
+.criteria-inactive[open] {
+  background: transparent;
+}
+.criteria-inactive-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  cursor: pointer;
+  font-size: 12px;
+  list-style: none;
+  user-select: none;
+}
+.criteria-inactive-summary::-webkit-details-marker {
+  display: none;
+}
+.criteria-inactive-summary::before {
+  content: "▸";
+  color: var(--text-muted);
+  font-size: 10px;
+  margin-right: 8px;
+  transition: transform 0.15s ease;
+}
+.criteria-inactive[open] .criteria-inactive-summary::before {
+  transform: rotate(90deg);
+}
+.criteria-inactive-label {
+  flex: 1;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+.criteria-inactive-count {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  background: var(--bg-elevated);
+  padding: 3px 9px;
+  border-radius: 100px;
+}
+.criteria-row--muted {
+  opacity: 0.6;
+}

@@ -202,18 +202,45 @@
         }
       }
 
-      // Criteria
+      // Criteria — split active (scored) from inactive (blank/"---")
       const criteriaSection = document.getElementById('criteria-section');
       if (criteriaSection) {
         if (criteria.length > 0) {
-          let html = '<div class="criteria-list">';
+          var activeRows = [];
+          var inactiveRows = [];
           criteria.forEach(function(c) {
+            var isActive = c.scored && c.scored !== '---' && c.scored !== '—' && String(c.scored).trim() !== '';
+            (isActive ? activeRows : inactiveRows).push(c);
+          });
+
+          let html = '<div class="criteria-list">';
+
+          // Active criteria — full rows
+          activeRows.forEach(function(c) {
             html +=
               '<div class="criteria-row">' +
                 '<div class="criteria-name">' + esc(c.name || '—') + '</div>' +
-                '<div class="criteria-value">' + (c.scored && c.scored !== '---' ? esc(c.scored) : '—') + ' / ' + esc(c.maximum || '—') + '</div>' +
+                '<div class="criteria-value">' + esc(c.scored) + ' / ' + esc(c.maximum || '—') + '</div>' +
               '</div>';
           });
+
+          // Inactive criteria — collapsed
+          if (inactiveRows.length > 0) {
+            html += '<details class="criteria-inactive">';
+            html += '<summary class="criteria-inactive-summary">' +
+                      '<span class="criteria-inactive-label">Bonus criteria</span>' +
+                      '<span class="criteria-inactive-count">' + inactiveRows.length + ' inactive</span>' +
+                    '</summary>';
+            inactiveRows.forEach(function(c) {
+              html +=
+                '<div class="criteria-row criteria-row--muted">' +
+                  '<div class="criteria-name">' + esc(c.name || '—') + '</div>' +
+                  '<div class="criteria-value">— / ' + esc(c.maximum || '—') + '</div>' +
+                '</div>';
+            });
+            html += '</details>';
+          }
+
           html += '</div>';
           criteriaSection.innerHTML =
             '<div class="rankings-section">' +

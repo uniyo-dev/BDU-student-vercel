@@ -176,6 +176,14 @@
 
     var bd = computeBreakdown(criteria);
 
+    // Split into active (contributed > 0) and inactive (contributed 0)
+    var activeRows = [];
+    var inactiveRows = [];
+    bd.rows.forEach(function (row) {
+      if (row.contribution > 0) activeRows.push(row);
+      else inactiveRows.push(row);
+    });
+
     var html = '<div class="priorities-section">';
     html += '<div class="priorities-section-head">' +
               '<span class="priorities-head-icon">' + ICONS.chart + '</span>' +
@@ -183,7 +191,9 @@
             '</div>';
 
     html += '<div class="priorities-criteria-list">';
-    bd.rows.forEach(function (row) {
+
+    // Active criteria — full rows
+    activeRows.forEach(function (row) {
       html += '<div class="priorities-criteria-row">';
       html += '<div class="priorities-criteria-name">' + esc(row.name) + '</div>';
       html += '<div class="priorities-criteria-weight">' + (row.percent !== null ? esc(row.percent) + '%' : '—') + '</div>';
@@ -195,6 +205,25 @@
       html += '</div>';
     });
 
+    // Inactive criteria — collapsed into one toggle
+    if (inactiveRows.length > 0) {
+      html += '<details class="priorities-criteria-inactive">';
+      html += '<summary class="priorities-criteria-inactive-summary">' +
+                '<span class="priorities-criteria-inactive-label">Bonus criteria</span>' +
+                '<span class="priorities-criteria-inactive-count">' + inactiveRows.length + ' inactive</span>' +
+              '</summary>';
+      inactiveRows.forEach(function (row) {
+        html += '<div class="priorities-criteria-row priorities-criteria-row--muted">';
+        html += '<div class="priorities-criteria-name">' + esc(row.name) + '</div>';
+        html += '<div class="priorities-criteria-weight">' + (row.percent !== null ? esc(row.percent) + '%' : '—') + '</div>';
+        html += '<div class="priorities-criteria-score">—</div>';
+        html += '<div class="priorities-criteria-contrib">0.00</div>';
+        html += '</div>';
+      });
+      html += '</details>';
+    }
+
+    // Total
     html += '<div class="priorities-criteria-row priorities-criteria-total">';
     html += '<div class="priorities-criteria-name"><strong>' + esc(t('total', 'TOTAL')) + '</strong></div>';
     html += '<div class="priorities-criteria-weight"></div>';
