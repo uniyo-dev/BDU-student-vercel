@@ -69,6 +69,7 @@
   var _pageSize = 250;
   var _currentPage = 1;
 
+  var _lookups = null;
   var _filters = {
     department: '',
     priority: '',
@@ -648,44 +649,59 @@
       btn.innerHTML = '<span class="refresh-spinner"></span> Refreshing...';
 
       try {
-        const res = await fetch('/api/rankings/refresh', {
+        // Clear lookups so renderFilterPanel refetches them
+        _lookups = null;
+
+        // Refetch lookups
+        await fetch('/api/placement/lookups', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ sessionId: sid })
-        });
-        const data = await res.json();
+        })
+          .then(function (r) { return r.json(); })
+          .then(function (data) {
+            if (!data.success) {
+              if (data.error && data.error.indexOf('Session') !== -1) {
+                alert('Session expired. Please log out and log back in.');
+              } else {
+                alert(data.error || 'Refresh failed.');
+              }
+              return;
+            }
+            _lookups = data.data;
 
-        if (!data.success) {
-          if (res.status === 401) {
-            alert('Session expired. Please log out and log back in.');
-          } else {
-            alert(data.error || 'Refresh failed.');
-          }
-          btn.innerHTML = originalHtml;
-          btn.disabled = false;
-          return;
-        }
+            // Re-apply defaults only if filters are empty
+            if (!_filters.academicYear && _lookups.acYears.length > 0) _filters.academicYear = String(_lookups.acYears[0]);
+            if (!_filters.semester && _lookups.semesters.length > 0) _filters.semester = String(_lookups.semesters[0]);
+            if (!_filters.year && _lookups.years.length > 0) _filters.year = String(_lookups.years[0]);
+            if (!_filters.term && _lookups.terms.length > 0) _filters.term = String(_lookups.terms[0]);
 
-        // Update stored data
-        const current = this.getData();
-        if (current && current.placement) {
-          current.placement.results = data.data.results || [];
-          current.placement.criteria = data.data.criteria || [];
-          current.placement.allStudents = data.data.allStudents || [];
-          current.placement.selectionOptions = data.data.selectionOptions || [];
-          sessionStorage.setItem('bdu_student_data', JSON.stringify(current));
-        }
+            // Re-render filter panel
+            renderFilterPanel();
 
-        // Re-render
-        this.data = current;
-        this.rendered = false;
-        this.render();
+            // If a department+priority is selected, refetch ranking
+            if (_filters.department && _filters.priority) {
+              fetchRanking();
+            } else {
+              // Show placeholder
+              const section = document.getElementById('leaderboard-section');
+              if (section) {
+                section.innerHTML = '<div class="rankings-section">' +
+                  '<div class="rankings-section-head">' +
+                    '<svg viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>' +
+                    '<span>Student Leaderboard</span>' +
+                  '</div>' +
+                  '<div class="rankings-empty-inline">Pick a department and priority above, then tap Apply Filters.</div>' +
+                '</div>';
+              }
+            }
 
-        btn.innerHTML = '✓ Refreshed';
-        setTimeout(function () {
-          btn.innerHTML = originalHtml;
-          btn.disabled = false;
-        }, 1200);
+            btn.innerHTML = '✓ Refreshed';
+            setTimeout(function () {
+              btn.innerHTML = originalHtml;
+              btn.disabled = false;
+            }, 1200);
+          });
       } catch (err) {
         alert('Network error: ' + err.message);
         btn.innerHTML = originalHtml;
