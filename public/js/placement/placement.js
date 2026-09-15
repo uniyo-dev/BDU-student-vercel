@@ -1,326 +1,258 @@
-// Placement Logic with department grouping
-document.addEventListener('DOMContentLoaded', function() {
-  if (!Auth.isLoggedIn()) {
-    window.location.href = '/';
-    return;
+// Departments tab — Placement Score + Department Catalog
+// 2026-09-15 rebuild: catalog view instead of applicant list
+// Data sources:
+//   1. placement.criteria[]       → score breakdown
+//   2. placement.results[]        → submitted choice count + status
+//   3. placement.selectionOptions → live BDU catalog
+//   4. Hardcoded fallback         → 30 real departments from official portal
+
+(function () {
+  'use strict';
+
+  var FALLBACK_CATALOG = [
+    { dept: 'Accounting and Finance',                        capacity: 200 },
+    { dept: 'Afan Oromo, Literature and Communication',      capacity: 30  },
+    { dept: 'Amharic',                                       capacity: 40  },
+    { dept: 'Amharic Education',                             capacity: 40  },
+    { dept: 'Cinema and Theatre Arts',                       capacity: 30  },
+    { dept: 'Civics and Ethical Studies',                    capacity: 40  },
+    { dept: 'Civics and Ethical Studies Education',          capacity: 40  },
+    { dept: 'Economics',                                     capacity: 150 },
+    { dept: 'Educational Planning and Management',           capacity: 100 },
+    { dept: 'English',                                       capacity: 80  },
+    { dept: 'English Education',                             capacity: 40  },
+    { dept: 'Gender and Development Studies',                capacity: 40  },
+    { dept: 'Geography',                                     capacity: 100 },
+    { dept: 'Geography Education',                           capacity: 40  },
+    { dept: "Ge'ez Language and Literature",                 capacity: 40  },
+    { dept: 'History',                                       capacity: 40  },
+    { dept: 'History Education',                             capacity: 40  },
+    { dept: 'Journalism & Communications',                   capacity: 80  },
+    { dept: 'Logistics and Supply Chain Management',         capacity: 100 },
+    { dept: 'Management',                                    capacity: 200 },
+    { dept: 'Marketing Management',                          capacity: 150 },
+    { dept: 'Music Arts',                                    capacity: 10  },
+    { dept: 'Political Science and International Studies',   capacity: 100 },
+    { dept: 'Psychology',                                    capacity: 100 },
+    { dept: 'Public Administration and Development Management', capacity: 50 },
+    { dept: 'Social Anthropology',                           capacity: 40  },
+    { dept: 'Social Work',                                   capacity: 100 },
+    { dept: 'Sociology',                                     capacity: 100 },
+    { dept: 'Special Needs and Inclusive Education',         capacity: 50  },
+    { dept: 'Tourism and Hotel Management',                  capacity: 40  }
+  ];
+
+  var DEADLINE = 'Sep 18, 2026';
+  var CATALOG_VERIFIED = '2026-09-15';
+
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
   }
-  
-  const data = Auth.getStudentData();
-  
-  if (!data) {
-    window.location.href = '/';
-    return;
+
+  function numOrNull(v) {
+    if (v === null || v === undefined || v === '') return null;
+    var n = parseFloat(v);
+    return isNaN(n) ? null : n;
   }
-  
-  const container = document.getElementById('depts-content');
-  const tabsContainer = document.getElementById('dept-tabs');
-  const statsBar = document.getElementById('stats-bar');
-  const pagination = document.getElementById('pagination');
-  
-  if (!container) return;
-  
-  const placement = data.placement || {};
-  const allStudents = placement.allStudents || [];
-  const results = placement.results || [];
-  
-  // Build full student list
-  let fullList = allStudents.length > 0 ? allStudents : [];
-  
-  if (fullList.length === 0 && results.length > 0) {
-    const bio = data.biography || {};
-    results.forEach(function(r) {
-      fullList.push({
-        fullName: bio.fullName,
-        studentId: bio.studentId,
-        department: r.department,
-        priority: r.priority,
-        totalScore: r.totalScore,
-        status: r.status,
+
+  // Compute score from criteria (same logic as everywhere else)
+  function computeScore(criteria) {
+    var total = 0;
+    var parts = { hs: 0, cgpa: 0, exam: 0 };
+    (criteria || []).forEach(function (c) {
+      var scored = numOrNull(c.scored);
+      var max = numOrNull(c.maximum);
+      var pct = numOrNull(c.percent);
+      if (scored === null || max === null || max <= 0 || pct === null || scored > max) return;
+      var contrib = (scored / max) * pct;
+      total += contrib;
+
+      var name = String(c.name || '').toLowerCase();
+      if (name.indexOf('highschool') !== -1 || name.indexOf('university entrance') !== -1) parts.hs = contrib;
+      else if (name.indexOf('cgpa') !== -1 || name.indexOf('current') !== -1) parts.cgpa = contrib;
+      else if (name.indexOf('program') !== -1 || name.indexOf('enterance') !== -1 || name.indexOf('entrance') !== -1) parts.exam = contrib;
+    });
+    return { total: total, parts: parts };
+  }
+
+  // Build catalog: live BDU first, fallback otherwise
+  function buildCatalog(selectionOptions) {
+    if (selectionOptions && selectionOptions.length > 0) {
+      var live = [];
+      selectionOptions.forEach(function (o) {
+        if (o && o.department) {
+          live.push({
+            dept: String(o.department).trim(),
+            capacity: parseInt(o.capacity, 10) || 0,
+            applied: (function () {
+              var n = parseInt(o.applied, 10);
+              return isNaN(n) ? null : n;
+            })(),
+            live: true
+          });
+        }
+      });
+      if (live.length > 0) {
+        live.sort(function (a, b) { return a.dept.localeCompare(b.dept); });
+        return { list: live, fromLive: true };
+      }
+    }
+    return {
+      list: FALLBACK_CATALOG.map(function (d) {
+        return { dept: d.dept, capacity: d.capacity, applied: null, live: false };
+      }),
+      fromLive: false
+    };
+  }
+
+  function renderScoreCard(score, results) {
+    var status = (results[0] && results[0].status) || 'Not Decided';
+    var submitted = results.length;
+
+    var html = '<div class="dept-score-card">';
+
+    html += '<div class="dept-score-hero">';
+    html += '<div class="dept-score-value">' + score.total.toFixed(2) + '</div>';
+    html += '<div class="dept-score-label">Your Placement Score</div>';
+    html += '</div>';
+
+    html += '<div class="dept-score-breakdown">';
+    html += '<div class="dept-score-part"><span class="dept-score-part-value">' + score.parts.hs.toFixed(2) + '</span><span class="dept-score-part-label">HS Exam</span></div>';
+    html += '<div class="dept-score-part"><span class="dept-score-part-value">' + score.parts.cgpa.toFixed(2) + '</span><span class="dept-score-part-label">CGPA</span></div>';
+    html += '<div class="dept-score-part"><span class="dept-score-part-value">' + score.parts.exam.toFixed(2) + '</span><span class="dept-score-part-label">Exam</span></div>';
+    html += '</div>';
+
+    html += '<div class="dept-score-meta">';
+    html += '<div class="dept-score-meta-item">';
+    html += '<span class="dept-score-meta-value">' + submitted + '</span>';
+    html += '<span class="dept-score-meta-label">choices</span>';
+    html += '</div>';
+    html += '<div class="dept-score-meta-item">';
+    html += '<span class="dept-score-meta-value dept-score-meta-value--status">' + esc(status) + '</span>';
+    html += '<span class="dept-score-meta-label">status</span>';
+    html += '</div>';
+    html += '<div class="dept-score-meta-item">';
+    html += '<span class="dept-score-meta-value">' + DEADLINE + '</span>';
+    html += '<span class="dept-score-meta-label">apply by</span>';
+    html += '</div>';
+    html += '</div>';
+
+    html += '</div>';
+    return html;
+  }
+
+  function renderCatalog(catalog) {
+    var list = catalog.list;
+    var totalSeats = list.reduce(function (s, d) { return s + (d.capacity || 0); }, 0);
+    var maxCap = Math.max.apply(null, list.map(function (d) { return d.capacity || 1; }));
+
+    var html = '<div class="dept-catalog-section">';
+
+    // Summary tiles
+    html += '<div class="dept-catalog-summary">';
+    html += '<div class="dept-catalog-summary-item"><span class="dept-catalog-summary-value">' + list.length + '</span><span class="dept-catalog-summary-label">departments</span></div>';
+    html += '<div class="dept-catalog-summary-item"><span class="dept-catalog-summary-value">' + totalSeats + '</span><span class="dept-catalog-summary-label">total seats</span></div>';
+    html += '<div class="dept-catalog-summary-item"><span class="dept-catalog-summary-value">' + DEADLINE + '</span><span class="dept-catalog-summary-label">apply by</span></div>';
+    html += '</div>';
+
+    // Search
+    html += '<div class="dept-catalog-search">';
+    html += '<input type="text" id="dept-catalog-search-input" class="dept-catalog-search-input" placeholder="Search departments..." />';
+    html += '</div>';
+
+    // Rows
+    html += '<div class="dept-catalog-list" id="dept-catalog-list">';
+    list.forEach(function (d) {
+      var pct = Math.max(6, Math.round((d.capacity / maxCap) * 100));
+      var tier = d.capacity >= 150 ? 'high' : (d.capacity >= 60 ? 'mid' : 'low');
+      var appliedTxt = '';
+      if (d.applied !== null && d.capacity > 0) {
+        appliedTxt = '<span class="dept-catalog-applied">' + d.applied + ' applied</span>';
+      }
+
+      html += '<div class="dept-catalog-row" data-dept-name="' + esc(d.dept.toLowerCase()) + '">';
+      html += '<div class="dept-catalog-info">';
+      html += '<div class="dept-catalog-name">' + esc(d.dept) + '</div>';
+      html += '<div class="dept-catalog-bar"><div class="dept-catalog-bar-fill dept-catalog-bar-fill--' + tier + '" style="width:' + pct + '%"></div></div>';
+      html += '</div>';
+      html += '<div class="dept-catalog-capacity">';
+      html += '<span class="dept-catalog-capacity-value">' + d.capacity + '</span>';
+      html += '<span class="dept-catalog-capacity-label">seats</span>';
+      html += appliedTxt;
+      html += '</div>';
+      html += '</div>';
+    });
+    html += '</div>';
+
+    // Footnote
+    var source = catalog.fromLive
+      ? 'Live from BDU.'
+      : 'Catalog verified ' + CATALOG_VERIFIED + ' from the official BDU portal.';
+
+    html += '<div class="dept-catalog-note">' + esc(source) + ' Department selection opens on the official portal when BDU enables it for your account.</div>';
+
+    html += '</div>';
+    return html;
+  }
+
+  function wireSearch() {
+    var input = document.getElementById('dept-catalog-search-input');
+    var list = document.getElementById('dept-catalog-list');
+    if (!input || !list) return;
+
+    input.addEventListener('input', function () {
+      var q = input.value.trim().toLowerCase();
+      var rows = list.querySelectorAll('.dept-catalog-row');
+      rows.forEach(function (row) {
+        var name = row.getAttribute('data-dept-name') || '';
+        row.classList.toggle('dept-catalog-row--hidden', q && name.indexOf(q) === -1);
       });
     });
   }
-  
-  // Get unique departments
-  const departments = [];
-  fullList.forEach(function(s) {
-    const dept = s.department || 'Unassigned';
-    if (departments.indexOf(dept) === -1) {
-      departments.push(dept);
-    }
-  });
-  
-  // VERIFIED BDU Departments List (from official registrar)
-  // Real department list — derived at runtime.
-// Primary source: the student's loaded placement data (allStudents[].department)
-// Fallback: real BDU departments captured from the official portal (Sep 2026)
-const COMMON_DEPARTMENTS_FALLBACK = [
-  'Accounting and Finance',
-  'Afan Oromo, Literature and Communication',
-  'Amharic',
-  'Amharic Education',
-  'Cinema and Theatre Arts',
-  'Civics and Ethical Studies',
-  'Civics and Ethical Studies Education',
-  'Economics',
-  'Educational Planning and Management',
-  'English',
-  'English Education',
-  'Gender and Development Studies',
-  'Geography',
-  'Geography Education',
-  "Ge'ez Language and Literature",
-  'History',
-  'History Education',
-  'Journalism & Communications',
-  'Logistics and Supply Chain Management',
-  'Management',
-  'Marketing Management',
-  'Music Arts',
-  'Political Science and International Studies',
-  'Psychology',
-  'Public Administration and Development Management',
-  'Social Anthropology',
-  'Social Work',
-  'Sociology',
-  'Special Needs and Inclusive Education',
-  'Tourism and Hotel Management'
-];
 
-function computeCommonDepartments() {
-  try {
-    var raw = sessionStorage.getItem('bdu_student_data');
-    if (raw) {
-      var data = JSON.parse(raw);
-      var placement = (data && data.placement) || {};
+  document.addEventListener('DOMContentLoaded', function () {
+    if (!Auth.isLoggedIn()) { window.location.href = '/'; return; }
+    var data = Auth.getStudentData();
+    if (!data) { window.location.href = '/'; return; }
 
-      // 1. Real departments from BDU's GetPlacementSelectionOption
-      var opts = placement.selectionOptions || [];
-      var seen = {};
-      var out = [];
-      opts.forEach(function (o) {
-        var d = o && o.department;
-        if (d) {
-          d = String(d).trim();
-          if (d && !seen[d]) { seen[d] = 1; out.push(d); }
-        }
-      });
-      if (out.length > 0) { out.sort(); return out; }
+    var container = document.getElementById('depts-content');
+    if (!container) return;
 
-      // 2. Fallback: derive from allStudents[]
-      var allStudents = placement.allStudents || [];
-      allStudents.forEach(function (s) {
-        var d = s && s.department;
-        if (d) {
-          d = String(d).trim();
-          if (d && !seen[d]) { seen[d] = 1; out.push(d); }
-        }
-      });
-      if (out.length > 0) { out.sort(); return out; }
-    }
-  } catch (e) {
-    console.warn('computeCommonDepartments: falling back', e.message);
-  }
-  return COMMON_DEPARTMENTS_FALLBACK.slice();
-}
+    var placement = data.placement || {};
+    var results = placement.results || [];
+    var criteria = placement.criteria || [];
+    var selectionOptions = placement.selectionOptions || [];
 
-const commonDepartments = computeCommonDepartments();
-  // Expose for other placement modules (priorities planner)
-  window.BDU_DEPARTMENTS = commonDepartments;
-  
-  // Combine common + actual departments
-  commonDepartments.forEach(function(dept) {
-    if (departments.indexOf(dept) === -1) {
-      departments.push(dept);
-    }
-  });
-  
-  let currentDept = departments[0] || 'All';
-  let currentPage = 1;
-  let filteredList = [];
-  const pageSize = 20;
-  
-  // Render department tabs
-  function renderTabs() {
-    if (!tabsContainer) return;
-    
-    let tabsHtml = '<button class="dept-tab ' + (currentDept === 'All' ? 'active' : '') + '" onclick="selectDept(\'All\')">All</button>';
-    
-    departments.forEach(function(dept) {
-      tabsHtml += '<button class="dept-tab ' + (currentDept === dept ? 'active' : '') + '" onclick="selectDept(\'' + dept.replace(/'/g, "\\'") + '\')">' + dept + '</button>';
-    });
-    
-    tabsContainer.innerHTML = tabsHtml;
-  }
-  
-  function filterByDept() {
-    if (currentDept === 'All') {
-      filteredList = fullList;
-    } else {
-      filteredList = fullList.filter(function(s) {
-        return (s.department || 'Unassigned') === currentDept;
-      });
-    }
-    
-    // Sort by score descending
-    if (usingResultsFallback) {
-      // Priority ascending — 1st choice first
-      filteredList.sort(function(a, b) {
-        return (parseInt(a.priority, 10) || 999) - (parseInt(b.priority, 10) || 999);
-      });
-    } else {
-      filteredList.sort(function(a, b) {
-        return parseFloat(b.totalScore) - parseFloat(a.totalScore);
-      });
-    }
-  }
-  
-  function render() {
-    filterByDept();
-    
-    const totalPages = Math.ceil(filteredList.length / pageSize);
-    const start = (currentPage - 1) * pageSize;
-    const end = Math.min(start + pageSize, filteredList.length);
-    const pageStudents = filteredList.slice(start, end);
-    
-    if (statsBar) {
-      var _label;
-      if (usingResultsFallback) {
-        _label = currentDept + ': your ' + filteredList.length + ' choice' + (filteredList.length === 1 ? '' : 's') + ' | Page ' + currentPage + ' of ' + Math.max(totalPages, 1);
-      } else {
-        _label = currentDept + ': ' + filteredList.length + ' students | Page ' + currentPage + ' of ' + Math.max(totalPages, 1);
-      }
-      statsBar.innerHTML = _label;
-    }
-    
-    let html = '';
-    
-    if (pageStudents.length === 0) {
-      if (usingResultsFallback) {
-        html = '<div class="dept-empty">You did not rank this department.<br>Other students\' applications will appear here as BDU publishes them.</div>';
-      } else {
-        html = '<div class="dept-empty">No students in this department yet.<br>Results will appear when placement is released.</div>';
-      }
-    } else {
-      pageStudents.forEach(function(s, index) {
-        const globalRank = start + index + 1;
-        const isSelected = s.status === 'Selected';
-        
-        let rankClass = 'rank-number';
-        if (globalRank === 1) rankClass += ' top1';
-        else if (globalRank <= 10) rankClass += ' top10';
-        
-        html += '<div class="student-card ' + (isSelected ? 'selected' : '') + '">';
-        html += '<div class="' + rankClass + '">' + globalRank + '</div>';
-        html += '<div class="student-info">';
-        html += '<div class="student-name">' + (s.fullName || 'Student') + '</div>';
-        html += '<div class="student-id">' + (s.studentId || '') + '</div>';
-        html += '<div class="student-dept">' + (s.department || '') + '</div>';
-        html += '</div>';
-        html += '<div class="student-score">';
-        html += '<div class="score-value">' + (s.totalScore || '—') + '</div>';
-        html += '<div class="score-priority">' + (s.priority || '') + '</div>';
-        html += '<span class="score-status ' + (isSelected ? 'status-selected' : 'status-not') + '">' + (s.status || 'Pending') + '</span>';
-        html += '</div>';
-        html += '</div>';
-      });
-    }
-    
+    var score = computeScore(criteria);
+    var catalog = buildCatalog(selectionOptions);
+
+    var html = '';
+    html += renderScoreCard(score, results);
+    html += renderCatalog(catalog);
+
     container.innerHTML = html;
-    
-    // Pagination
-    if (pagination && totalPages > 1) {
-      let pagHtml = '';
-      pagHtml += '<button class="page-btn" onclick="goToPage(' + (currentPage - 1) + ')" ' + (currentPage === 1 ? 'disabled' : '') + '>←</button>';
-      
-      const maxButtons = 5;
-      let startPage = Math.max(1, currentPage - Math.floor(maxButtons / 2));
-      let endPage = Math.min(totalPages, startPage + maxButtons - 1);
-      startPage = Math.max(1, endPage - maxButtons + 1);
-      
-      for (let i = startPage; i <= endPage; i++) {
-        pagHtml += '<button class="page-btn ' + (i === currentPage ? 'active' : '') + '" onclick="goToPage(' + i + ')">' + i + '</button>';
-      }
-      
-      pagHtml += '<button class="page-btn" onclick="goToPage(' + (currentPage + 1) + ')" ' + (currentPage === totalPages ? 'disabled' : '') + '>→</button>';
-      pagination.innerHTML = pagHtml;
-    } else if (pagination) {
-      pagination.innerHTML = '';
+
+    wireSearch();
+
+    // Keep stats bar showing a small summary
+    var statsBar = document.getElementById('stats-bar');
+    if (statsBar) {
+      statsBar.innerHTML = catalog.list.length + ' departments · ' + (catalog.fromLive ? 'live data' : 'verified catalog');
     }
-  }
-  
-  window.selectDept = function(dept) {
-    currentDept = dept;
-    currentPage = 1;
-    renderTabs();
-    render();
-  };
-  
-  window.goToPage = function(page) {
-    currentPage = page;
-    render();
-  };
-  
-  window.searchStudents = function() {
-    const query = document.getElementById('search-input').value.toLowerCase();
-    
-    let baseList = fullList;
-    if (currentDept !== 'All') {
-      baseList = fullList.filter(function(s) { return (s.department || 'Unassigned') === currentDept; });
-    }
-    
-    if (!query) {
-      filteredList = baseList;
-    } else {
-      filteredList = baseList.filter(function(s) {
-        return (s.fullName || '').toLowerCase().includes(query) ||
-               (s.studentId || '').toLowerCase().includes(query);
-      });
-    }
-    
-    if (usingResultsFallback) {
-      // Priority ascending — 1st choice first
-      filteredList.sort(function(a, b) {
-        return (parseInt(a.priority, 10) || 999) - (parseInt(b.priority, 10) || 999);
-      });
-    } else {
-      filteredList.sort(function(a, b) {
-        return parseFloat(b.totalScore) - parseFloat(a.totalScore);
-      });
-    }
-    
-    currentPage = 1;
-    render();
-  };
-  
-  // Placement criteria was moved to the Priorities tab (Score Breakdown)
-  // This function is kept as a no-op for backward compatibility.
-  function renderCriteria() {
-    return;
-    const criteria = placement.criteria || [];
-    
-    if (criteria.length > 0) {
-      let criteriaHtml = '<div class="criteria-box">';
-      criteriaHtml += '<div class="criteria-box-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg>Placement Criteria (Official)</div>';
-      
-      criteria.forEach(function(c) {
-        criteriaHtml += '<div class="criteria-box-row">';
-        criteriaHtml += '<span class="criteria-box-name">' + c.name + '</span>';
-        criteriaHtml += '<span class="criteria-box-value">' + c.percent + '%</span>';
-        criteriaHtml += '</div>';
-      });
-      
-      criteriaHtml += '</div>';
-      
-      // Insert after pagination
-      const pagination = document.getElementById('pagination');
-      if (pagination) {
-        pagination.insertAdjacentHTML('afterend', criteriaHtml);
-      }
-    }
-  }
-  
-  // Initial render
-  renderTabs();
-  render();
-  // renderCriteria();  // Moved to Priorities tab
-});
+
+    // Clear pagination (not used in catalog view)
+    var pagination = document.getElementById('pagination');
+    if (pagination) pagination.innerHTML = '';
+
+    // Clear dept-tabs (not used in catalog view)
+    var tabsContainer = document.getElementById('dept-tabs');
+    if (tabsContainer) tabsContainer.innerHTML = '';
+
+    // Expose catalog for other modules
+    window.BDU_DEPARTMENTS = catalog.list.map(function (d) { return d.dept; });
+  });
+})();

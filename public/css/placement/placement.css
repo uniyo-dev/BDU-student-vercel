@@ -859,3 +859,237 @@
 .rankings-filter-empty strong {
   color: var(--primary);
 }
+
+/* ===== Departments tab rebuild: score + catalog ===== */
+
+/* ─── Score card ─── */
+.dept-score-card {
+  margin: 0 0 16px;
+  padding: 22px 20px 18px;
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--primary) 12%, var(--bg-card)),
+    color-mix(in srgb, var(--primary) 4%, var(--bg-card)));
+  border: 1px solid color-mix(in srgb, var(--primary) 28%, transparent);
+  border-radius: 20px;
+}
+.dept-score-hero {
+  text-align: center;
+  margin-bottom: 16px;
+}
+.dept-score-value {
+  font-size: 44px;
+  font-weight: 900;
+  color: var(--primary);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  letter-spacing: -1px;
+}
+.dept-score-label {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-top: 6px;
+}
+.dept-score-breakdown {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.dept-score-part {
+  padding: 10px 8px;
+  background: color-mix(in srgb, var(--bg-card) 70%, transparent);
+  border-radius: 12px;
+  text-align: center;
+}
+.dept-score-part-value {
+  display: block;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+.dept-score-part-label {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-top: 3px;
+}
+.dept-score-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+}
+.dept-score-meta-item {
+  padding: 8px 6px;
+  background: color-mix(in srgb, var(--bg-card) 60%, transparent);
+  border-radius: 10px;
+  text-align: center;
+}
+.dept-score-meta-value {
+  display: block;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+}
+.dept-score-meta-value--status {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+.dept-score-meta-label {
+  display: block;
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-top: 3px;
+}
+
+/* ─── Catalog ─── */
+.dept-catalog-section {
+  padding: 18px 16px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: 18px;
+  margin-bottom: 16px;
+}
+.dept-catalog-summary {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.dept-catalog-summary-item {
+  padding: 10px 6px;
+  background: var(--bg-body);
+  border-radius: 10px;
+  text-align: center;
+}
+.dept-catalog-summary-value {
+  display: block;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--primary);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.15;
+}
+.dept-catalog-summary-label {
+  display: block;
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-top: 3px;
+}
+
+.dept-catalog-search {
+  margin-bottom: 12px;
+}
+.dept-catalog-search-input {
+  width: 100%;
+  padding: 10px 14px;
+  background: var(--bg-body);
+  border: 1px solid var(--border-light);
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--text-primary);
+}
+.dept-catalog-search-input:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.dept-catalog-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.dept-catalog-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 12px;
+  background: var(--bg-body);
+  border-radius: 10px;
+}
+.dept-catalog-row--hidden {
+  display: none;
+}
+.dept-catalog-info {
+  min-width: 0;
+}
+.dept-catalog-name {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.dept-catalog-bar {
+  height: 5px;
+  background: color-mix(in srgb, var(--border) 40%, transparent);
+  border-radius: 100px;
+  overflow: hidden;
+}
+.dept-catalog-bar-fill {
+  height: 100%;
+  border-radius: 100px;
+  transition: width 0.3s ease;
+}
+.dept-catalog-bar-fill--high { background: var(--success); }
+.dept-catalog-bar-fill--mid  { background: var(--primary); }
+.dept-catalog-bar-fill--low  { background: var(--warning); }
+
+.dept-catalog-capacity {
+  text-align: right;
+  flex-shrink: 0;
+}
+.dept-catalog-capacity-value {
+  display: block;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+.dept-catalog-capacity-label {
+  display: block;
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-top: 3px;
+}
+.dept-catalog-applied {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--warning);
+  margin-top: 4px;
+}
+
+.dept-catalog-note {
+  margin-top: 14px;
+  padding: 10px 12px;
+  background: color-mix(in srgb, var(--primary) 6%, transparent);
+  border-radius: 10px;
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  text-align: center;
+}
