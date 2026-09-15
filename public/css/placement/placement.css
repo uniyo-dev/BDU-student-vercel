@@ -772,3 +772,75 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ===== Rankings pagination ===== */
+.rankings-pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+  padding: 10px 4px;
+  flex-wrap: wrap;
+}
+.rankings-pagination-left {
+  display: flex;
+  gap: 6px;
+}
+.rankings-page-size {
+  padding: 6px 12px;
+  background: var(--bg-body);
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+.rankings-page-size:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+.rankings-page-size.is-active {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+.rankings-pagination-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+.rankings-page-btn {
+  width: 32px;
+  height: 32px;
+  background: var(--bg-body);
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.rankings-page-btn:hover:not(:disabled) {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+.rankings-page-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.rankings-page-info {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  min-width: 90px;
+  text-align: center;
+}

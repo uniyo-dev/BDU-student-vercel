@@ -66,6 +66,9 @@
   // ============================================================
   // FILTER STATE + HELPERS
   // ============================================================
+  var _pageSize = 250;
+  var _currentPage = 1;
+
   var _filters = {
     department: '',
     priority: '',
@@ -304,10 +307,17 @@
     html += '<th>Placement</th>';
     html += '</tr></thead><tbody>';
 
-    filtered.forEach(function (s, i) {
+    var totalPages = Math.max(1, Math.ceil(filtered.length / _pageSize));
+    if (_currentPage > totalPages) _currentPage = totalPages;
+    if (_currentPage < 1) _currentPage = 1;
+    var startIdx = (_currentPage - 1) * _pageSize;
+    var pageRows = filtered.slice(startIdx, startIdx + _pageSize);
+
+    pageRows.forEach(function (s, i) {
+      var globalIdx = startIdx + i + 1;
       var isMe = myId && String(s.studentId || '').toUpperCase() === myId;
       html += '<tr' + (isMe ? ' class="rankings-tr--me"' : '') + '>';
-      html += '<td class="rankings-td--num">' + (i + 1) + (isMe ? ' <span class="rankings-you-chip">YOU</span>' : '') + '</td>';
+      html += '<td class="rankings-td--num">' + globalIdx + (isMe ? ' <span class="rankings-you-chip">YOU</span>' : '') + '</td>';
       html += '<td class="rankings-td--mono">' + esc(s.studentId || '—') + '</td>';
       html += '<td>' + esc(s.department || '—') + '</td>';
       html += '<td class="rankings-td--num">' + esc(s.highschoolExam || '—') + '</td>';
@@ -323,6 +333,24 @@
 
     html += '</tbody></table>';
     html += '</div>';
+
+    // ─── Pagination controls ───
+    var totalPages = Math.max(1, Math.ceil(filtered.length / _pageSize));
+    if (_currentPage > totalPages) _currentPage = totalPages;
+
+    html += '<div class="rankings-pagination">';
+    html += '<div class="rankings-pagination-left">';
+    [250, 500, 1000].forEach(function (size) {
+      html += '<button type="button" class="rankings-page-size' + (size === _pageSize ? ' is-active' : '') + '" data-page-size="' + size + '">' + size + '</button>';
+    });
+    html += '</div>';
+    html += '<div class="rankings-pagination-right">';
+    html += '<button type="button" class="rankings-page-btn" data-page-prev' + (_currentPage <= 1 ? ' disabled' : '') + '>‹</button>';
+    html += '<span class="rankings-page-info">Page ' + _currentPage + ' of ' + totalPages + '</span>';
+    html += '<button type="button" class="rankings-page-btn" data-page-next' + (_currentPage >= totalPages ? ' disabled' : '') + '>›</button>';
+    html += '</div>';
+    html += '</div>';
+
     html += '</div>';
 
     section.innerHTML = html;
@@ -418,12 +446,39 @@
         if (clearBtn) {
           clearBtn.addEventListener('click', function () {
             _filters = { department: '', priority: '', academicYear: '', semester: '', year: '', term: '', gender: '', applicationStatus: '' };
+            _currentPage = 1;
             renderFilterPanel(allStudents, selectionOptions);
             renderLeaderboardTable(allStudents, bio);
           });
         }
         if (window.BDDropdown && typeof window.BDDropdown.init === 'function') {
           window.BDDropdown.init(filterSection);
+        }
+      }, 30);
+
+      // Wire pagination buttons
+      setTimeout(function () {
+        var lb = document.getElementById('leaderboard-section');
+        if (!lb) return;
+        lb.querySelectorAll('[data-page-size]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            _pageSize = parseInt(btn.getAttribute('data-page-size'), 10) || 250;
+            _currentPage = 1;
+            renderLeaderboardTable(allStudents, bio);
+          });
+        });
+        var prevBtn = lb.querySelector('[data-page-prev]');
+        var nextBtn = lb.querySelector('[data-page-next]');
+        if (prevBtn) {
+          prevBtn.addEventListener('click', function () {
+            if (_currentPage > 1) { _currentPage--; renderLeaderboardTable(allStudents, bio); }
+          });
+        }
+        if (nextBtn) {
+          nextBtn.addEventListener('click', function () {
+            _currentPage++;
+            renderLeaderboardTable(allStudents, bio);
+          });
         }
       }, 30);
 
