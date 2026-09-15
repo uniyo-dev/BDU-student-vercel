@@ -68,7 +68,15 @@ function renderPlacementBanner(data) {
   var title, meta;
   var state = 'pending';
 
-  if (selectionOptions.length === 0) {
+  // New: if the student has already submitted, show submission status
+  var submittedCount = (placement.results || []).length;
+
+  if (submittedCount > 0) {
+    title = 'You submitted ' + submittedCount + ' choice' + (submittedCount === 1 ? '' : 's');
+    var firstStatus = (placement.results[0] || {}).status || 'Not Decided';
+    meta = 'Status: ' + firstStatus + ' · Selection closes ' + (latestEnd ? latestEnd.toLocaleDateString() : 'Sep 18, 2026');
+    state = 'open';
+  } else if (selectionOptions.length === 0) {
     title = 'Not yet released';
     meta = 'BDU will publish your selectable departments soon.';
     state = 'pending';

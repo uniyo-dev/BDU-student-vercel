@@ -800,10 +800,25 @@
     { dept: 'Tourism and Hotel Management',                   capacity: 40  }
   ];
 
-  function renderDepartmentCatalog() {
-    if (!DEPARTMENT_CATALOG.length) return '';
+  function renderDepartmentCatalog(placement) {
+    // Prefer live BDU catalog when available; fall back to hardcoded
+    var liveOptions = (placement && placement.selectionOptions) || [];
+    var catalog = [];
 
-    var totalSeats = DEPARTMENT_CATALOG.reduce(function (sum, d) {
+    if (liveOptions.length > 0) {
+      liveOptions.forEach(function (o) {
+        if (o && o.department) {
+          catalog.push({ dept: o.department, capacity: parseInt(o.capacity, 10) || 0 });
+        }
+      });
+      catalog.sort(function (a, b) { return a.dept.localeCompare(b.dept); });
+    } else {
+      catalog = DEPARTMENT_CATALOG.slice();
+    }
+
+    if (!catalog.length) return '';
+
+    var totalSeats = catalog.reduce(function (sum, d) {
       return sum + (d.capacity || 0);
     }, 0);
 
@@ -815,7 +830,7 @@
 
     html += '<div class="priorities-catalog-meta">' +
               '<div class="priorities-catalog-meta-item">' +
-                '<span class="priorities-catalog-meta-value">' + DEPARTMENT_CATALOG.length + '</span>' +
+                '<span class="priorities-catalog-meta-value">' + catalog.length + '</span>' +
                 '<span class="priorities-catalog-meta-label">departments</span>' +
               '</div>' +
               '<div class="priorities-catalog-meta-item">' +
@@ -836,9 +851,9 @@
     html += '</div>';
 
     // Capacity color tiers — highlight small vs large departments
-    var maxCapacity = Math.max.apply(null, DEPARTMENT_CATALOG.map(function (d) { return d.capacity; }));
+    var maxCapacity = Math.max.apply(null, catalog.map(function (d) { return d.capacity || 0; }));
 
-    DEPARTMENT_CATALOG.forEach(function (d) {
+    catalog.forEach(function (d) {
       var pct = Math.round((d.capacity / maxCapacity) * 100);
       var tier = d.capacity >= 150 ? 'high' : (d.capacity >= 60 ? 'mid' : 'low');
 
@@ -864,7 +879,7 @@
   // ===== M5 5.3b: choice planner =====
 
   var PLAN_KEY = 'bd_priority_plan';
-  var PLAN_SLOTS = 10;
+  var PLAN_SLOTS = 30;  // BDU allows up to 30 priorities
 
   // Real department list.
   // Primary source: unique departments from placement.allStudents[] (BDU's own data).
@@ -1091,10 +1106,12 @@
               esc(t('planner_note', 'Arrange the departments you would submit, most preferred first. This is your workspace - it is not sent anywhere.')) +
             '</div>';
 
-    html += '<div class="priorities-planner-list">';
+    html += '<div class="priorities-planner-list" data-plan-list>';
+    var _initialVisible = 10;
     for (var i = 0; i < PLAN_SLOTS; i++) {
       var current = plan[i] || '';
-      html += '<div class="priorities-planner-row" data-plan-row="' + i + '">';
+      var _hiddenClass = (i >= 10) ? ' priorities-planner-row--collapsed' : '';
+      html += '<div class="priorities-planner-row' + _hiddenClass + '" data-plan-row="' + i + '">';
       html += '<div class="priorities-planner-num">' + (i + 1) + '</div>';
       html += '<select class="priorities-planner-select" data-plan-select="' + i + '" data-dropdown>';
       html += '<option value="">' + esc(t('planner_empty', '— Choose a department —')) + '</option>';
@@ -1112,6 +1129,14 @@
       html += '</div>';
     }
     html += '</div>';
+
+    // Show-more toggle
+    if (PLAN_SLOTS > 10) {
+      html += '<button type="button" class="priorities-planner-toggle" data-plan-toggle>' +
+                '<span data-plan-toggle-label>' + esc(t('planner_show_all', 'Show all ' + PLAN_SLOTS + ' slots')) + '</span>' +
+                '<span class="priorities-planner-toggle-arrow" aria-hidden="true">▾</span>' +
+              '</button>';
+    }
 
     html += '<div class="priorities-planner-actions">';
     html += '<button type="button" class="priorities-planner-copy" data-plan-copy>' +
@@ -1249,6 +1274,28 @@
     // Initial state
     refreshButtons(getPlanFromDOM());
 
+    // Wire show-more toggle
+    var toggleBtn = section.querySelector('[data-plan-toggle]');
+    if (toggleBtn) {
+      toggleBtn.addEventListener('click', function () {
+        var list = section.querySelector('[data-plan-list]');
+        if (!list) return;
+        var collapsed = list.querySelectorAll('.priorities-planner-row--collapsed');
+        var isExpanded = toggleBtn.getAttribute('data-expanded') === '1';
+        collapsed.forEach(function (row) {
+          row.classList.toggle('priorities-planner-row--hidden', isExpanded);
+        });
+        toggleBtn.setAttribute('data-expanded', isExpanded ? '0' : '1');
+        var labelEl = toggleBtn.querySelector('[data-plan-toggle-label]');
+        if (labelEl) {
+          labelEl.textContent = isExpanded
+            ? (t('planner_show_all', 'Show all ' + PLAN_SLOTS + ' slots'))
+            : (t('planner_show_less', 'Show first 10 slots'));
+        }
+        toggleBtn.classList.toggle('is-expanded', !isExpanded);
+      });
+    }
+
     // Init styled dropdowns on the planner selects
     if (window.BDDropdown && typeof window.BDDropdown.init === 'function') {
       window.BDDropdown.init(section);
@@ -1288,7 +1335,7 @@
       html += renderResultCard(results);
       html += renderScoreBreakdown(criteria);
       html += renderStanding(placement, criteria);
-      html += renderDepartmentCatalog();
+      html += renderDepartmentCatalog(placement);
       html += renderPriorityList(results);
       html += renderSimulator(criteria);
       html += renderActionGuide();

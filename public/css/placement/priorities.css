@@ -1164,3 +1164,41 @@
     display: none;
   }
 }
+
+/* ===== M5 Patch D: 30-slot planner toggle ===== */
+.priorities-planner-row--hidden {
+  display: none;
+}
+
+.priorities-planner-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: 10px;
+  padding: 12px 16px;
+  background: var(--bg-body);
+  border: 1px dashed var(--border-light);
+  border-radius: 12px;
+  color: var(--primary);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.priorities-planner-toggle:hover {
+  background: color-mix(in srgb, var(--primary) 8%, var(--bg-body));
+  border-color: var(--primary);
+}
+.priorities-planner-toggle.is-expanded {
+  border-style: solid;
+}
+.priorities-planner-toggle-arrow {
+  font-size: 10px;
+  transition: transform 0.2s ease;
+}
+.priorities-planner-toggle.is-expanded .priorities-planner-toggle-arrow {
+  transform: rotate(180deg);
+}
