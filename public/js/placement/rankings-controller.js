@@ -1,6 +1,25 @@
 (function() {
   'use strict';
 
+
+
+  // ─── Module state ─────────────────────────────────
+  var _pageSize = 250;
+  var _currentPage = 1;
+  var _filters = {
+    department: '',
+    priority: '',
+    academicYear: '',
+    semester: '',
+    year: '',
+    term: '',
+    gender: '',
+    applicationStatus: ''
+  };
+  var _lookups = null;
+  var _fetchedStudents = [];
+  var _fetchedTotal = 0;
+
   // ============================================================
   // TAB SWITCHER (Departments / Rankings)
   // ============================================================
@@ -66,20 +85,7 @@
   // ============================================================
   // FILTER STATE + HELPERS
   // ============================================================
-  var _pageSize = 250;
-  var _currentPage = 1;
 
-  var _lookups = null;
-  var _filters = {
-    department: '',
-    priority: '',
-    academicYear: '',
-    semester: '',
-    year: '',
-    term: '',
-    gender: '',
-    applicationStatus: ''
-  };
 
   function uniqueValues(arr, key) {
     var seen = {};
