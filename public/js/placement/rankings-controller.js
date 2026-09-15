@@ -111,6 +111,22 @@
     var section = document.getElementById('filter-section');
     if (!section) return;
 
+    // When there are no students to filter, hide the filter panel.
+    // Keep the info banner so students understand what's coming.
+    if (!allStudents || allStudents.length === 0) {
+      section.innerHTML =
+        '<div class="rankings-info-banner">' +
+          '<span class="rankings-info-banner-icon" aria-hidden="true">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>' +
+          '</span>' +
+          '<div class="rankings-info-banner-text">' +
+            '<strong>How this works:</strong> once BDU publishes applicant data, you can filter by department, priority, academic year, semester, year, and term. Results are sorted by total score — highest first.' +
+          '</div>' +
+        '</div>' +
+        '<div class="rankings-filter-empty">Filters will appear here once BDU publishes placement data. Tap <strong>Refresh Rankings</strong> after results are released.</div>';
+      return;
+    }
+
     // Build unique values for each filter
     var depts = [];
     if (selectionOptions && selectionOptions.length > 0) {
