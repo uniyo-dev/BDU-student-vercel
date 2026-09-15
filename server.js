@@ -837,6 +837,31 @@ const server = http.createServer(async (req, res) => {
           '/DepartmentPlacment/PlacementPrioritySummary',
         ];
 
+        // Probe the lookup endpoints
+        const lookups = [
+          '/Placement/GetDestinationDepartment',
+          '/Placement/GetSelectionPriority',
+          '/Placement/GetAcYear',
+          '/Placement/GetSemester',
+          '/Placement/GetYear',
+          '/Placement/GetTerm',
+        ];
+        const lookupData = [];
+        for (const url of lookups) {
+          try {
+            const r = await makeRequest(url, { headers: apiHeaders });
+            const b = r.body || '';
+            lookupData.push({
+              url: url,
+              status: r.statusCode,
+              length: b.length,
+              preview: b.slice(0, 800),
+            });
+          } catch (e) {
+            lookupData.push({ url: url, error: e.message });
+          }
+        }
+
         // Special case: fetch the HTML page and dump its structure
         let htmlDump = null;
         try {
@@ -899,6 +924,7 @@ const server = http.createServer(async (req, res) => {
           loginStatus: loginRes.statusCode,
           department: d,
           priority: p,
+          lookups: lookupData,
           htmlDump: htmlDump,
           results: results,
         }, null, 2));
