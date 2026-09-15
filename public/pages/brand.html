@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0B0F19">
+  <meta name="description" content="The Bond of Brothers — Bahir Dar University & BD Buddy working together for students.">
+  <title>The Bond of Brothers — BD Buddy</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/css/shared/variables.css">
+  <link rel="stylesheet" href="/css/shared/reset.css">
+  <link rel="stylesheet" href="/css/shared/theme.css">
+  <link rel="stylesheet" href="/css/brand/brand.css">
+</head>
+<body class="brand-page">
+
+  <div class="brand-backdrop"></div>
+
+  <a href="/pages/about.html" class="brand-back-btn" aria-label="Back to About">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    <span>About</span>
+  </a>
+
+  <button id="bd-theme-toggle" class="bd-theme-toggle brand-theme-toggle" type="button" aria-label="Toggle theme"></button>
+
+  <main class="brand-card">
+
+    <div class="brand-ribbon">
+      <span class="brand-pulse-dot"></span>
+      <span>Sacred Academic Brotherhood</span>
+    </div>
+
+    <!-- Fusion Stage -->
+    <div class="brand-fusion-stage">
+      <svg class="brand-canvas-overlay" viewBox="0 0 320 200" aria-hidden="true">
+        <defs>
+          <linearGradient id="brandOrbitGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#1A5F9C"/>
+            <stop offset="45%" stop-color="#FCD34D"/>
+            <stop offset="100%" stop-color="#D628D9"/>
+          </linearGradient>
+        </defs>
+        <path class="brand-infinity-track" d="M 82,100 C 82,45 160,45 160,100 C 160,155 238,155 238,100 C 238,45 160,45 160,100 C 160,155 82,155 82,100 Z"/>
+        <path class="brand-infinity-glow" stroke="url(#brandOrbitGrad)" d="M 82,100 C 82,45 160,45 160,100 C 160,155 238,155 238,100 C 238,45 160,45 160,100 C 160,155 82,155 82,100 Z"/>
+      </svg>
+
+      <div class="brand-orb brand-orb-bdu" title="Bahir Dar University — The Alma Mater">
+        <div class="brand-orb-emblem">
+          <svg class="brand-bdu-emblem" id="bduEmblemSvg" viewBox="0 0 512 512" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <!-- Outer Ring Blue Gradient -->
+            <linearGradient id="ringSkyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#73BAF8"/>
+              <stop offset="50%" stop-color="#4AA3F5"/>
+              <stop offset="100%" stop-color="#1E88E5"/>
+            </linearGradient>
+
+            <!-- Sunburst Rays Gradient -->
+            <linearGradient id="sunRayGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#F59E0B"/>
+              <stop offset="50%" stop-color="#FBBF24"/>
+              <stop offset="100%" stop-color="#FDE68A"/>
+            </linearGradient>
+
+            <!-- Flame Radial Gradient -->
+            <radialGradient id="torchFlameGrad" cx="50%" cy="70%" r="60%">
+              <stop offset="0%" stop-color="#FEF08A"/>
+              <stop offset="35%" stop-color="#FBBF24"/>
+              <stop offset="70%" stop-color="#EA580C"/>
+              <stop offset="100%" stop-color="#DC2626"/>
+            </radialGradient>
+
+            <!-- Tis Abay Waterfall Vertical Flow Gradient -->
+            <linearGradient id="waterfallFlow" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.95"/>
+              <stop offset="30%" stop-color="#E0F2FE" stop-opacity="0.9"/>
+              <stop offset="70%" stop-color="#BAE6FD" stop-opacity="0.95"/>
+              <stop offset="100%" stop-color="#7DD3FC"/>
+            </linearGradient>
+
+            <!-- Deep River Water Gradient -->
+            <linearGradient id="riverPool" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#0284C7"/>
+              <stop offset="60%" stop-color="#0369A1"/>
+              <stop offset="100%" stop-color="#075985"/>
+            </linearGradient>
+
+            <!-- Book Page Gradient -->
+            <linearGradient id="bookLeftPage" x1="100%" y1="0%" x2="0%" y2="0%">
+              <stop offset="0%" stop-color="#CBD5E1"/>
+              <stop offset="15%" stop-color="#F1F5F9"/>
+              <stop offset="100%" stop-color="#FFFFFF"/>
+            </linearGradient>
+
+            <linearGradient id="bookRightPage" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#CBD5E1"/>
+              <stop offset="15%" stop-color="#F1F5F9"/>
+              <stop offset="100%" stop-color="#FFFFFF"/>
+            </linearGradient>
+
+            <!-- Inner Circle Clip -->
+            <clipPath id="innerPortalClip">
+              <circle cx="256" cy="256" r="162"/>
+            </clipPath>
+
+            <!-- Text Curve Paths -->
+            <path id="curveTopAmharic" d="M 44,256 A 212,212 0 0,1 468,256" fill="none"/>
+            <path id="curveTopEnglish" d="M 68,256 A 188,188 0 0,1 444,256" fill="none"/>
+            <path id="curveBottomAmharic" d="M 72,256 A 184,184 0 0,0 440,256" fill="none"/>
+            <path id="curveBottomEnglish" d="M 48,256 A 208,208 0 0,0 464,256" fill="none"/>
+
+            <filter id="flameGlow" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#F59E0B" flood-opacity="0.8"/>
+            </filter>
+
+            <filter id="bookShadow" x="-10%" y="-10%" width="120%" height="130%">
+              <feDropShadow dx="0" dy="5" stdDeviation="4" flood-color="#000000" flood-opacity="0.5"/>
+            </filter>
+          </defs>
+
+          <!-- ================= 1. CONCENTRIC BORDER RINGS ================= -->
+          <!-- Sky-Blue Outer Ring -->
+          <circle cx="256" cy="256" r="252" fill="url(#ringSkyGrad)"/>
+
+          <!-- Crisp Double White Outer Rings -->
+          <circle cx="256" cy="256" r="250" fill="none" stroke="#FFFFFF" stroke-width="2.5"/>
+          <circle cx="256" cy="256" r="245" fill="none" stroke="#FFFFFF" stroke-width="1.2"/>
+
+          <!-- Crisp Double White Inner Rings -->
+          <circle cx="256" cy="256" r="167" fill="none" stroke="#FFFFFF" stroke-width="2.5"/>
+          <circle cx="256" cy="256" r="162" fill="#FFFFFF"/>
+
+          <!-- ================= 2. INNER PORTAL CONTENT ================= -->
+          <g clip-path="url(#innerPortalClip)">
+            <!-- Golden Sky Base -->
+            <rect x="94" y="94" width="324" height="324" fill="#FEF3C7"/>
+
+            <!-- Golden Sunburst (Radiating 12 Broad Rays Behind Landscape) -->
+            <g transform="translate(256, 252)">
+              <polygon points="0,0 -18,-170 18,-170" fill="url(#sunRayGrad)"/>
+              <polygon points="0,0 -18,-170 18,-170" fill="url(#sunRayGrad)" transform="rotate(22)"/>
+              <polygon points="0,0 -18,-170 18,-170" fill="url(#sunRayGrad)" transform="rotate(-22)"/>
+              <polygon points="0,0 -18,-170 18,-170" fill="url(#sunRayGrad)" transform="rotate(45)"/>
+              <polygon points="0,0 -18,-170 18,-170" fill="url(#sunRayGrad)" transform="rotate(-45)"/>
+              <polygon points="0,0 -18,-170 18,-170" fill="url(#sunRayGrad)" transform="rotate(68)"/>
+              <polygon points="0,0 -18,-170 18,-170" fill="url(#sunRayGrad)" transform="rotate(-68)"/>
+              <polygon points="0,0 -18,-170 18,-170" fill="url(#sunRayGrad)" transform="rotate(90)"/>
+              <polygon points="0,0 -18,-170 18,-170" fill="url(#sunRayGrad)" transform="rotate(-90)"/>
+            </g>
+
+            <!-- ================= TIS ABAY (BLUE NILE FALLS) ================= -->
+            <!-- Background Mountain Ridge & Distant Tree Line -->
+            <path d="M 94,272 Q 155,250 215,268 T 335,265 T 418,272 L 418,418 L 94,418 Z" fill="#15803D"/>
+            <path d="M 94,286 C 135,268 175,282 205,296 C 240,280 275,280 310,296 C 345,282 385,270 418,286 L 418,418 L 94,418 Z" fill="#166534"/>
+
+            <!-- Basalt Rock Cliff Face & Gorge Ledge -->
+            <!-- Deep Charcoal Basalt Barrier behind the falls -->
+            <path d="M 125,302 L 140,418 L 372,418 L 387,302 Z" fill="#1E293B"/>
+            <path d="M 150,305 L 160,418 L 352,418 L 362,305 Z" fill="#0F172A"/>
+
+            <!-- Vertical Basalt Column Details -->
+            <line x1="178" y1="305" x2="178" y2="390" stroke="#090D16" stroke-width="4"/>
+            <line x1="208" y1="305" x2="206" y2="395" stroke="#090D16" stroke-width="4"/>
+            <line x1="256" y1="305" x2="256" y2="400" stroke="#090D16" stroke-width="5"/>
+            <line x1="304" y1="305" x2="306" y2="395" stroke="#090D16" stroke-width="4"/>
+            <line x1="334" y1="305" x2="334" y2="390" stroke="#090D16" stroke-width="4"/>
+
+            <!-- Blue Nile Plunging Waterfall Cascades -->
+            <!-- Left Cataract Plume -->
+            <path d="M 160,305 L 166,418 L 196,418 L 190,305 Z" fill="url(#waterfallFlow)"/>
+            <path d="M 172,305 L 176,418 L 188,418 L 182,305 Z" fill="#FFFFFF"/>
+
+            <!-- Center-Left Cataract -->
+            <path d="M 200,305 L 202,418 L 226,418 L 222,305 Z" fill="url(#waterfallFlow)"/>
+            <path d="M 208,305 L 210,418 L 220,418 L 218,305 Z" fill="#FFFFFF"/>
+
+            <!-- Mighty Center Torrent (Tis Issat Main Fall) -->
+            <path d="M 230,305 L 232,418 L 282,418 L 282,305 Z" fill="url(#waterfallFlow)"/>
+            <path d="M 240,305 L 242,418 L 272,418 L 270,305 Z" fill="#FFFFFF"/>
+            <line x1="250" y1="308" x2="250" y2="415" stroke="#E0F2FE" stroke-width="2.5"/>
+            <line x1="262" y1="308" x2="262" y2="415" stroke="#E0F2FE" stroke-width="2.5"/>
+
+            <!-- Center-Right Cataract -->
+            <path d="M 290,305 L 286,418 L 312,418 L 312,305 Z" fill="url(#waterfallFlow)"/>
+            <path d="M 294,305 L 292,418 L 304,418 L 304,305 Z" fill="#FFFFFF"/>
+
+            <!-- Right Cataract Plume -->
+            <path d="M 322,305 L 316,418 L 346,418 L 352,305 Z" fill="url(#waterfallFlow)"/>
+            <path d="M 324,305 L 324,418 L 336,418 L 340,305 Z" fill="#FFFFFF"/>
+
+            <!-- Plunge Pool & River Rapids -->
+            <rect x="94" y="396" width="324" height="25" fill="url(#riverPool)" opacity="0.85"/>
+
+            <!-- Billowing Water Mist & Spray Clouds (At the bottom & crest) -->
+            <ellipse cx="256" cy="305" rx="90" ry="8" fill="#FFFFFF" opacity="0.85"/>
+            <ellipse cx="256" cy="398" rx="85" ry="16" fill="#FFFFFF" opacity="0.9"/>
+            <ellipse cx="190" cy="402" rx="45" ry="12" fill="#E0F2FE" opacity="0.85"/>
+            <ellipse cx="322" cy="402" rx="45" ry="12" fill="#E0F2FE" opacity="0.85"/>
+            <ellipse cx="256" cy="410" rx="110" ry="10" fill="#BAE6FD" opacity="0.7"/>
+
+            <!-- Prominent Riverbank Trees Framing Falls -->
+            <!-- Left Foreground Foliage -->
+            <path d="M 94,310 Q 130,295 152,330 Q 160,375 140,418 L 94,418 Z" fill="#14532D"/>
+            <circle cx="132" cy="328" r="18" fill="#166534"/>
+            <circle cx="114" cy="344" r="22" fill="#15803D"/>
+            <circle cx="138" cy="360" r="16" fill="#14532D"/>
+
+            <!-- Right Foreground Foliage -->
+            <path d="M 418,310 Q 382,295 360,330 Q 352,375 372,418 L 418,418 Z" fill="#14532D"/>
+            <circle cx="380" cy="328" r="18" fill="#166534"/>
+            <circle cx="398" cy="344" r="22" fill="#15803D"/>
+            <circle cx="374" cy="360" r="16" fill="#14532D"/>
+
+            <!-- ================= 3. THE OPEN BOOK & NILE TORCH ================= -->
+            <!-- Floating strategically right above the falls crest with depth shadow -->
+            <g transform="translate(256, 268)" filter="url(#bookShadow)">
+              <!-- Blue Hardcover Binding Foundation -->
+              <path d="M -70,-2 C -42,-14 -14,-10 0,6 C 14,-10 42,-14 70,-2 L 67,32 C 40,20 12,24 0,38 C -12,24 -40,20 -67,32 Z" fill="#1D4ED8" stroke="#1E3A8A" stroke-width="2"/>
+
+              <!-- Stack of Pages Edge Thickness -->
+              <path d="M -67,0 C -40,-11 -13,-7 0,8 C 13,-7 40,-11 67,0 L 65,28 C 38,17 12,21 0,34 C -12,21 -38,17 -65,28 Z" fill="#E2E8F0"/>
+
+              <!-- Left Open Page -->
+              <path d="M 0,8 C -14,-7 -40,-11 -66,0 L -64,26 C -38,15 -12,19 0,32 Z" fill="url(#bookLeftPage)" stroke="#94A3B8" stroke-width="0.8"/>
+
+              <!-- Right Open Page -->
+              <path d="M 0,8 C 14,-7 40,-11 66,0 L 64,26 C 38,15 12,19 0,32 Z" fill="url(#bookRightPage)" stroke="#94A3B8" stroke-width="0.8"/>
+
+              <!-- Center Spine Crease & Gold Bookmark Ribbon -->
+              <line x1="0" y1="8" x2="0" y2="34" stroke="#2563EB" stroke-width="2.5"/>
+              <path d="M 0,32 L -4,44 L 0,41 L 4,44 Z" fill="#F59E0B"/>
+
+              <!-- Text Page Ruled Guidelines -->
+              <path d="M -56,7 C -38,0 -18,3 -4,14" fill="none" stroke="#93C5FD" stroke-width="1.2"/>
+              <path d="M -56,13 C -38,6 -18,9 -4,19" fill="none" stroke="#93C5FD" stroke-width="1.2"/>
+              <path d="M 4,14 C 18,3 38,0 56,7" fill="none" stroke="#93C5FD" stroke-width="1.2"/>
+              <path d="M 4,19 C 18,9 38,6 56,13" fill="none" stroke="#93C5FD" stroke-width="1.2"/>
+
+              <!-- Foundational Years Inscribed in Pages -->
+              <!-- Left: 1953 (Establishment of Bahir Dar Poly-technic E.C.) -->
+              <text x="-33" y="23" font-family="'Inter', 'Arial Black', sans-serif" font-size="13" font-weight="900" fill="#1E3A8A" text-anchor="middle">1953</text>
+              <!-- Right: 1963 (Gregorian Equivalent G.C.) -->
+              <text x="33" y="23" font-family="'Inter', 'Arial Black', sans-serif" font-size="13" font-weight="900" fill="#1E3A8A" text-anchor="middle">1963</text>
+
+              <!-- ================= 4. TORCH OF WISDOM FLAME ================= -->
+              <!-- Torch Handle Rising from Book Spine -->
+              <rect x="-2.5" y="-6" width="5" height="15" fill="#78350F" rx="1.5"/>
+              <polygon points="-5,-6 5,-6 3,-10 -3,-10" fill="#D97706"/>
+
+              <!-- Outer Flame with Glow -->
+              <g filter="url(#flameGlow)">
+                <path d="M 0,-38 C -14,-26 -13,-14 -6,-8 C -3,-5 3,-5 6,-8 C 13,-14 14,-26 0,-38 Z" fill="url(#torchFlameGrad)"/>
+                <!-- Inner Bright Core -->
+                <path d="M 0,-30 C -7,-22 -6,-14 -3,-9 C -1,-7 1,-7 3,-9 C 6,-14 7,-22 0,-30 Z" fill="#FEF08A"/>
+              </g>
+            </g>
+          </g>
+
+          <!-- ================= 5. CIRCULAR OUTER TYPOGRAPHY ================= -->
+          <!-- Top Line 1: Amharic Title "ባሕር ዳር ዩኒቨርሲቲ" -->
+          <text fill="#FFFFFF" font-family="'Noto Sans Ethiopic', 'Nyala', 'Abyssinica SIL', sans-serif" font-size="22.5" font-weight="900" letter-spacing="3.2">
+            <textPath href="#curveTopAmharic" startOffset="50%" text-anchor="middle">ባሕር ዳር ዩኒቨርሲቲ</textPath>
+          </text>
+
+          <!-- Top Line 2: English Title "Bahir Dar University" -->
+          <text fill="#FFFFFF" font-family="'Inter', 'Segoe UI', Arial, sans-serif" font-size="15" font-weight="800" letter-spacing="1.4">
+            <textPath href="#curveTopEnglish" startOffset="50%" text-anchor="middle">Bahir Dar University</textPath>
+          </text>
+
+          <!-- Bottom Line 1: Amharic Motto "ከዓባይ ዳር ጥበብ ሲቀዳ" -->
+          <text fill="#FFFFFF" font-family="'Noto Sans Ethiopic', 'Nyala', 'Abyssinica SIL', sans-serif" font-size="18.5" font-weight="900" letter-spacing="2.2">
+            <textPath href="#curveBottomAmharic" startOffset="50%" text-anchor="middle">ከዓባይ ዳር ጥበብ ሲቀዳ</textPath>
+          </text>
+
+          <!-- Bottom Line 2: English Motto "Wisdom at the source of the Blue Nile" -->
+          <text fill="#FFFFFF" font-family="'Georgia', 'Times New Roman', serif" font-style="italic" font-size="13.5" font-weight="700" letter-spacing="0.8">
+            <textPath href="#curveBottomEnglish" startOffset="50%" text-anchor="middle">Wisdom at the source of the Blue Nile</textPath>
+          </text>
+        </svg>
+        </div>
+        <span class="brand-orb-tag">BDU</span>
+      </div>
+
+      <div class="brand-clasp-center" title="The Bond of Trust">
+        <svg class="brand-clasp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0"/>
+          <path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2"/>
+          <path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8"/>
+          <path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/>
+        </svg>
+      </div>
+
+      <div class="brand-orb brand-orb-buddy" title="BD Buddy — The Student's Voice">
+        <svg class="brand-orb-icon" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 10v6M2 10l10-5 10 5-10 5z" stroke="#FCD34D"/>
+          <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+        </svg>
+        <span class="brand-orb-tag">BUDDY</span>
+      </div>
+    </div>
+
+    <!-- Story text -->
+    <div class="brand-story-block">
+      <h2 class="brand-title-banner">Brothers in Wisdom</h2>
+      <p class="brand-quote-story" id="brandQuoteText">
+        "BDU builds the foundation of knowledge. BD Buddy carries the torch to the student's hands."
+      </p>
+    </div>
+
+    <!-- Sync gauge -->
+    <div class="brand-sync-panel">
+      <div class="brand-gauge-header">
+        <span class="brand-side-a">BDU Portal</span>
+        <span class="brand-side-mid">Working Together</span>
+        <span class="brand-side-b">BD Buddy</span>
+      </div>
+      <div class="brand-track">
+        <div class="brand-fill" id="brandSyncFill"></div>
+      </div>
+      <div class="brand-gauge-sub">
+        <span id="brandStepPhase">They meet</span>
+        <span id="brandStepAction">Connection open</span>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <a href="/index.html" class="brand-continue-cta">
+      <span>Continue to BD Buddy</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </a>
+
+  </main>
+
+  <script src="/js/shared/theme-toggle.js"></script>
+  <script src="/js/brand/brand.js"></script>
+</body>
+</html>

@@ -620,3 +620,58 @@ body {
   text-align: right;
   max-width: 60%;
 }
+
+/* ═══════════════════════════════════════════════════════════
+   Brand page link card (About → Brand)
+   ═══════════════════════════════════════════════════════════ */
+.brand-link-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  margin: 0 16px 20px;
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--primary) 12%, var(--bg-card)),
+    color-mix(in srgb, var(--primary) 4%, var(--bg-card)));
+  border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent);
+  border-radius: 18px;
+  text-decoration: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.brand-link-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--primary) 20%, transparent);
+}
+.brand-link-icon {
+  display: inline-flex;
+  width: 40px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  background: var(--primary);
+  border-radius: 12px;
+  color: #fff;
+  flex-shrink: 0;
+}
+.brand-link-icon svg { width: 22px; height: 22px; stroke: currentColor; }
+.brand-link-body {
+  flex: 1;
+  min-width: 0;
+}
+.brand-link-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+.brand-link-desc {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+.brand-link-arrow {
+  width: 18px;
+  height: 18px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
