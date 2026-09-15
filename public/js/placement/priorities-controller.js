@@ -676,7 +676,21 @@
     });
 
     var st = computeStanding(placement, yourScore);
-    if (!st) return '';
+
+    // When there's no data yet, still show the panel with a clear
+    // "waiting for BDU" message. Builds trust that the feature exists.
+    if (!st) {
+      var waitingHtml = '<div class="priorities-section priorities-standing-section">';
+      waitingHtml += '<div class="priorities-section-head">' +
+                '<span class="priorities-head-icon">' + ICONS.chart + '</span>' +
+                esc(t('standing_head', 'Where You Stand')) +
+              '</div>';
+      waitingHtml += '<div class="priorities-standing-waiting">' +
+                esc(t('standing_waiting', 'Rankings will appear once BDU publishes applicant data. Check back after placement results are released.')) +
+              '</div>';
+      waitingHtml += '</div>';
+      return waitingHtml;
+    }
 
     var html = '<div class="priorities-section priorities-standing-section">';
     html += '<div class="priorities-section-head">' +

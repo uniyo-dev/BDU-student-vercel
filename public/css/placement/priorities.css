@@ -993,3 +993,14 @@
   background: color-mix(in srgb, var(--primary) 6%, transparent);
   border-radius: 10px;
 }
+
+.priorities-standing-waiting {
+  padding: 24px 16px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1.5;
+  background: var(--bg-body);
+  border-radius: 12px;
+  border: 1px dashed var(--border-light);
+}
