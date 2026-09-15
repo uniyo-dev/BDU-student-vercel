@@ -766,3 +766,144 @@
 .criteria-row--muted {
   opacity: 0.6;
 }
+
+/* ===== Rankings filter + leaderboard table ===== */
+.rankings-filter-section {
+  margin-bottom: 16px;
+}
+.rankings-filter-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.rankings-filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.rankings-filter-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+.rankings-filter-select {
+  width: 100%;
+}
+.rankings-filter-actions {
+  display: flex;
+  gap: 8px;
+}
+.rankings-filter-btn {
+  flex: 1;
+  padding: 10px 14px;
+  background: var(--bg-body);
+  border: 1px solid var(--border-light);
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+.rankings-filter-btn:hover {
+  border-color: var(--primary);
+}
+.rankings-filter-btn--primary {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+.rankings-filter-btn--primary:hover {
+  background: var(--primary-hover);
+}
+
+@media (max-width: 480px) {
+  .rankings-filter-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ─── Leaderboard table ─── */
+.rankings-table-meta {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+.rankings-table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 12px;
+  border: 1px solid var(--border-light);
+}
+.rankings-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+  white-space: nowrap;
+}
+.rankings-table thead {
+  background: var(--bg-elevated);
+}
+.rankings-table th {
+  text-align: left;
+  padding: 10px 10px;
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  border-bottom: 1px solid var(--border-light);
+}
+.rankings-table td {
+  padding: 9px 10px;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-light);
+}
+.rankings-table tr:last-child td {
+  border-bottom: none;
+}
+.rankings-table tbody tr:nth-child(even) {
+  background: color-mix(in srgb, var(--bg-body) 50%, transparent);
+}
+.rankings-th--num, .rankings-td--num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.rankings-td--mono {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+}
+.rankings-td--bold {
+  font-weight: 800;
+  color: var(--primary);
+}
+.rankings-tr--me {
+  background: color-mix(in srgb, var(--success) 12%, transparent) !important;
+}
+.rankings-tr--me td {
+  font-weight: 600;
+}
+.rankings-you-chip {
+  display: inline-block;
+  padding: 2px 6px;
+  background: var(--success);
+  color: #fff;
+  border-radius: 6px;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  margin-left: 4px;
+  vertical-align: middle;
+}
+.rankings-empty-inline {
+  padding: 20px 16px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 12px;
+  background: var(--bg-body);
+  border-radius: 10px;
+}

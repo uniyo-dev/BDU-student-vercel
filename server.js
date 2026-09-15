@@ -294,6 +294,13 @@ async function handleLogin(req, res) {
       priority: s.Priority || '',
       totalScore: s.TotalResult || s.TotalScore || '',
       status: s.ApplicationStatus || s.PlacementStatus || '',
+      // Extended columns to mirror BDU's PlacementPrioritySummary table
+      highschoolExam: s.HighschoolExam || s.NonExamTotalResult || s.NoneExamTotalResult || '',
+      programExam: s.Exam || s.ExamResult || '',
+      gender: s.Gender || '',
+      academicStatus: s.AcademicStatus || s.AcademicStanding || s.AcademicResult || '',
+      applicationStatus: s.ApplicationStatus || '',
+      placementStatus: s.PlacementStatus || '',
     }));
 
     const placementCriteria = rawCriteria.map(c => ({

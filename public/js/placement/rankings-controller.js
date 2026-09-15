@@ -63,6 +63,201 @@
   // ============================================================
   // RANKINGS RENDERER
   // ============================================================
+  // ============================================================
+  // FILTER STATE + HELPERS
+  // ============================================================
+  var _filters = {
+    department: '',
+    priority: '',
+    gender: '',
+    applicationStatus: ''
+  };
+
+  function uniqueValues(arr, key) {
+    var seen = {};
+    var out = [];
+    arr.forEach(function (item) {
+      var v = item && item[key];
+      if (v != null && String(v).trim() !== '' && !seen[v]) {
+        seen[v] = 1;
+        out.push(String(v));
+      }
+    });
+    return out.sort();
+  }
+
+  function applyFilters(list) {
+    return list.filter(function (s) {
+      if (_filters.department && (s.department || '') !== _filters.department) return false;
+      if (_filters.priority && String(s.priority || '') !== _filters.priority) return false;
+      if (_filters.gender && (s.gender || '') !== _filters.gender) return false;
+      if (_filters.applicationStatus && (s.applicationStatus || s.status || '') !== _filters.applicationStatus) return false;
+      return true;
+    });
+  }
+
+  function renderFilterPanel(allStudents, selectionOptions) {
+    var section = document.getElementById('filter-section');
+    if (!section) return;
+
+    var depts = [];
+    if (selectionOptions && selectionOptions.length > 0) {
+      selectionOptions.forEach(function (o) {
+        if (o && o.department && depts.indexOf(o.department) === -1) depts.push(o.department);
+      });
+    }
+    depts.sort();
+
+    var priorities = uniqueValues(allStudents, 'priority');
+    var statuses = uniqueValues(allStudents, 'applicationStatus');
+    if (statuses.length === 0) statuses = uniqueValues(allStudents, 'status');
+
+    var html = '<div class="rankings-section rankings-filter-section">';
+    html += '<div class="rankings-section-head">' +
+              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>' +
+              '<span>Filter Students</span>' +
+            '</div>';
+
+    html += '<div class="rankings-filter-grid">';
+
+    // Department
+    html += '<div class="rankings-filter-field">';
+    html += '<label class="rankings-filter-label" for="filter-dept">Department</label>';
+    html += '<select id="filter-dept" class="rankings-filter-select" data-filter="department" data-dropdown>';
+    html += '<option value="">All departments</option>';
+    depts.forEach(function (d) {
+      html += '<option value="' + esc(d) + '"' + (_filters.department === d ? ' selected' : '') + '>' + esc(d) + '</option>';
+    });
+    html += '</select>';
+    html += '</div>';
+
+    // Priority
+    html += '<div class="rankings-filter-field">';
+    html += '<label class="rankings-filter-label" for="filter-priority">Priority</label>';
+    html += '<select id="filter-priority" class="rankings-filter-select" data-filter="priority" data-dropdown>';
+    html += '<option value="">Any priority</option>';
+    priorities.forEach(function (p) {
+      html += '<option value="' + esc(p) + '"' + (_filters.priority === p ? ' selected' : '') + '>' + esc(p) + '</option>';
+    });
+    html += '</select>';
+    html += '</div>';
+
+    // Gender
+    html += '<div class="rankings-filter-field">';
+    html += '<label class="rankings-filter-label" for="filter-gender">Gender</label>';
+    html += '<select id="filter-gender" class="rankings-filter-select" data-filter="gender" data-dropdown>';
+    html += '<option value="">Any</option>';
+    html += '<option value="M"' + (_filters.gender === 'M' ? ' selected' : '') + '>Male</option>';
+    html += '<option value="F"' + (_filters.gender === 'F' ? ' selected' : '') + '>Female</option>';
+    html += '</select>';
+    html += '</div>';
+
+    // Application status
+    html += '<div class="rankings-filter-field">';
+    html += '<label class="rankings-filter-label" for="filter-status">Application Status</label>';
+    html += '<select id="filter-status" class="rankings-filter-select" data-filter="applicationStatus" data-dropdown>';
+    html += '<option value="">Any status</option>';
+    statuses.forEach(function (st) {
+      html += '<option value="' + esc(st) + '"' + (_filters.applicationStatus === st ? ' selected' : '') + '>' + esc(st) + '</option>';
+    });
+    html += '</select>';
+    html += '</div>';
+
+    html += '</div>'; // grid
+
+    html += '<div class="rankings-filter-actions">';
+    html += '<button type="button" class="rankings-filter-btn rankings-filter-btn--primary" data-filter-apply>Apply</button>';
+    html += '<button type="button" class="rankings-filter-btn" data-filter-clear>Clear</button>';
+    html += '</div>';
+
+    html += '</div>';
+    section.innerHTML = html;
+  }
+
+  function renderLeaderboardTable(allStudents, bio) {
+    var section = document.getElementById('leaderboard-section');
+    if (!section) return;
+
+    var head = '<div class="rankings-section-head">' +
+                '<svg viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>' +
+                '<span>Student Leaderboard</span>' +
+              '</div>';
+
+    if (!allStudents || allStudents.length === 0) {
+      section.innerHTML = '<div class="rankings-section">' + head +
+        '<div class="rankings-empty">' +
+          '<div class="rankings-empty-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>' +
+          '<div class="rankings-empty-title">Not yet released</div>' +
+          '<div class="rankings-empty-text">Student rankings will appear here once BDU publishes them.</div>' +
+        '</div>' +
+      '</div>';
+      return;
+    }
+
+    var filtered = applyFilters(allStudents);
+    var myId = (bio && bio.studentId) ? String(bio.studentId).toUpperCase() : '';
+
+    // Sort by totalScore descending
+    filtered.sort(function (a, b) {
+      var aS = parseFloat(String(a.totalScore).replace('%', '')) || 0;
+      var bS = parseFloat(String(b.totalScore).replace('%', '')) || 0;
+      return bS - aS;
+    });
+
+    var html = '<div class="rankings-section">' + head;
+    html += '<div class="rankings-table-meta">' +
+              (filtered.length === allStudents.length
+                ? 'Showing all ' + filtered.length
+                : 'Showing ' + filtered.length + ' of ' + allStudents.length) + ' students' +
+            '</div>';
+
+    if (filtered.length === 0) {
+      html += '<div class="rankings-empty-inline">No students match these filters.</div>';
+      html += '</div>';
+      section.innerHTML = html;
+      return;
+    }
+
+    html += '<div class="rankings-table-wrap">';
+    html += '<table class="rankings-table">';
+    html += '<thead><tr>';
+    html += '<th class="rankings-th--num">#</th>';
+    html += '<th>ID</th>';
+    html += '<th>Dept</th>';
+    html += '<th class="rankings-th--num">HS Exam</th>';
+    html += '<th class="rankings-th--num">Program</th>';
+    html += '<th class="rankings-th--num">Total</th>';
+    html += '<th>Gender</th>';
+    html += '<th class="rankings-th--num">Prio</th>';
+    html += '<th>Academic</th>';
+    html += '<th>Application</th>';
+    html += '<th>Placement</th>';
+    html += '</tr></thead><tbody>';
+
+    filtered.forEach(function (s, i) {
+      var isMe = myId && String(s.studentId || '').toUpperCase() === myId;
+      html += '<tr' + (isMe ? ' class="rankings-tr--me"' : '') + '>';
+      html += '<td class="rankings-td--num">' + (i + 1) + (isMe ? ' <span class="rankings-you-chip">YOU</span>' : '') + '</td>';
+      html += '<td class="rankings-td--mono">' + esc(s.studentId || '—') + '</td>';
+      html += '<td>' + esc(s.department || '—') + '</td>';
+      html += '<td class="rankings-td--num">' + esc(s.highschoolExam || '—') + '</td>';
+      html += '<td class="rankings-td--num">' + esc(s.programExam || '—') + '</td>';
+      html += '<td class="rankings-td--num rankings-td--bold">' + esc(s.totalScore || '—') + '</td>';
+      html += '<td>' + esc(s.gender || '—') + '</td>';
+      html += '<td class="rankings-td--num">' + esc(s.priority || '—') + '</td>';
+      html += '<td>' + esc(s.academicStatus || '—') + '</td>';
+      html += '<td>' + esc(s.applicationStatus || s.status || '—') + '</td>';
+      html += '<td>' + esc(s.placementStatus || '—') + '</td>';
+      html += '</tr>';
+    });
+
+    html += '</tbody></table>';
+    html += '</div>';
+    html += '</div>';
+
+    section.innerHTML = html;
+  }
+
   window.RankingsController = {
     rendered: false,
     data: null,
