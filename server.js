@@ -918,6 +918,72 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  // Placement lookups — returns all option lists for the filter dropdowns
+  // POST /api/placement/lookups  { sessionId }
+  if (req.url === '/api/placement/lookups' && req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => body += chunk);
+    req.on('end', async () => {
+      try {
+        const { sessionId } = JSON.parse(body || '{}');
+        const session = getBDUSession(sessionId);
+        if (!session) {
+          res.writeHead(401, { 'Content-Type': 'application/json' });
+          return res.end(JSON.stringify({ success: false, error: 'Session expired. Please log out and log back in.' }));
+        }
+
+        const apiHeaders = {
+          'Cookie': session.cookies,
+          'Accept': 'application/json, text/plain, */*',
+          'X-Requested-With': 'XMLHttpRequest'
+        };
+
+        const [deptRes, prioRes, acYearRes, semRes, yearRes, termRes] = await Promise.all([
+          makeRequest('/Placement/GetDestinationDepartment', { headers: apiHeaders }),
+          makeRequest('/Placement/GetSelectionPriority', { headers: apiHeaders }),
+          makeRequest('/Placement/GetAcYear', { headers: apiHeaders }),
+          makeRequest('/Placement/GetSemester', { headers: apiHeaders }),
+          makeRequest('/Placement/GetYear', { headers: apiHeaders }),
+          makeRequest('/Placement/GetTerm', { headers: apiHeaders }),
+        ]);
+
+        const departments = JSON.parse(deptRes.body || '{}').data || [];
+        const priorities = JSON.parse(prioRes.body || '{}').data || [];
+        const acYears = JSON.parse(acYearRes.body || '{}').data || [];
+        const semesters = JSON.parse(semRes.body || '{}').data || [];
+        const years = JSON.parse(yearRes.body || '{}').data || [];
+        const terms = JSON.parse(termRes.body || '{}').data || [];
+
+        touchBDUSession(sessionId);
+
+        res.writeHead(200, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
+        res.end(JSON.stringify({
+          success: true,
+          data: {
+            departments: departments.map(d => ({
+              code: d.DestinationCurriculumTblCode,
+              label: d.DestProgam,
+              name: String(d.DestProgam || '').split('->')[0].trim(),
+            })),
+            priorities: priorities.map(p => ({
+              code: p.PriorityName,
+              label: p.PriorityDesc,
+            })),
+            acYears: acYears.map(a => a.AcYear),
+            semesters: semesters.map(s => s.Semester),
+            years: years.map(y => y.Year),
+            terms: terms.map(t => t.Term),
+          }
+        }));
+      } catch (err) {
+        console.error('[LOOKUPS]', err.stack || err.message);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: false, error: err.message }));
+      }
+    });
+    return;
+  }
+
   // PDF generation: POST /api/generate-grade-pdf
   if (req.url === '/api/generate-grade-pdf' && req.method === 'POST') {
     let body = '';
