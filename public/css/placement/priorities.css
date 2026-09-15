@@ -1054,3 +1054,113 @@
 .priorities-criteria-row--muted {
   opacity: 0.6;
 }
+
+/* ===== M5 Patch C: Department Catalog ===== */
+.priorities-catalog-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.priorities-catalog-meta-item {
+  padding: 12px 10px;
+  background: var(--bg-body);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  text-align: center;
+}
+.priorities-catalog-meta-value {
+  display: block;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--primary);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.15;
+}
+.priorities-catalog-meta-label {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-top: 4px;
+}
+
+.priorities-catalog-table {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background: var(--border-light);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.priorities-catalog-row {
+  display: grid;
+  grid-template-columns: 1fr 48px 80px;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--bg-card);
+  font-size: 12px;
+  align-items: center;
+}
+.priorities-catalog-row--head {
+  background: var(--bg-elevated);
+  font-weight: 700;
+  font-size: 10px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+.priorities-catalog-cell--name {
+  color: var(--text-primary);
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.priorities-catalog-cell--num {
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  font-weight: 700;
+}
+.priorities-catalog-cell--bar {
+  display: flex;
+  align-items: center;
+}
+.priorities-catalog-bar {
+  width: 100%;
+  height: 6px;
+  background: var(--bg-body);
+  border-radius: 100px;
+  overflow: hidden;
+}
+.priorities-catalog-bar-fill {
+  height: 100%;
+  border-radius: 100px;
+  transition: width 0.3s ease;
+}
+.priorities-catalog-bar-fill--high { background: var(--success); }
+.priorities-catalog-bar-fill--mid  { background: var(--primary); }
+.priorities-catalog-bar-fill--low  { background: var(--warning); }
+
+.priorities-catalog-note {
+  margin-top: 12px;
+  padding: 10px 12px;
+  background: color-mix(in srgb, var(--primary) 6%, transparent);
+  border-radius: 10px;
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+@media (max-width: 420px) {
+  .priorities-catalog-row {
+    grid-template-columns: 1fr 40px;
+    font-size: 11px;
+  }
+  .priorities-catalog-cell--bar {
+    display: none;
+  }
+}

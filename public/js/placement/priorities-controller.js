@@ -759,6 +759,108 @@
     return html;
   }
 
+  // ===== M5 Patch C: Department Catalog =====
+  // Real departments + intake capacity from BDU's official page.
+  // Captured Sep 15, 2026. Update when BDU publishes a new catalog.
+  // Order: alphabetical by department name.
+
+  var DEPARTMENT_CATALOG_VERIFIED = '2026-09-15';
+  var DEPARTMENT_CATALOG_DEADLINE = 'Sep 18, 2026';
+
+  var DEPARTMENT_CATALOG = [
+    { dept: 'Accounting and Finance',                        capacity: 200 },
+    { dept: 'Afan Oromo, Literature and Communication',      capacity: 30  },
+    { dept: 'Amharic',                                        capacity: 40  },
+    { dept: 'Amharic Education',                              capacity: 40  },
+    { dept: 'Cinema and Theatre Arts',                        capacity: 30  },
+    { dept: 'Civics and Ethical Studies',                     capacity: 40  },
+    { dept: 'Civics and Ethical Studies Education',           capacity: 40  },
+    { dept: 'Economics',                                      capacity: 150 },
+    { dept: 'Educational Planning and Management',            capacity: 100 },
+    { dept: 'English',                                        capacity: 80  },
+    { dept: 'English Education',                              capacity: 40  },
+    { dept: 'Gender and Development Studies',                 capacity: 40  },
+    { dept: 'Geography',                                      capacity: 100 },
+    { dept: 'Geography Education',                            capacity: 40  },
+    { dept: "Ge'ez Language and Literature",                  capacity: 40  },
+    { dept: 'History',                                        capacity: 40  },
+    { dept: 'History Education',                              capacity: 40  },
+    { dept: 'Journalism & Communications',                    capacity: 80  },
+    { dept: 'Logistics and Supply Chain Management',          capacity: 100 },
+    { dept: 'Management',                                     capacity: 200 },
+    { dept: 'Marketing Management',                           capacity: 150 },
+    { dept: 'Music Arts',                                     capacity: 10  },
+    { dept: 'Political Science and International Studies',    capacity: 100 },
+    { dept: 'Psychology',                                     capacity: 100 },
+    { dept: 'Public Administration and Development Management', capacity: 50 },
+    { dept: 'Social Anthropology',                            capacity: 40  },
+    { dept: 'Social Work',                                    capacity: 100 },
+    { dept: 'Sociology',                                      capacity: 100 },
+    { dept: 'Special Needs and Inclusive Education',          capacity: 50  },
+    { dept: 'Tourism and Hotel Management',                   capacity: 40  }
+  ];
+
+  function renderDepartmentCatalog() {
+    if (!DEPARTMENT_CATALOG.length) return '';
+
+    var totalSeats = DEPARTMENT_CATALOG.reduce(function (sum, d) {
+      return sum + (d.capacity || 0);
+    }, 0);
+
+    var html = '<div class="priorities-section priorities-catalog-section">';
+    html += '<div class="priorities-section-head">' +
+              '<span class="priorities-head-icon">' + ICONS.target + '</span>' +
+              esc(t('catalog_head', 'Department Catalog')) +
+            '</div>';
+
+    html += '<div class="priorities-catalog-meta">' +
+              '<div class="priorities-catalog-meta-item">' +
+                '<span class="priorities-catalog-meta-value">' + DEPARTMENT_CATALOG.length + '</span>' +
+                '<span class="priorities-catalog-meta-label">departments</span>' +
+              '</div>' +
+              '<div class="priorities-catalog-meta-item">' +
+                '<span class="priorities-catalog-meta-value">' + totalSeats + '</span>' +
+                '<span class="priorities-catalog-meta-label">total seats</span>' +
+              '</div>' +
+              '<div class="priorities-catalog-meta-item">' +
+                '<span class="priorities-catalog-meta-value">' + esc(DEPARTMENT_CATALOG_DEADLINE) + '</span>' +
+                '<span class="priorities-catalog-meta-label">apply by</span>' +
+              '</div>' +
+            '</div>';
+
+    html += '<div class="priorities-catalog-table">';
+    html += '<div class="priorities-catalog-row priorities-catalog-row--head">';
+    html += '<div class="priorities-catalog-cell priorities-catalog-cell--name">Department</div>';
+    html += '<div class="priorities-catalog-cell priorities-catalog-cell--num">Seats</div>';
+    html += '<div class="priorities-catalog-cell priorities-catalog-cell--bar">Availability</div>';
+    html += '</div>';
+
+    // Capacity color tiers — highlight small vs large departments
+    var maxCapacity = Math.max.apply(null, DEPARTMENT_CATALOG.map(function (d) { return d.capacity; }));
+
+    DEPARTMENT_CATALOG.forEach(function (d) {
+      var pct = Math.round((d.capacity / maxCapacity) * 100);
+      var tier = d.capacity >= 150 ? 'high' : (d.capacity >= 60 ? 'mid' : 'low');
+
+      html += '<div class="priorities-catalog-row">';
+      html += '<div class="priorities-catalog-cell priorities-catalog-cell--name">' + esc(d.dept) + '</div>';
+      html += '<div class="priorities-catalog-cell priorities-catalog-cell--num">' + d.capacity + '</div>';
+      html += '<div class="priorities-catalog-cell priorities-catalog-cell--bar">';
+      html += '<div class="priorities-catalog-bar"><div class="priorities-catalog-bar-fill priorities-catalog-bar-fill--' + tier + '" style="width:' + pct + '%"></div></div>';
+      html += '</div>';
+      html += '</div>';
+    });
+
+    html += '</div>';
+
+    html += '<div class="priorities-catalog-note">' +
+              esc(t('catalog_note', 'These departments will appear as selectable on the official portal when BDU opens the window for your account. The planner below lets you prepare your priority order now. Catalog verified ' + DEPARTMENT_CATALOG_VERIFIED + '.')) +
+            '</div>';
+
+    html += '</div>';
+    return html;
+  }
+
   // ===== M5 5.3b: choice planner =====
 
   var PLAN_KEY = 'bd_priority_plan';
@@ -1186,6 +1288,7 @@
       html += renderResultCard(results);
       html += renderScoreBreakdown(criteria);
       html += renderStanding(placement, criteria);
+      html += renderDepartmentCatalog();
       html += renderPriorityList(results);
       html += renderSimulator(criteria);
       html += renderActionGuide();
