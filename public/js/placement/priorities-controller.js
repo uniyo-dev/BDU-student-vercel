@@ -15,6 +15,12 @@
 (function () {
   'use strict';
 
+  // Captured at module load — survives history.replaceState from tab switching
+  var _DEV_STANDING_DEMO = (function () {
+    try { return /(?:\?|&)standing=demo(?:&|$)/.test(location.search); }
+    catch (e) { return false; }
+  })();
+
   function t(key, fallback) {
     if (window.BD_I18N && typeof window.BD_I18N[key] === 'string') {
       return window.BD_I18N[key];
@@ -650,7 +656,7 @@
   function renderStanding(placement, criteria) {
     // DEV PREVIEW: append ?standing=demo to the URL to see the
     // panel with generated sample data. Never fires in production.
-    if (location.search.indexOf('standing=demo') !== -1 && (placement.allStudents || []).length === 0) {
+    if (_DEV_STANDING_DEMO && (placement.allStudents || []).length === 0) {
       placement = { allStudents: [] };
       var _base = yourScore || 67.76;
       for (var _i = 0; _i < 200; _i++) {
