@@ -578,6 +578,22 @@ const server = http.createServer(async (req, res) => {
           body: fd.toString(),
         });
 
+        // ─── DEBUG: dump everything about the login attempt ───
+        const loginDebug = {
+          loginStatus: loginRes.statusCode,
+          loginHeaders: loginRes.headers,
+          loginBodyLength: (loginRes.body || '').length,
+          loginBodyPreview: (loginRes.body || '').slice(0, 1500),
+          tokenExtracted: token ? 'yes (len ' + token.length + ')' : 'NO',
+          tokenPreview: token ? token.slice(0, 60) : '',
+          loginPageStatus: loginPage.statusCode,
+          loginPageLength: (loginPage.body || '').length,
+          loginPageFirstForm: (loginPage.body || '').match(/<form[\s\S]{0,800}/) ? 'present' : 'not found',
+          loginPageInputNames: ((loginPage.body || '').match(/name="[^"]+"/g) || []).slice(0, 20),
+          cookies1Count: cookies1.length,
+          cookies2Count: (loginRes.headers['set-cookie'] || []).length,
+        };
+
         const cookies2 = (loginRes.headers['set-cookie'] || []).map(c => c.split(';')[0]);
         const cookieHeader = [...cookies1, ...cookies2].join('; ');
         const apiHeaders = { 'Cookie': cookieHeader, 'Accept': 'application/json, text/plain, */*', 'X-Requested-With': 'XMLHttpRequest' };
@@ -610,7 +626,7 @@ const server = http.createServer(async (req, res) => {
 
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({
-          loginStatus: loginRes.statusCode,
+          loginDebug: loginDebug,
           endpoints: results
         }, null, 2));
       } catch (err) {
