@@ -69,6 +69,10 @@
   var _filters = {
     department: '',
     priority: '',
+    academicYear: '',
+    semester: '',
+    year: '',
+    term: '',
     gender: '',
     applicationStatus: ''
   };
@@ -90,6 +94,10 @@
     return list.filter(function (s) {
       if (_filters.department && (s.department || '') !== _filters.department) return false;
       if (_filters.priority && String(s.priority || '') !== _filters.priority) return false;
+      if (_filters.academicYear && (s.academicYear || '') !== _filters.academicYear) return false;
+      if (_filters.semester && String(s.semester || '') !== _filters.semester) return false;
+      if (_filters.year && String(s.year || '') !== _filters.year) return false;
+      if (_filters.term && (s.term || '') !== _filters.term) return false;
       if (_filters.gender && (s.gender || '') !== _filters.gender) return false;
       if (_filters.applicationStatus && (s.applicationStatus || s.status || '') !== _filters.applicationStatus) return false;
       return true;
@@ -100,6 +108,7 @@
     var section = document.getElementById('filter-section');
     if (!section) return;
 
+    // Build unique values for each filter
     var depts = [];
     if (selectionOptions && selectionOptions.length > 0) {
       selectionOptions.forEach(function (o) {
@@ -109,10 +118,27 @@
     depts.sort();
 
     var priorities = uniqueValues(allStudents, 'priority');
+    var acYears = uniqueValues(allStudents, 'academicYear');
+    var semesters = uniqueValues(allStudents, 'semester');
+    var years = uniqueValues(allStudents, 'year');
+    var terms = uniqueValues(allStudents, 'term');
     var statuses = uniqueValues(allStudents, 'applicationStatus');
     if (statuses.length === 0) statuses = uniqueValues(allStudents, 'status');
 
-    var html = '<div class="rankings-section rankings-filter-section">';
+    var html = '';
+
+    // ─── Info banner (mirrors BDU's placement page text) ───
+    html += '<div class="rankings-info-banner">';
+    html += '<span class="rankings-info-banner-icon" aria-hidden="true">' +
+              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>' +
+            '</span>';
+    html += '<div class="rankings-info-banner-text">' +
+              '<strong>How this works:</strong> filter by department, priority, academic year, semester, year, and term to see students who selected that combination. Results are sorted by total score — highest first.' +
+            '</div>';
+    html += '</div>';
+
+    // ─── Filter panel ───
+    html += '<div class="rankings-section rankings-filter-section">';
     html += '<div class="rankings-section-head">' +
               '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>' +
               '<span>Filter Students</span>' +
@@ -142,6 +168,50 @@
     html += '</select>';
     html += '</div>';
 
+    // Academic Year
+    html += '<div class="rankings-filter-field">';
+    html += '<label class="rankings-filter-label" for="filter-acyear">Academic Year</label>';
+    html += '<select id="filter-acyear" class="rankings-filter-select" data-filter="academicYear" data-dropdown>';
+    html += '<option value="">Any academic year</option>';
+    acYears.forEach(function (v) {
+      html += '<option value="' + esc(v) + '"' + (_filters.academicYear === v ? ' selected' : '') + '>' + esc(v) + '</option>';
+    });
+    html += '</select>';
+    html += '</div>';
+
+    // Semester
+    html += '<div class="rankings-filter-field">';
+    html += '<label class="rankings-filter-label" for="filter-semester">Semester</label>';
+    html += '<select id="filter-semester" class="rankings-filter-select" data-filter="semester" data-dropdown>';
+    html += '<option value="">Any semester</option>';
+    semesters.forEach(function (v) {
+      html += '<option value="' + esc(v) + '"' + (_filters.semester === v ? ' selected' : '') + '>' + esc(v) + '</option>';
+    });
+    html += '</select>';
+    html += '</div>';
+
+    // Year
+    html += '<div class="rankings-filter-field">';
+    html += '<label class="rankings-filter-label" for="filter-year">Year</label>';
+    html += '<select id="filter-year" class="rankings-filter-select" data-filter="year" data-dropdown>';
+    html += '<option value="">Any year</option>';
+    years.forEach(function (v) {
+      html += '<option value="' + esc(v) + '"' + (_filters.year === v ? ' selected' : '') + '>' + esc(v) + '</option>';
+    });
+    html += '</select>';
+    html += '</div>';
+
+    // Academic Term
+    html += '<div class="rankings-filter-field">';
+    html += '<label class="rankings-filter-label" for="filter-term">Academic Term</label>';
+    html += '<select id="filter-term" class="rankings-filter-select" data-filter="term" data-dropdown>';
+    html += '<option value="">Any term</option>';
+    terms.forEach(function (v) {
+      html += '<option value="' + esc(v) + '"' + (_filters.term === v ? ' selected' : '') + '>' + esc(v) + '</option>';
+    });
+    html += '</select>';
+    html += '</div>';
+
     // Gender
     html += '<div class="rankings-filter-field">';
     html += '<label class="rankings-filter-label" for="filter-gender">Gender</label>';
@@ -152,7 +222,7 @@
     html += '</select>';
     html += '</div>';
 
-    // Application status
+    // Application Status
     html += '<div class="rankings-filter-field">';
     html += '<label class="rankings-filter-label" for="filter-status">Application Status</label>';
     html += '<select id="filter-status" class="rankings-filter-select" data-filter="applicationStatus" data-dropdown>';
@@ -166,8 +236,8 @@
     html += '</div>'; // grid
 
     html += '<div class="rankings-filter-actions">';
-    html += '<button type="button" class="rankings-filter-btn rankings-filter-btn--primary" data-filter-apply>Apply</button>';
-    html += '<button type="button" class="rankings-filter-btn" data-filter-clear>Clear</button>';
+    html += '<button type="button" class="rankings-filter-btn rankings-filter-btn--primary" data-filter-apply>Apply Filters</button>';
+    html += '<button type="button" class="rankings-filter-btn" data-filter-clear>Clear All</button>';
     html += '</div>';
 
     html += '</div>';
@@ -347,7 +417,7 @@
         }
         if (clearBtn) {
           clearBtn.addEventListener('click', function () {
-            _filters = { department: '', priority: '', gender: '', applicationStatus: '' };
+            _filters = { department: '', priority: '', academicYear: '', semester: '', year: '', term: '', gender: '', applicationStatus: '' };
             renderFilterPanel(allStudents, selectionOptions);
             renderLeaderboardTable(allStudents, bio);
           });

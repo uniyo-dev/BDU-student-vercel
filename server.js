@@ -342,6 +342,11 @@ async function handleLogin(req, res) {
       academicStatus: s.AcademicStatus || s.AcademicStanding || s.AcademicResult || '',
       applicationStatus: s.ApplicationStatus || '',
       placementStatus: s.PlacementStatus || '',
+      // Filter fields (matching BDU's PlacementPrioritySummary filter panel)
+      academicYear: s.AcYear || s.AcademicYear || '',
+      semester: s.Semester || '',
+      year: s.Year || s.AcademicYearShort || '',
+      term: s.AcademicTerm || s.Term || '',
     }));
 
     const placementCriteria = rawCriteria.map(c => ({
@@ -566,6 +571,10 @@ const server = http.createServer(async (req, res) => {
           academicStatus: s.AcademicStatus || s.AcademicStanding || s.AcademicResult || '',
           applicationStatus: s.ApplicationStatus || '',
           placementStatus: s.PlacementStatus || '',
+          academicYear: s.AcYear || s.AcademicYear || '',
+          semester: s.Semester || '',
+          year: s.Year || s.AcademicYearShort || '',
+          term: s.AcademicTerm || s.Term || '',
         }));
 
         const selectionOptions = selectionOptionsRaw.map(o => ({
