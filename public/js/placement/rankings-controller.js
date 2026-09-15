@@ -323,49 +323,39 @@
         }
       }
 
-      // Leaderboard
-      const leaderboardSection = document.getElementById('leaderboard-section');
-      if (leaderboardSection) {
-        if (allStudents.length > 0) {
-          const myId = bio.studentId;
-          const sorted = allStudents.slice().sort(function(a, b) {
-            const aS = parseFloat(String(a.totalScore).replace('%', '')) || 0;
-            const bS = parseFloat(String(b.totalScore).replace('%', '')) || 0;
-            return bS - aS;
+      // Filter panel + Leaderboard table
+      const selectionOptions = placement.selectionOptions || [];
+      renderFilterPanel(allStudents, selectionOptions);
+      renderLeaderboardTable(allStudents, bio);
+
+      // Wire filter selects after render
+      setTimeout(function () {
+        var filterSection = document.getElementById('filter-section');
+        if (!filterSection) return;
+        filterSection.querySelectorAll('[data-filter]').forEach(function (sel) {
+          sel.addEventListener('change', function () {
+            var key = sel.getAttribute('data-filter');
+            _filters[key] = sel.value || '';
           });
-          let html = '<div class="leaderboard-list">';
-          sorted.slice(0, 10).forEach(function(s, i) {
-            const isMe = String(s.studentId).toUpperCase() === String(myId).toUpperCase();
-            html +=
-              '<div class="leaderboard-row' + (isMe ? ' is-me' : '') + '">' +
-                '<div class="leaderboard-rank">#' + (i + 1) + '</div>' +
-                '<div class="leaderboard-name">' + esc(s.fullName || 'Student') + (isMe ? ' (You)' : '') + '</div>' +
-                '<div class="leaderboard-score">' + esc(s.totalScore || '—') + '</div>' +
-              '</div>';
+        });
+        var applyBtn = filterSection.querySelector('[data-filter-apply]');
+        var clearBtn = filterSection.querySelector('[data-filter-clear]');
+        if (applyBtn) {
+          applyBtn.addEventListener('click', function () {
+            renderLeaderboardTable(allStudents, bio);
           });
-          html += '</div>';
-          leaderboardSection.innerHTML =
-            '<div class="rankings-section">' +
-              '<div class="rankings-section-head">' +
-                '<svg viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>' +
-                '<span>Department Leaderboard</span>' +
-              '</div>' + html +
-            '</div>';
-        } else {
-          leaderboardSection.innerHTML =
-            '<div class="rankings-section">' +
-              '<div class="rankings-section-head">' +
-                '<svg viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>' +
-                '<span>Department Leaderboard</span>' +
-              '</div>' +
-              '<div class="rankings-empty">' +
-                '<div class="rankings-empty-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>' +
-                '<div class="rankings-empty-title">Not yet released</div>' +
-                '<div class="rankings-empty-text">Full department rankings will appear once placement is released.</div>' +
-              '</div>' +
-            '</div>';
         }
-      }
+        if (clearBtn) {
+          clearBtn.addEventListener('click', function () {
+            _filters = { department: '', priority: '', gender: '', applicationStatus: '' };
+            renderFilterPanel(allStudents, selectionOptions);
+            renderLeaderboardTable(allStudents, bio);
+          });
+        }
+        if (window.BDDropdown && typeof window.BDDropdown.init === 'function') {
+          window.BDDropdown.init(filterSection);
+        }
+      }, 30);
 
       // Placement priorities
       const prioritySection = document.getElementById('priority-section');
