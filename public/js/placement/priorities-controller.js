@@ -606,6 +606,100 @@
     }
   }
 
+  // ===== M5 E-B: Where You Stand =====
+
+  // Compute your rank + percentile from allStudents[].totalScore
+  // Returns null if insufficient data.
+  function computeStanding(placement, yourScore) {
+    var all = (placement && placement.allStudents) || [];
+    if (all.length < 5) return null;
+
+    var scores = [];
+    all.forEach(function (s) {
+      var v = parseFloat(s && s.totalScore);
+      if (!isNaN(v)) scores.push(v);
+    });
+    if (scores.length < 5) return null;
+
+    scores.sort(function (a, b) { return b - a; });  // desc
+
+    var myScore = parseFloat(yourScore) || 0;
+    var rank = scores.length + 1;
+    for (var i = 0; i < scores.length; i++) {
+      if (myScore >= scores[i]) { rank = i + 1; break; }
+    }
+
+    function pct(arr, p) {
+      var idx = Math.floor((p / 100) * (arr.length - 1));
+      return arr[Math.max(0, Math.min(arr.length - 1, idx))];
+    }
+
+    return {
+      total: scores.length,
+      rank: rank,
+      percentile: Math.round(((scores.length - rank + 1) / scores.length) * 100),
+      yourScore: myScore,
+      highest: scores[0],
+      lowest: scores[scores.length - 1],
+      q1: pct(scores, 25),
+      median: pct(scores, 50),
+      q3: pct(scores, 75)
+    };
+  }
+
+  function renderStanding(placement, criteria) {
+    // Sum criteria contributions (same as dashboard)
+    var yourScore = 0;
+    (criteria || []).forEach(function (c) {
+      var scored = parseFloat(c.scored);
+      var max = parseFloat(c.maximum);
+      var pct = parseFloat(c.percent);
+      if (!isNaN(scored) && !isNaN(max) && max > 0 && !isNaN(pct) && scored <= max) {
+        yourScore += (scored / max) * pct;
+      }
+    });
+
+    var st = computeStanding(placement, yourScore);
+    if (!st) return '';
+
+    var html = '<div class="priorities-section priorities-standing-section">';
+    html += '<div class="priorities-section-head">' +
+              '<span class="priorities-head-icon">' + ICONS.chart + '</span>' +
+              esc(t('standing_head', 'Where You Stand')) +
+            '</div>';
+
+    html += '<div class="priorities-standing-hero">';
+    html += '<div class="priorities-standing-rank">#' + st.rank + '</div>';
+    html += '<div class="priorities-standing-sub">of ' + st.total + ' applicants</div>';
+    html += '<div class="priorities-standing-pct">' + st.percentile + 'th percentile</div>';
+    html += '</div>';
+
+    html += '<div class="priorities-standing-row">';
+    html += '<div class="priorities-standing-cell"><div class="priorities-standing-cell-value">' + st.yourScore.toFixed(2) + '</div><div class="priorities-standing-cell-label">Your score</div></div>';
+    html += '<div class="priorities-standing-cell"><div class="priorities-standing-cell-value">' + st.highest.toFixed(2) + '</div><div class="priorities-standing-cell-label">Highest</div></div>';
+    html += '<div class="priorities-standing-cell"><div class="priorities-standing-cell-value">' + st.median.toFixed(2) + '</div><div class="priorities-standing-cell-label">Median</div></div>';
+    html += '</div>';
+
+    // Distribution bar with your marker
+    html += '<div class="priorities-standing-bar-wrap">';
+    html += '<div class="priorities-standing-bar">';
+    html += '<div class="priorities-standing-q q1" title="Top 25%">Q1</div>';
+    html += '<div class="priorities-standing-q q2" title="25-50%">Q2</div>';
+    html += '<div class="priorities-standing-q q3" title="50-75%">Q3</div>';
+    html += '<div class="priorities-standing-q q4" title="Bottom 25%">Q4</div>';
+    html += '<div class="priorities-standing-marker" style="left:' + (100 - st.percentile) + '%;"></div>';
+    html += '</div>';
+    html += '<div class="priorities-standing-scale"><span>Top</span><span>Middle</span><span>Bottom</span></div>';
+    html += '</div>';
+
+    html += '<div class="priorities-standing-note">' +
+              esc(t('standing_note', 'Rank computed from the placement data BDU has published so far. Will update as more results are released.')) +
+            '</div>';
+
+    html += '</div>';
+    return html;
+  }
+
   // ===== M5 5.3b: choice planner =====
 
   var PLAN_KEY = 'bd_priority_plan';
