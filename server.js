@@ -768,167 +768,149 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  // DEBUG: /api/probe-rankings — find the URL that returns BDU's student ranking
-  // POST { username, password, department, priority }
-  // Tries many candidate URLs and returns status + length + preview of each.
-  if (req.url === '/api/probe-rankings' && req.method === 'POST') {
+  // Placement rankings by department + priority
+  // POST /api/placement/rankings
+  //   { sessionId, department, priority, acYear, semester, year, term }
+  // Returns the list of students ranked for that combination.
+  if (req.url === '/api/placement/rankings' && req.method === 'POST') {
     let body = '';
     req.on('data', chunk => body += chunk);
     req.on('end', async () => {
       try {
-        const { username, password, department, priority } = JSON.parse(body || '{}');
-        if (!username || !password) {
-          res.writeHead(400, { 'Content-Type': 'application/json' });
-          return res.end(JSON.stringify({ success: false, error: 'username and password required' }));
+        const payload = JSON.parse(body || '{}');
+        const session = getBDUSession(payload.sessionId);
+        if (!session) {
+          res.writeHead(401, { 'Content-Type': 'application/json' });
+          return res.end(JSON.stringify({ success: false, error: 'Session expired. Please log out and log back in.' }));
         }
 
-        // Log in
-        const loginPage = await makeRequest('/Account/Login');
-        const token = loginPage.body.match(/__RequestVerificationToken[^>]*value="([^"]+)"/)?.[1] || '';
-        const cookies1 = (loginPage.headers['set-cookie'] || []).map(c => c.split(';')[0]);
-
-        const fd = new URLSearchParams();
-        fd.append('Input.UserName', username);
-        fd.append('Input.Password', password);
-        fd.append('__RequestVerificationToken', token);
-        fd.append('Input.RememberMe', 'false');
-
-        const loginRes = await makeRequest('/Account/Login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Cookie': cookies1.join('; '),
-            'Origin': 'http://studentportal.bdu.edu.et',
-            'Referer': 'http://studentportal.bdu.edu.et/Account/Login',
-          },
-          body: fd.toString(),
-        });
-
-        const cookies2 = (loginRes.headers['set-cookie'] || []).map(c => c.split('; ')[0]);
-        const cookieHeader = [...cookies1, ...cookies2].join('; ');
         const apiHeaders = {
-          'Cookie': cookieHeader,
+          'Cookie': session.cookies,
           'Accept': 'application/json, text/plain, */*',
           'X-Requested-With': 'XMLHttpRequest'
         };
 
-        const d = department || 'Economics';
-        const p = priority || '1';
+        // Step 1 — look up all 6 codes
+        const [deptRes, prioRes, acYearRes, semRes, yearRes, termRes] = await Promise.all([
+          makeRequest('/Placement/GetDestinationDepartment', { headers: apiHeaders }),
+          makeRequest('/Placement/GetSelectionPriority', { headers: apiHeaders }),
+          makeRequest('/Placement/GetAcYear', { headers: apiHeaders }),
+          makeRequest('/Placement/GetSemester', { headers: apiHeaders }),
+          makeRequest('/Placement/GetYear', { headers: apiHeaders }),
+          makeRequest('/Placement/GetTerm', { headers: apiHeaders }),
+        ]);
 
-        // Candidate URLs — probe them all
-        const candidates = [
-          // Direct URL patterns
-          '/Placement/GetDepartmentApplicationSummary',
-          '/Placement/GetDepartmentApplicationDetail',
-          '/Placement/GetPlacementPrioritySummary',
-          '/Placement/GetPlacementResultByDepartment',
-          '/Placement/GetSelectionPriorityResult',
-          '/Placement/GetStudentByPriority',
-          '/Placement/GetPriorityStudents',
-          '/Placement/GetRankByPriority',
-          '/Placement/GetPlacementPriorityDetail',
-          // With query params
-          '/Placement/GetDepartmentApplicationSummary?department=' + encodeURIComponent(d) + '&priority=' + p,
-          '/Placement/GetPlacementPrioritySummary?department=' + encodeURIComponent(d) + '&priority=' + p,
-          '/Placement/GetSelectionPriorityResult?department=' + encodeURIComponent(d) + '&priority=' + p,
-          '/Placement/GetStudentByPriority?department=' + encodeURIComponent(d) + '&priority=' + p,
-          '/Placement/GetRankByPriority?department=' + encodeURIComponent(d) + '&priority=' + p,
-          // HTML pages that may render
-          '/DepartmentPlacment/PlacementPrioritySummary',
-        ];
+        const departments = JSON.parse(deptRes.body || '{}').data || [];
+        const priorities = JSON.parse(prioRes.body || '{}').data || [];
+        const acYears = JSON.parse(acYearRes.body || '{}').data || [];
+        const semesters = JSON.parse(semRes.body || '{}').data || [];
+        const years = JSON.parse(yearRes.body || '{}').data || [];
+        const terms = JSON.parse(termRes.body || '{}').data || [];
 
-        // Probe the lookup endpoints
-        const lookups = [
-          '/Placement/GetDestinationDepartment',
-          '/Placement/GetSelectionPriority',
-          '/Placement/GetAcYear',
-          '/Placement/GetSemester',
-          '/Placement/GetYear',
-          '/Placement/GetTerm',
-        ];
-        const lookupData = [];
-        for (const url of lookups) {
-          try {
-            const r = await makeRequest(url, { headers: apiHeaders });
-            const b = r.body || '';
-            lookupData.push({
-              url: url,
-              status: r.statusCode,
-              length: b.length,
-              preview: b.slice(0, 800),
-            });
-          } catch (e) {
-            lookupData.push({ url: url, error: e.message });
-          }
+        // Step 2 — translate display values to codes
+        // Department: match either the full "X -> Quota Y" or just "X"
+        const deptNeedle = String(payload.department || '').trim();
+        const deptMatch = departments.find(d => {
+          const display = String(d.DestProgam || '');
+          const nameOnly = display.split('->')[0].trim();
+          return display === deptNeedle || nameOnly === deptNeedle;
+        });
+        if (!deptMatch) {
+          res.writeHead(404, { 'Content-Type': 'application/json' });
+          return res.end(JSON.stringify({ success: false, error: 'Department not found: ' + deptNeedle }));
         }
 
-        // Special case: fetch the HTML page and dump its structure
-        let htmlDump = null;
-        try {
-          const htmlR = await makeRequest(
-            '/DepartmentPlacment/PlacementPrioritySummary?department=' + encodeURIComponent(d) + '&priority=' + p + '&academicYear=2025/2026&semester=2&year=1&term=II',
-            { headers: { 'Cookie': cookieHeader, 'Accept': 'text/html' } }
-          );
-          const html = htmlR.body || '';
-          htmlDump = {
-            status: htmlR.statusCode,
-            length: html.length,
-            // Extract any URLs in the HTML (loadUrl, ajax, callback)
-            urls: (html.match(/["'](?:loadUrl|url|Url|action|Action|ajaxUrl|callback)["']\s*[:=]\s*["']([^"']+)["']/g) || []).slice(0, 30),
-            // Find the first <table> block (first 1500 chars)
-            tablePreview: (function () {
-              const idx = html.indexOf('<table');
-              if (idx === -1) return 'NO TABLE FOUND';
-              return html.slice(idx, idx + 1500);
-            })(),
-            // Find the createStore block for GetDepartmentApplicationSummary
-            storeConfig: (function () {
-              const idx = html.indexOf('/Placement/GetDepartmentApplicationSummary');
-              if (idx === -1) return 'NOT FOUND';
-              return html.slice(Math.max(0, idx - 200), idx + 2500);
-            })(),
-            // Find any 'DataGrid' or grid definitions
-            gridConfig: (function () {
-              const idx = html.indexOf('dxDataGrid');
-              if (idx === -1) return 'NO GRID';
-              return html.slice(idx, idx + 2500);
-            })(),
-            // Find any "GetPlacement" or "Placement/" URLs in the HTML
-            placementUrls: (html.match(/\/Placement\/[A-Za-z]+/g) || []).filter((v, i, a) => a.indexOf(v) === i).slice(0, 30),
-            // Find any URLs with GetXXX / GetYYY pattern
-            getUrls: (html.match(/\/Get[A-Z][A-Za-z]+/g) || []).filter((v, i, a) => a.indexOf(v) === i).slice(0, 30),
-          };
-        } catch (e) {
-          htmlDump = { error: e.message };
+        // Priority: match by PriorityDesc ("1st") or PriorityName (1)
+        const prioNeedle = String(payload.priority || '').trim();
+        const prioMatch = priorities.find(p =>
+          String(p.PriorityDesc) === prioNeedle ||
+          String(p.PriorityName) === prioNeedle ||
+          (prioNeedle === '1st' && p.PriorityName === 1)
+        );
+        if (!prioMatch) {
+          res.writeHead(404, { 'Content-Type': 'application/json' });
+          return res.end(JSON.stringify({ success: false, error: 'Priority not found: ' + prioNeedle }));
         }
 
-        const results = [];
-        for (const url of candidates) {
-          try {
-            const r = await makeRequest(url, { headers: apiHeaders });
-            const b = r.body || '';
-            results.push({
-              url: url,
-              status: r.statusCode,
-              length: b.length,
-              contentType: (r.headers && r.headers['content-type']) || '',
-              preview: b.slice(0, 300),
-            });
-          } catch (e) {
-            results.push({ url: url, error: e.message });
-          }
-        }
+        // Academic Year: match by AcYear string
+        const acYearNeedle = String(payload.acYear || '').trim();
+        const acYearMatch = acYears.find(a => String(a.AcYear) === acYearNeedle) || acYears[0];
 
-        res.writeHead(200, { 'Content-Type': 'application/json' });
+        // Semester: match by Semester number, else first
+        const semNeedle = String(payload.semester || '').trim();
+        const semMatch = semesters.find(s => String(s.Semester) === semNeedle) || semesters[0];
+
+        // Year/Batch: match by Year number, else first
+        const yearNeedle = String(payload.year || '').trim();
+        const yearMatch = years.find(y => String(y.Year) === yearNeedle) || years[0];
+
+        // Term: match by Term string, else first
+        const termNeedle = String(payload.term || '').trim();
+        const termMatch = terms.find(t => String(t.Term) === termNeedle) || terms[0];
+
+        // Step 3 — build the URL with proper codes
+        const params = new URLSearchParams({
+          destinationCurriculumTblCode: deptMatch.DestinationCurriculumTblCode,
+          acYear: acYearMatch.AcYear,
+          batch: yearMatch.Year,
+          semester: semMatch.Semester,
+          term: termMatch.Term,
+          priority: prioMatch.PriorityName,
+        });
+
+        const url = '/Placement/GetDepartmentApplicationSummary?' + params.toString();
+        const rankRes = await makeRequest(url, { headers: apiHeaders });
+        const rankData = JSON.parse(rankRes.body || '{}').data || [];
+
+        // Normalize each row to match our existing shape
+        const students = rankData.map(s => ({
+          studentId: String(s.StudentNo || ''),
+          department: deptNeedle,
+          priority: String(s.Priority || ''),
+          totalScore: s.TotalScore != null ? String(s.TotalScore) : '',
+          highschoolExam: s.NoneExamTotalResult != null ? String(s.NoneExamTotalResult) : '',
+          programExam: s.ExamResult != null ? String(s.ExamResult) : '',
+          gender: s.Sex || '',
+          academicStatus: s.FinalStatus || '',
+          applicationStatus: s.ApplicationStatus || '',
+          placementStatus: s.PlacementStatus || '',
+          studentCurriculumTblCode: s.StudentCurriculumTblCode || null,
+        }));
+
+        touchBDUSession(payload.sessionId);
+
+        res.writeHead(200, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
         res.end(JSON.stringify({
-          loginStatus: loginRes.statusCode,
-          department: d,
-          priority: p,
-          lookups: lookupData,
-          htmlDump: htmlDump,
-          results: results,
-        }, null, 2));
+          success: true,
+          data: {
+            students: students,
+            total: students.length,
+            resolvedCodes: {
+              destinationCurriculumTblCode: deptMatch.DestinationCurriculumTblCode,
+              acYear: acYearMatch.AcYear,
+              batch: yearMatch.Year,
+              semester: semMatch.Semester,
+              term: termMatch.Term,
+              priority: prioMatch.PriorityName,
+            },
+            availableOptions: {
+              departments: departments.map(d => ({
+                code: d.DestinationCurriculumTblCode,
+                label: d.DestProgam,
+              })),
+              priorities: priorities.map(p => ({
+                name: p.PriorityName,
+                label: p.PriorityDesc,
+              })),
+              acYears: acYears.map(a => a.AcYear),
+              semesters: semesters.map(s => s.Semester),
+              years: years.map(y => y.Year),
+              terms: terms.map(t => t.Term),
+            }
+          }
+        }));
       } catch (err) {
+        console.error('[RANKINGS]', err.stack || err.message);
         res.writeHead(500, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ success: false, error: err.message }));
       }
