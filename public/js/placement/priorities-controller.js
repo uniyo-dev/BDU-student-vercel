@@ -648,6 +648,16 @@
   }
 
   function renderStanding(placement, criteria) {
+    // DEV PREVIEW: append ?standing=demo to the URL to see the
+    // panel with generated sample data. Never fires in production.
+    if (location.search.indexOf('standing=demo') !== -1 && (placement.allStudents || []).length === 0) {
+      placement = { allStudents: [] };
+      var _base = yourScore || 67.76;
+      for (var _i = 0; _i < 200; _i++) {
+        placement.allStudents.push({ totalScore: (_base - 20 + Math.random() * 35).toFixed(2) });
+      }
+    }
+
     // Sum criteria contributions (same as dashboard)
     var yourScore = 0;
     (criteria || []).forEach(function (c) {
@@ -1126,6 +1136,7 @@
       var html = '';
       html += renderResultCard(results);
       html += renderScoreBreakdown(criteria);
+      html += renderStanding(placement, criteria);
       html += renderPriorityList(results);
       html += renderSimulator(criteria);
       html += renderActionGuide();
