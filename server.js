@@ -544,6 +544,83 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  // DEBUG: /api/debug-endpoints — POST { username, password }
+  // REMOVE AFTER DIAGNOSIS. Probes the placement endpoints.
+  if (req.url === '/api/debug-endpoints' && req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => body += chunk);
+    req.on('end', async () => {
+      try {
+        const { username, password } = JSON.parse(body);
+        if (!username || !password) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          return res.end(JSON.stringify({ success: false, error: 'username and password required' }));
+        }
+
+        const loginPage = await makeRequest('/Account/Login');
+        const token = loginPage.body.match(/__RequestVerificationToken[^>]*value="([^"]+)"/)?.[1] || '';
+        const cookies1 = (loginPage.headers['set-cookie'] || []).map(c => c.split(';')[0]);
+
+        const fd = new URLSearchParams();
+        fd.append('Input.UserName', username);
+        fd.append('Input.Password', password);
+        fd.append('__RequestVerificationToken', token);
+        fd.append('Input.RememberMe', 'false');
+
+        const loginRes = await makeRequest('/Account/Login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Cookie': cookies1.join('; '),
+            'Origin': 'http://studentportal.bdu.edu.et',
+            'Referer': 'http://studentportal.bdu.edu.et/Account/Login',
+          },
+          body: fd.toString(),
+        });
+
+        const cookies2 = (loginRes.headers['set-cookie'] || []).map(c => c.split(';')[0]);
+        const cookieHeader = [...cookies1, ...cookies2].join('; ');
+        const apiHeaders = { 'Cookie': cookieHeader, 'Accept': 'application/json, text/plain, */*', 'X-Requested-With': 'XMLHttpRequest' };
+
+        const endpoints = [
+          '/Placement/GetPlacementSelectionOption',
+          '/Placement/GetPlacementPriority',
+          '/DepartmentPlacment/DepartmentSelection',
+          '/Placement/GetPlacementResultSummary',
+          '/Placement/GetPlacementCriteria',
+          '/Placement/GetDepartmentApplicationSummary',
+        ];
+
+        const results = [];
+        for (const ep of endpoints) {
+          try {
+            const r = await makeRequest(ep, { headers: apiHeaders });
+            const bodyText = r.body || '';
+            results.push({
+              path: ep,
+              status: r.statusCode,
+              length: bodyText.length,
+              contentType: (r.headers && r.headers['content-type']) || '',
+              preview: bodyText.slice(0, 600),
+            });
+          } catch (e) {
+            results.push({ path: ep, error: e.message });
+          }
+        }
+
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+          loginStatus: loginRes.statusCode,
+          endpoints: results
+        }, null, 2));
+      } catch (err) {
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: false, error: err.message }));
+      }
+    });
+    return;
+  }
+
   // PDF generation: POST /api/generate-grade-pdf
   if (req.url === '/api/generate-grade-pdf' && req.method === 'POST') {
     let body = '';
