@@ -310,7 +310,8 @@
         // Set sensible defaults
         if (!_filters.academicYear && _lookups.acYears.length > 0) _filters.academicYear = String(_lookups.acYears[0]);
         if (!_filters.semester && _lookups.semesters.length > 0) _filters.semester = String(_lookups.semesters[0]);
-        if (!_filters.year && _lookups.years.length > 0) _filters.year = String(_lookups.years[0]);
+        // Year: leave empty by default so "Any" is selected
+        // (was forcing _lookups.years[0], which auto-set it to 1)
         if (!_filters.term && _lookups.terms.length > 0) _filters.term = String(_lookups.terms[0]);
 
         renderFilterPanel();
