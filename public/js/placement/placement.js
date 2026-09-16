@@ -326,19 +326,20 @@
     var score = computeScore(criteria);
     var catalog = buildCatalog(selectionOptions);
 
-    var html = '';
-    html += renderScoreCard(score, results);
-    container.innerHTML = html;
+    // Render score card + popular section immediately (popular may be empty)
+    var popularHtml = '';
+    var scoreHtml = renderScoreCard(score, results);
+    var catalogHtml = renderCatalog(catalog, placement);
+    container.innerHTML = scoreHtml + catalogHtml;
 
-    // Fetch popular departments asynchronously and prepend the section
+    // Fetch popular asynchronously and re-render once it arrives
     fetchPopularDepartments(function (popular) {
       var popularHtml = popular ? renderPopularSection(popular) : '';
-      var finalHtml = renderScoreCard(score, results) + popularHtml;
-      container.innerHTML = finalHtml;
+      container.innerHTML = renderScoreCard(score, results) + popularHtml + catalogHtml;
+      wireCatalogToggle();
+      wireSearch();
     });
 
-    // Initial render — score card only, popular will fill in
-    container.innerHTML = renderScoreCard(score, results);
     window.BDU_DEPARTMENTS = catalog.list.map(function (d) { return d.dept; });
 
     // Keep stats bar showing a small summary
