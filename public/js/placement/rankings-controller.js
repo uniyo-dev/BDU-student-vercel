@@ -255,6 +255,17 @@
       sel.addEventListener('change', function () {
         var key = sel.getAttribute('data-filter');
         _filters[key] = sel.value || '';
+
+        // Client-side filters (gender, applicationStatus) — re-render without re-fetch
+        if (key === 'gender' || key === 'applicationStatus') {
+          var lb = document.getElementById('leaderboard-section');
+          if (lb && _fetchedStudents && _fetchedStudents.length > 0) {
+            renderFetchedRows({
+              students: _fetchedStudents,
+              resolvedCodes: {},
+            }, lb);
+          }
+        }
       });
     });
 
@@ -408,7 +419,6 @@
                 '<span>Student Leaderboard</span>' +
               '</div>';
 
-    // 1. Get full student list from the server response
     var students = data.students || [];
     if (students.length === 0) {
       section.innerHTML = '<div class="rankings-section">' + head +
@@ -417,15 +427,34 @@
       return;
     }
 
-    // 2. Apply all client-side filters
-    var visible = applyFilters(students);
+    // ═══ 1. FILTER FIRST (client-side filters on returned rows) ═══
+    // The server already filtered by department + priority.
+    // Any additional client-side filters apply here.
+    var visible = students.filter(function (s) {
+      if (_filters.gender) {
+        var g = (s.gender || '').toUpperCase();
+        if (g !== _filters.gender.toUpperCase()) return false;
+      }
+      if (_filters.applicationStatus) {
+        var st = s.applicationStatus || s.status || '';
+        if (st !== _filters.applicationStatus) return false;
+      }
+      return true;
+    });
 
-    // 3. Sort by totalScore descending
+    if (visible.length === 0) {
+      section.innerHTML = '<div class="rankings-section">' + head +
+        '<div class="rankings-empty-inline">No students match the current filters.</div>' +
+      '</div>';
+      return;
+    }
+
+    // ═══ 2. SORT THE FILTERED LIST ═══
     visible.sort(function (a, b) {
       return (parseFloat(b.totalScore) || 0) - (parseFloat(a.totalScore) || 0);
     });
 
-    // 4. Compute gender counts FROM THE FILTERED LIST
+    // ═══ 3. COUNT FROM THE FILTERED LIST ═══
     var male = 0, female = 0, unknown = 0;
     visible.forEach(function (s) {
       var g = (s.gender || '').toUpperCase();
@@ -435,21 +464,21 @@
     });
     var total = visible.length;
 
-    // 5. Build the HTML
+    // ═══ 4. RENDER ═══
     var html = '<div class="rankings-section">' + head;
 
-    // ─── Summary bar ───
+    // Summary bar — counts come from the FILTERED list
     html += '<div class="rankings-summary">';
     html += '<div class="rankings-summary-count">' + total + ' student' + (total === 1 ? '' : 's') + '</div>';
     html += '<div class="rankings-summary-gender">';
     if (male > 0) {
       html += '<span class="rankings-gender-chip rankings-gender-chip--male">' +
-                'Male: ' + male + (total > 0 ? ' (' + Math.round(male / total * 100) + '%)' : '') +
+                'Male: ' + male + ' (' + Math.round(male / total * 100) + '%)' +
               '</span>';
     }
     if (female > 0) {
       html += '<span class="rankings-gender-chip rankings-gender-chip--female">' +
-                'Female: ' + female + (total > 0 ? ' (' + Math.round(female / total * 100) + '%)' : '') +
+                'Female: ' + female + ' (' + Math.round(female / total * 100) + '%)' +
               '</span>';
     }
     if (unknown > 0) {
@@ -458,7 +487,7 @@
     html += '</div>';
     html += '</div>';
 
-    // ─── Table ───
+    // Table
     html += '<div class="rankings-table-wrap">';
     html += '<table class="rankings-table">';
     html += '<thead><tr>';
