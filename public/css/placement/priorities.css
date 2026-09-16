@@ -1160,3 +1160,46 @@
 .priorities-standing-note--link a:hover {
   text-decoration: underline;
 }
+
+/* ===== Top-5 choice highlight in Priorities catalog ===== */
+.priorities-catalog-row {
+  position: relative;
+  padding-left: 16px;
+}
+.priorities-catalog-row--top1 {
+  border-left: 4px solid #FCD34D;
+  background: color-mix(in srgb, #FCD34D 10%, var(--bg-card));
+}
+.priorities-catalog-row--top2 {
+  border-left: 4px solid #94A3B8;
+  background: color-mix(in srgb, #94A3B8 6%, var(--bg-card));
+}
+.priorities-catalog-row--top3 {
+  border-left: 4px solid #D97706;
+  background: color-mix(in srgb, #D97706 6%, var(--bg-card));
+}
+.priorities-catalog-row--top4-5 {
+  border-left: 4px solid var(--primary);
+  background: color-mix(in srgb, var(--primary) 6%, var(--bg-card));
+}
+.priorities-catalog-badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: 100px;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+.priorities-catalog-badge--1 {
+  background: #FCD34D;
+  color: #78350F;
+  box-shadow: 0 0 8px rgba(252, 211, 77, 0.5);
+}
+.priorities-catalog-badge--2 { background: #CBD5E1; color: #1E293B; }
+.priorities-catalog-badge--3 { background: #D97706; color: #fff; }
+.priorities-catalog-badge--4,
+.priorities-catalog-badge--5 { background: var(--primary); color: #fff; }

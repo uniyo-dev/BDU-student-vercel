@@ -324,20 +324,15 @@
     container.innerHTML = html;
 
     // Fetch popular departments asynchronously and prepend the section
-    var catalogHtml = renderCatalog(catalog, placement);
     fetchPopularDepartments(function (popular) {
       var popularHtml = popular ? renderPopularSection(popular) : '';
-      var finalHtml = renderScoreCard(score, results) + popularHtml + catalogHtml;
+      var finalHtml = renderScoreCard(score, results) + popularHtml;
       container.innerHTML = finalHtml;
-      wireSearch();
-      window.BDU_DEPARTMENTS = catalog.list.map(function (d) { return d.dept; });
     });
 
-    // Fallback — render everything except popular section immediately
-    var initialHtml = renderScoreCard(score, results) + catalogHtml;
-    container.innerHTML = initialHtml;
-
-    wireSearch();
+    // Initial render — score card only, popular will fill in
+    container.innerHTML = renderScoreCard(score, results);
+    window.BDU_DEPARTMENTS = catalog.list.map(function (d) { return d.dept; });
 
     // Keep stats bar showing a small summary
     var statsBar = document.getElementById('stats-bar');

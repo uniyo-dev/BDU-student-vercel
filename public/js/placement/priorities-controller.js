@@ -831,7 +831,6 @@
   ];
 
   function renderDepartmentCatalog(placement) {
-    // Prefer live BDU catalog when available; fall back to hardcoded
     var liveOptions = (placement && placement.selectionOptions) || [];
     var catalog = [];
 
@@ -842,15 +841,26 @@
         }
       });
       catalog.sort(function (a, b) { return a.dept.localeCompare(b.dept); });
-    } else {
+    } else if (typeof DEPARTMENT_CATALOG !== 'undefined' && DEPARTMENT_CATALOG.length) {
       catalog = DEPARTMENT_CATALOG.slice();
     }
 
     if (!catalog.length) return '';
 
+    // Priority map from student's own submitted results
+    var priorityMap = {};
+    var submittedResults = (placement && placement.results) || [];
+    submittedResults.forEach(function (r) {
+      if (r && r.department) {
+        priorityMap[String(r.department).trim()] = r.priority;
+      }
+    });
+
     var totalSeats = catalog.reduce(function (sum, d) {
       return sum + (d.capacity || 0);
     }, 0);
+
+    var maxCapacity = Math.max.apply(null, catalog.map(function (d) { return d.capacity || 0; }));
 
     var html = '<div class="priorities-section priorities-catalog-section">';
     html += '<div class="priorities-section-head">' +
@@ -868,38 +878,44 @@
                 '<span class="priorities-catalog-meta-label">total seats</span>' +
               '</div>' +
               '<div class="priorities-catalog-meta-item">' +
-                '<span class="priorities-catalog-meta-value">' + esc(DEPARTMENT_CATALOG_DEADLINE) + '</span>' +
+                '<span class="priorities-catalog-meta-value">' + esc((typeof DEPARTMENT_CATALOG_DEADLINE !== 'undefined' && DEPARTMENT_CATALOG_DEADLINE) || 'Sep 18, 2026') + '</span>' +
                 '<span class="priorities-catalog-meta-label">apply by</span>' +
               '</div>' +
             '</div>';
 
     html += '<div class="priorities-catalog-table">';
-    html += '<div class="priorities-catalog-row priorities-catalog-row--head">';
-    html += '<div class="priorities-catalog-cell priorities-catalog-cell--name">Department</div>';
-    html += '<div class="priorities-catalog-cell priorities-catalog-cell--num">Seats</div>';
-    html += '<div class="priorities-catalog-cell priorities-catalog-cell--bar">Availability</div>';
-    html += '</div>';
-
-    // Capacity color tiers — highlight small vs large departments
-    var maxCapacity = Math.max.apply(null, catalog.map(function (d) { return d.capacity || 0; }));
-
     catalog.forEach(function (d) {
-      var pct = Math.round((d.capacity / maxCapacity) * 100);
+      var pct = maxCapacity > 0 ? Math.max(6, Math.round((d.capacity / maxCapacity) * 100)) : 6;
       var tier = d.capacity >= 150 ? 'high' : (d.capacity >= 60 ? 'mid' : 'low');
 
-      html += '<div class="priorities-catalog-row">';
-      html += '<div class="priorities-catalog-cell priorities-catalog-cell--name">' + esc(d.dept) + '</div>';
+      var prioRaw = priorityMap[d.dept];
+      var prioNum = parseInt(prioRaw, 10);
+      var isTop5 = !isNaN(prioNum) && prioNum >= 1 && prioNum <= 5;
+
+      var rowClass = 'priorities-catalog-row';
+      if (isTop5) {
+        if (prioNum === 1) rowClass += ' priorities-catalog-row--top1';
+        else if (prioNum === 2) rowClass += ' priorities-catalog-row--top2';
+        else if (prioNum === 3) rowClass += ' priorities-catalog-row--top3';
+        else rowClass += ' priorities-catalog-row--top4-5';
+      }
+
+      var badge = '';
+      if (isTop5) {
+        var suffix = prioNum === 1 ? 'st' : prioNum === 2 ? 'nd' : prioNum === 3 ? 'rd' : 'th';
+        badge = '<span class="priorities-catalog-badge priorities-catalog-badge--' + prioNum + '">' + prioNum + suffix + ' choice</span>';
+      }
+
+      html += '<div class="' + rowClass + '">';
+      html += '<div class="priorities-catalog-cell priorities-catalog-cell--name">' + esc(d.dept) + badge + '</div>';
       html += '<div class="priorities-catalog-cell priorities-catalog-cell--num">' + d.capacity + '</div>';
-      html += '<div class="priorities-catalog-cell priorities-catalog-cell--bar">';
-      html += '<div class="priorities-catalog-bar"><div class="priorities-catalog-bar-fill priorities-catalog-bar-fill--' + tier + '" style="width:' + pct + '%"></div></div>';
-      html += '</div>';
+      html += '<div class="priorities-catalog-cell priorities-catalog-cell--bar"><div class="priorities-catalog-bar"><div class="priorities-catalog-bar-fill priorities-catalog-bar-fill--' + tier + '" style="width:' + pct + '%"></div></div></div>';
       html += '</div>';
     });
-
     html += '</div>';
 
     html += '<div class="priorities-catalog-note">' +
-              esc(t('catalog_note', 'These departments will appear as selectable on the official portal when BDU opens the window for your account. The planner below lets you prepare your priority order now. Catalog verified ' + DEPARTMENT_CATALOG_VERIFIED + '.')) +
+              esc(t('catalog_note', 'Departments you ranked in your top 5 are highlighted. Submit on the official portal at studentportal.bdu.edu.et.')) +
             '</div>';
 
     html += '</div>';
@@ -1045,6 +1061,7 @@
       html += renderResultCard(results);
       html += renderScoreBreakdown(criteria);
       html += renderStanding(placement, criteria);
+      html += renderDepartmentCatalog(placement);
       html += renderPriorityList(results);
       html += renderSimulator(criteria);
       html += renderActionGuide();
