@@ -417,15 +417,46 @@
     }
 
     // Sort by totalScore descending (already sorted by BDU, but be safe)
-    students.sort(function (a, b) {
+    visibleStudents.sort(function (a, b) {
       return (parseFloat(b.totalScore) || 0) - (parseFloat(a.totalScore) || 0);
     });
 
+    // Compute gender counts from the full student list (before filtering)
+    var male = 0, female = 0, unknown = 0;
+    students.forEach(function (s) {
+      var g = (s.gender || '').toUpperCase();
+      if (g === 'M') male++;
+      else if (g === 'F') female++;
+      else unknown++;
+    });
+    var total = students.length;
+
+    // Apply client-side gender filter (if set)
+    var visibleStudents = _filters.gender
+      ? students.filter(function (s) { return (s.gender || '').toUpperCase() === _filters.gender; })
+      : students;
+
     var html = '<div class="rankings-section">' + head;
-    html += '<div class="rankings-table-meta">' +
-              students.length + ' students · ' +
-              (data.resolvedCodes ? data.resolvedCodes.department || '' : '') +
-            '</div>';
+
+    // ─── Summary bar ───
+    html += '<div class="rankings-summary">';
+    html += '<div class="rankings-summary-count">' + total + ' student' + (total === 1 ? '' : 's') + '</div>';
+    html += '<div class="rankings-summary-gender">';
+    if (male > 0) {
+      html += '<span class="rankings-gender-chip rankings-gender-chip--male">' +
+                'Male: ' + male + ' (' + Math.round(male / total * 100) + '%)' +
+              '</span>';
+    }
+    if (female > 0) {
+      html += '<span class="rankings-gender-chip rankings-gender-chip--female">' +
+                'Female: ' + female + ' (' + Math.round(female / total * 100) + '%)' +
+              '</span>';
+    }
+    if (unknown > 0) {
+      html += '<span class="rankings-gender-chip">Unknown: ' + unknown + '</span>';
+    }
+    html += '</div>';
+    html += '</div>';
 
     html += '<div class="rankings-table-wrap">';
     html += '<table class="rankings-table">';
@@ -442,7 +473,7 @@
     html += '<th>Placement</th>';
     html += '</tr></thead><tbody>';
 
-    students.forEach(function (s, i) {
+    visibleStudents.forEach(function (s, i) {
       var isMe = myId && String(s.studentId || '').toUpperCase() === myId;
       var statusClass = '';
       if (s.placementStatus === 'Selected') statusClass = 'rankings-status--selected';
