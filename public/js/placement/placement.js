@@ -145,10 +145,20 @@
     return html;
   }
 
-  function renderCatalog(catalog) {
+  function renderCatalog(catalog, placement) {
     var list = catalog.list;
     var totalSeats = list.reduce(function (s, d) { return s + (d.capacity || 0); }, 0);
     var maxCap = Math.max.apply(null, list.map(function (d) { return d.capacity || 1; }));
+
+    // Build priority map from the student's submitted results[]
+    // Keys: department name (as BDU returns it), Values: priority number
+    var priorityMap = {};
+    var submittedResults = (placement && placement.results) || [];
+    submittedResults.forEach(function (r) {
+      if (r && r.department) {
+        priorityMap[String(r.department).trim()] = r.priority;
+      }
+    });
 
     var html = '<div class="dept-catalog-section">';
 
@@ -174,9 +184,28 @@
         appliedTxt = '<span class="dept-catalog-applied">' + d.applied + ' applied</span>';
       }
 
-      html += '<div class="dept-catalog-row" data-dept-name="' + esc(d.dept.toLowerCase()) + '">';
+      // Look up this department's priority from the student's results
+      var prioRaw = priorityMap[d.dept] || priorityMap[String(d.dept).trim()];
+      var prioNum = parseInt(prioRaw, 10);
+      var isTop5 = !isNaN(prioNum) && prioNum >= 1 && prioNum <= 5;
+
+      var rowClass = 'dept-catalog-row';
+      if (isTop5) {
+        if (prioNum === 1) rowClass += ' dept-catalog-row--top1';
+        else if (prioNum === 2) rowClass += ' dept-catalog-row--top2';
+        else if (prioNum === 3) rowClass += ' dept-catalog-row--top3';
+        else rowClass += ' dept-catalog-row--top4-5';
+      }
+
+      var badge = '';
+      if (isTop5) {
+        var suffix = prioNum === 1 ? 'st' : prioNum === 2 ? 'nd' : prioNum === 3 ? 'rd' : 'th';
+        badge = '<span class="dept-catalog-badge dept-catalog-badge--' + prioNum + '">' + prioNum + suffix + ' choice</span>';
+      }
+
+      html += '<div class="' + rowClass + '" data-dept-name="' + esc(d.dept.toLowerCase()) + '">';
       html += '<div class="dept-catalog-info">';
-      html += '<div class="dept-catalog-name">' + esc(d.dept) + '</div>';
+      html += '<div class="dept-catalog-name">' + esc(d.dept) + badge + '</div>';
       html += '<div class="dept-catalog-bar"><div class="dept-catalog-bar-fill dept-catalog-bar-fill--' + tier + '" style="width:' + pct + '%"></div></div>';
       html += '</div>';
       html += '<div class="dept-catalog-capacity">';
@@ -295,7 +324,7 @@
     container.innerHTML = html;
 
     // Fetch popular departments asynchronously and prepend the section
-    var catalogHtml = renderCatalog(catalog);
+    var catalogHtml = renderCatalog(catalog, placement);
     fetchPopularDepartments(function (popular) {
       var popularHtml = popular ? renderPopularSection(popular) : '';
       var finalHtml = renderScoreCard(score, results) + popularHtml + catalogHtml;

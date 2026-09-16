@@ -1299,3 +1299,64 @@
   text-transform: uppercase;
   letter-spacing: 0.4px;
 }
+
+/* ===== Top-5 choice highlight in catalog ===== */
+.dept-catalog-row {
+  position: relative;
+  padding-left: 16px;
+  transition: transform 0.15s ease;
+}
+.dept-catalog-row:hover { transform: translateX(2px); }
+
+/* Rank 1 — gold */
+.dept-catalog-row--top1 {
+  border-left: 4px solid #FCD34D;
+  background: color-mix(in srgb, #FCD34D 10%, var(--bg-body));
+}
+/* Rank 2 — silver */
+.dept-catalog-row--top2 {
+  border-left: 4px solid #94A3B8;
+  background: color-mix(in srgb, #94A3B8 6%, var(--bg-body));
+}
+/* Rank 3 — bronze */
+.dept-catalog-row--top3 {
+  border-left: 4px solid #D97706;
+  background: color-mix(in srgb, #D97706 6%, var(--bg-body));
+}
+/* Ranks 4–5 — primary */
+.dept-catalog-row--top4-5 {
+  border-left: 4px solid var(--primary);
+  background: color-mix(in srgb, var(--primary) 6%, var(--bg-body));
+}
+
+/* Badge next to department name */
+.dept-catalog-badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: 100px;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+.dept-catalog-badge--1 {
+  background: #FCD34D;
+  color: #78350F;
+  box-shadow: 0 0 8px rgba(252, 211, 77, 0.5);
+}
+.dept-catalog-badge--2 {
+  background: #CBD5E1;
+  color: #1E293B;
+}
+.dept-catalog-badge--3 {
+  background: #D97706;
+  color: #fff;
+}
+.dept-catalog-badge--4,
+.dept-catalog-badge--5 {
+  background: var(--primary);
+  color: #fff;
+}
