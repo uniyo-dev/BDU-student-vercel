@@ -162,6 +162,13 @@
 
     var html = '<div class="dept-catalog-section">';
 
+    // Collapsible wrapper — collapsed by default
+    html += '<button type="button" class="dept-catalog-toggle" data-catalog-toggle>';
+    html += '<span class="dept-catalog-toggle-label">Show ' + list.length + ' departments</span>';
+    html += '<span class="dept-catalog-toggle-arrow" aria-hidden="true">▾</span>';
+    html += '</button>';
+    html += '<div class="dept-catalog-body" data-catalog-body>';
+
     // Summary tiles
     html += '<div class="dept-catalog-summary">';
     html += '<div class="dept-catalog-summary-item"><span class="dept-catalog-summary-value">' + list.length + '</span><span class="dept-catalog-summary-label">departments</span></div>';
@@ -224,7 +231,7 @@
 
     html += '<div class="dept-catalog-note">' + esc(source) + ' Department selection opens on the official portal when BDU enables it for your account.</div>';
 
-    html += '</div>';
+    html += '</div>'; // end dept-catalog-body
     return html;
   }
 
@@ -350,5 +357,34 @@
 
     // Expose catalog for other modules
     window.BDU_DEPARTMENTS = catalog.list.map(function (d) { return d.dept; });
+
+    // Wire the catalog collapse toggle (if present)
+    wireCatalogToggle();
   });
+
+  // ─── Catalog collapse/expand toggle ───
+  function wireCatalogToggle() {
+    var btn = document.querySelector('[data-catalog-toggle]');
+    var body = document.querySelector('[data-catalog-body]');
+    if (!btn || !body) return;
+
+    // Default collapsed
+    body.classList.add('dept-catalog-body--collapsed');
+
+    btn.addEventListener('click', function () {
+      var collapsed = body.classList.contains('dept-catalog-body--collapsed');
+      if (collapsed) {
+        body.classList.remove('dept-catalog-body--collapsed');
+        btn.classList.add('dept-catalog-toggle--open');
+        var label = btn.querySelector('.dept-catalog-toggle-label');
+        if (label) label.textContent = 'Hide departments';
+      } else {
+        body.classList.add('dept-catalog-body--collapsed');
+        btn.classList.remove('dept-catalog-toggle--open');
+        var label2 = btn.querySelector('.dept-catalog-toggle-label');
+        var total = body.querySelectorAll('.dept-catalog-row').length;
+        if (label2) label2.textContent = 'Show ' + total + ' departments';
+      }
+    });
+  }
 })();

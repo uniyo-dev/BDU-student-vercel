@@ -225,51 +225,6 @@
 .priorities-status.rejected { background: var(--danger-bg); color: var(--danger); }
 
 /* ---- Simulator ---- */
-.priorities-sim {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.priorities-sim-block {
-  padding: 12px;
-  background: var(--bg-body);
-  border-radius: 12px;
-  border: 1px solid var(--border-light);
-}
-
-.priorities-sim-label {
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
-  margin-bottom: 8px;
-}
-
-.priorities-sim-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 6px 0;
-  font-size: 12px;
-  color: var(--text-secondary);
-}
-
-.priorities-sim-status {
-  font-weight: 700;
-  color: var(--text-muted);
-}
-
-.priorities-sim-note {
-  padding: 10px 14px;
-  background: var(--warning-bg);
-  border: 1px solid var(--warning-border);
-  border-radius: 10px;
-  font-size: 11px;
-  color: var(--warning);
-  line-height: 1.5;
-}
-
 /* ---- Action guide ---- */
 .priorities-action-list {
   padding-left: 20px;
@@ -418,122 +373,6 @@
 }
 
 /* On narrow screens, stack score under the name */
-@media (max-width: 480px) {
-  .priorities-criteria-row,
-  .priorities-criteria-total {
-    grid-template-columns: 1fr auto;
-    grid-template-areas:
-      "name  score"
-      "weight contrib";
-    row-gap: 4px;
-  }
-  .priorities-criteria-name   { grid-area: name; }
-  .priorities-criteria-score  { grid-area: score; text-align: right; }
-  .priorities-criteria-weight { grid-area: weight; font-size: 10px; }
-  .priorities-criteria-contrib { grid-area: contrib; text-align: right; }
-}
-
-/* --- Priority card status variants --- */
-.priorities-card--selected     { background: var(--success-bg); border-color: var(--success-border); }
-.priorities-card--not_selected { background: var(--danger-bg);  border-color: var(--danger-border); }
-.priorities-card--pending      { background: var(--warning-bg); border-color: var(--warning-border); }
-.priorities-card--unknown      { background: var(--bg-body); }
-
-.priorities-status--selected     { background: var(--success-bg); color: var(--success); }
-.priorities-status--not_selected { background: var(--danger-bg);  color: var(--danger); }
-.priorities-status--pending      { background: var(--warning-bg); color: var(--warning); }
-.priorities-status--rejected     { background: var(--danger-bg);  color: var(--danger); }
-.priorities-status--unknown      { background: var(--bg-elevated); color: var(--text-muted); }
-
-/* --- Simulator (sliders) --- */
-.priorities-sim-note-top {
-  font-size: 11px;
-  color: var(--text-muted);
-  line-height: 1.5;
-  margin-bottom: 14px;
-}
-.priorities-sim-control {
-  margin-bottom: 16px;
-}
-.priorities-sim-control-label {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin-bottom: 8px;
-}
-.priorities-sim-value {
-  font-variant-numeric: tabular-nums;
-  color: var(--primary);
-  font-weight: 800;
-}
-.priorities-sim-range {
-  width: 100%;
-  accent-color: var(--primary);
-  height: 6px;
-  cursor: pointer;
-}
-.priorities-sim-scale {
-  display: flex;
-  justify-content: space-between;
-  font-size: 10px;
-  color: var(--text-muted);
-  margin-top: 2px;
-}
-.priorities-sim-total {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 14px;
-  background: color-mix(in srgb, var(--primary) 10%, transparent);
-  border-radius: 12px;
-  margin-top: 8px;
-}
-.priorities-sim-total-label {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-}
-.priorities-sim-total-value {
-  font-size: 20px;
-  font-weight: 800;
-  color: var(--primary);
-  font-variant-numeric: tabular-nums;
-}
-.priorities-sim-disclaimer {
-  display: flex;
-  gap: 8px;
-  align-items: flex-start;
-  margin-top: 12px;
-  padding: 10px 12px;
-  background: var(--warning-bg);
-  border: 1px solid var(--warning-border);
-  border-radius: 10px;
-  font-size: 11px;
-  color: var(--warning);
-  line-height: 1.5;
-}
-.priorities-sim-disclaimer-icon {
-  display: inline-flex;
-  width: 14px;
-  height: 14px;
-  flex-shrink: 0;
-  margin-top: 2px;
-}
-.priorities-sim-disclaimer-icon svg { width: 100%; height: 100%; stroke: currentColor; }
-
-/* --- Empty state --- */
-.priorities-empty-icon {
-  display: inline-flex;
-  width: 40px;
-  height: 40px;
-  color: var(--text-muted);
-  margin-bottom: 12px;
-}
 .priorities-empty-icon svg { width: 100%; height: 100%; stroke: currentColor; }
 .priorities-empty-title {
   font-size: 15px;
@@ -548,141 +387,6 @@
 }
 
 
-/* ===== M5 5.3a: checklist + snapshot ===== */
-
-/* --- Checklist --- */
-.priorities-checklist-progress {
-  font-size: 12px;
-  color: var(--text-secondary);
-  margin-bottom: 12px;
-}
-.priorities-checklist-count {
-  font-weight: 800;
-  color: var(--primary);
-  font-variant-numeric: tabular-nums;
-}
-.priorities-checklist {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-.priorities-checklist-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 10px 12px;
-  background: var(--bg-body);
-  border: 1px solid var(--border-light);
-  border-radius: 10px;
-  cursor: pointer;
-  transition: background 0.15s ease, border-color 0.15s ease;
-}
-.priorities-checklist-item:hover {
-  border-color: var(--primary);
-}
-.priorities-checklist-item.is-checked {
-  background: color-mix(in srgb, var(--success) 8%, transparent);
-  border-color: color-mix(in srgb, var(--success) 30%, transparent);
-}
-.priorities-checklist-box {
-  appearance: none;
-  -webkit-appearance: none;
-  width: 18px;
-  height: 18px;
-  min-width: 18px;
-  border: 2px solid var(--border-light);
-  border-radius: 5px;
-  background: var(--bg-card);
-  cursor: pointer;
-  position: relative;
-  margin-top: 1px;
-  transition: all 0.15s ease;
-}
-.priorities-checklist-box:checked {
-  background: var(--success);
-  border-color: var(--success);
-}
-.priorities-checklist-box:checked::after {
-  content: "";
-  position: absolute;
-  top: 2px;
-  left: 5px;
-  width: 5px;
-  height: 9px;
-  border: solid #fff;
-  border-width: 0 2px 2px 0;
-  transform: rotate(45deg);
-}
-.priorities-checklist-text {
-  font-size: 13px;
-  color: var(--text-primary);
-  line-height: 1.4;
-}
-.priorities-checklist-item.is-checked .priorities-checklist-text {
-  color: var(--text-secondary);
-}
-.priorities-checklist-reset {
-  margin-top: 12px;
-  padding: 8px 14px;
-  background: transparent;
-  border: 1px solid var(--border-light);
-  border-radius: 10px;
-  color: var(--text-muted);
-  font-size: 12px;
-  font-weight: 700;
-  cursor: pointer;
-  font-family: inherit;
-}
-.priorities-checklist-reset:hover {
-  color: var(--danger);
-  border-color: var(--danger-border);
-}
-
-/* --- Snapshot --- */
-.priorities-snapshot-note {
-  font-size: 12px;
-  color: var(--text-muted);
-  line-height: 1.5;
-  margin-bottom: 12px;
-}
-.priorities-snapshot-actions {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-.priorities-snapshot-btn {
-  flex: 1;
-  min-width: 140px;
-  padding: 10px 14px;
-  background: var(--bg-body);
-  border: 1px solid var(--border-light);
-  border-radius: 10px;
-  color: var(--text-primary);
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-  font-family: inherit;
-  transition: border-color 0.15s ease, background 0.15s ease;
-}
-.priorities-snapshot-btn:hover {
-  border-color: var(--primary);
-}
-.priorities-snapshot-btn--primary {
-  background: var(--primary);
-  color: #fff;
-  border-color: var(--primary);
-}
-.priorities-snapshot-btn--primary:hover {
-  background: var(--primary-hover);
-  border-color: var(--primary-hover);
-}
-
-
-.priorities-planner-btn:hover:not(:disabled) {
-  background: var(--primary);
-  color: #fff;
-  border-color: var(--primary);
-}
 /* ===== M5 5.3c: department status ===== */
 .priorities-dept-status-note {
   font-size: 12px;
@@ -783,149 +487,6 @@
 }
 
 /* ===== M5 E-B: Where You Stand ===== */
-.priorities-standing-hero {
-  text-align: center;
-  padding: 20px 12px 18px;
-  background: linear-gradient(135deg,
-    color-mix(in srgb, var(--primary) 12%, transparent),
-    color-mix(in srgb, var(--primary) 4%, transparent));
-  border-radius: 16px;
-  margin-bottom: 16px;
-}
-.priorities-standing-rank {
-  font-size: 44px;
-  font-weight: 900;
-  color: var(--primary);
-  font-variant-numeric: tabular-nums;
-  line-height: 1;
-  letter-spacing: -1px;
-}
-.priorities-standing-sub {
-  font-size: 12px;
-  color: var(--text-secondary);
-  margin-top: 6px;
-  font-weight: 600;
-}
-.priorities-standing-pct {
-  display: inline-block;
-  margin-top: 10px;
-  padding: 4px 12px;
-  background: color-mix(in srgb, var(--primary) 20%, transparent);
-  color: var(--primary);
-  border-radius: 100px;
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-}
-
-.priorities-standing-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 10px;
-  margin-bottom: 18px;
-}
-.priorities-standing-cell {
-  padding: 12px;
-  background: var(--bg-body);
-  border: 1px solid var(--border-light);
-  border-radius: 12px;
-  text-align: center;
-}
-.priorities-standing-cell-value {
-  font-size: 16px;
-  font-weight: 800;
-  color: var(--text-1);
-  font-variant-numeric: tabular-nums;
-}
-.priorities-standing-cell-label {
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
-  margin-top: 4px;
-}
-
-.priorities-standing-bar-wrap {
-  margin-bottom: 14px;
-}
-.priorities-standing-bar {
-  position: relative;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 2px;
-  height: 36px;
-  border-radius: 10px;
-  overflow: hidden;
-}
-.priorities-standing-q {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 10px;
-  font-weight: 800;
-  color: rgba(255,255,255,0.9);
-  letter-spacing: 0.5px;
-}
-.priorities-standing-q.q1 { background: #10b981; }
-.priorities-standing-q.q2 { background: #22c55e; }
-.priorities-standing-q.q3 { background: #f59e0b; }
-.priorities-standing-q.q4 { background: #ef4444; }
-
-.priorities-standing-marker {
-  position: absolute;
-  top: -6px;
-  bottom: -6px;
-  width: 4px;
-  background: #fff;
-  border: 2px solid var(--primary);
-  border-radius: 4px;
-  transform: translateX(-50%);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-  pointer-events: none;
-}
-.priorities-standing-marker::after {
-  content: "▼";
-  position: absolute;
-  top: -14px;
-  left: 50%;
-  transform: translateX(-50%);
-  color: var(--primary);
-  font-size: 10px;
-}
-
-.priorities-standing-scale {
-  display: flex;
-  justify-content: space-between;
-  font-size: 10px;
-  color: var(--text-muted);
-  margin-top: 8px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
-}
-
-.priorities-standing-note {
-  font-size: 11px;
-  color: var(--text-muted);
-  line-height: 1.5;
-  padding: 10px 12px;
-  background: color-mix(in srgb, var(--primary) 6%, transparent);
-  border-radius: 10px;
-}
-
-.priorities-standing-waiting {
-  padding: 24px 16px;
-  text-align: center;
-  color: var(--text-muted);
-  font-size: 13px;
-  line-height: 1.5;
-  background: var(--bg-body);
-  border-radius: 12px;
-  border: 1px dashed var(--border-light);
-}
-
 /* ===== Collapsed inactive criteria ===== */
 .priorities-criteria-inactive {
   margin-top: 6px;
@@ -1086,103 +647,124 @@
   }
 }
 
-.priorities-planner-toggle.is-expanded {
-  border-style: solid;
-}
-.priorities-planner-toggle.is-expanded /* ===== Where You Stand — dual state additions ===== */
-.priorities-standing-hero--waiting {
-  background: linear-gradient(135deg,
-    color-mix(in srgb, var(--primary) 14%, transparent),
-    color-mix(in srgb, var(--primary) 4%, transparent));
-}
-
-.priorities-standing-row--single {
-  grid-template-columns: 1fr 1fr;
-}
-
-.priorities-standing-cell-value--sm {
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-}
-
-.priorities-standing-waiting {
-  padding: 14px 16px;
-  background: color-mix(in srgb, var(--warning) 8%, transparent);
-  border: 1px solid color-mix(in srgb, var(--warning) 25%, transparent);
-  border-radius: 12px;
-  margin-bottom: 12px;
-}
-.priorities-standing-waiting-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 12px;
-  font-weight: 800;
-  color: var(--warning);
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
-  margin-bottom: 10px;
-}
-.priorities-standing-waiting-icon {
-  display: inline-flex;
-  width: 14px;
-  height: 14px;
-  flex-shrink: 0;
-}
-.priorities-standing-waiting-icon svg {
-  width: 100%;
-  height: 100%;
-  stroke: currentColor;
-}
-.priorities-standing-waiting-list {
-  margin: 0 0 10px 0;
-  padding-left: 20px;
-  font-size: 12.5px;
-  color: var(--text-primary);
-  line-height: 1.7;
-}
-.priorities-standing-waiting-note {
-  font-size: 11.5px;
-  color: var(--text-muted);
-  line-height: 1.5;
-}
-
-.priorities-standing-note--link {
-  text-align: center;
-  font-size: 12px;
-}
-.priorities-standing-note--link a {
-  color: var(--primary);
-  font-weight: 700;
-  text-decoration: none;
-}
-.priorities-standing-note--link a:hover {
-  text-decoration: underline;
-}
-
+/* ===== Where You Stand — dual state additions ===== */
 /* ===== Top-5 choice highlight in Priorities catalog ===== */
 .priorities-catalog-row {
   position: relative;
   padding-left: 16px;
 }
-.priorities-catalog-row--top1 {
+.priorities-catalog-badge--4,
+
+/* ===== Priority Choice rows (with top-5 highlight) ===== */
+.priorities-choice-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.priorities-choice-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--bg-body);
+  border-radius: 12px;
+  border: 1px solid var(--border-light);
+}
+.priorities-choice-row--top1 {
   border-left: 4px solid #FCD34D;
-  background: color-mix(in srgb, #FCD34D 10%, var(--bg-card));
+  background: color-mix(in srgb, #FCD34D 10%, var(--bg-body));
 }
-.priorities-catalog-row--top2 {
+.priorities-choice-row--top2 {
   border-left: 4px solid #94A3B8;
-  background: color-mix(in srgb, #94A3B8 6%, var(--bg-card));
+  background: color-mix(in srgb, #94A3B8 6%, var(--bg-body));
 }
-.priorities-catalog-row--top3 {
+.priorities-choice-row--top3 {
   border-left: 4px solid #D97706;
-  background: color-mix(in srgb, #D97706 6%, var(--bg-card));
+  background: color-mix(in srgb, #D97706 6%, var(--bg-body));
 }
-.priorities-catalog-row--top4-5 {
+.priorities-choice-row--top4-5 {
   border-left: 4px solid var(--primary);
-  background: color-mix(in srgb, var(--primary) 6%, var(--bg-card));
+  background: color-mix(in srgb, var(--primary) 6%, var(--bg-body));
 }
-.priorities-catalog-badge {
+.priorities-choice-row--selected {
+  background: var(--success-bg);
+  border-color: var(--success-border);
+}
+.priorities-choice-row--not_selected {
+  background: var(--danger-bg);
+  border-color: var(--danger-border);
+}
+
+.priorities-choice-num {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 800;
+  text-align: center;
+}
+.priorities-choice-row--top1 .priorities-choice-num {
+  background: #FCD34D;
+  color: #78350F;
+}
+.priorities-choice-row--top2 .priorities-choice-num {
+  background: #CBD5E1;
+  color: #1E293B;
+}
+.priorities-choice-row--top3 .priorities-choice-num {
+  background: #D97706;
+  color: #fff;
+}
+.priorities-choice-row--top4-5 .priorities-choice-num {
+  background: var(--primary);
+  color: #fff;
+}
+
+.priorities-choice-body { flex: 1; min-width: 0; }
+.priorities-choice-dept {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+.priorities-choice-score {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.priorities-choice-status {
+  font-size: 10px;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: 100px;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+.priorities-choice-status--selected {
+  background: var(--success-bg);
+  color: var(--success);
+}
+.priorities-choice-status--not_selected {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+.priorities-choice-status--pending {
+  background: var(--warning-bg);
+  color: var(--warning);
+}
+.priorities-choice-status--unknown {
+  background: var(--bg-elevated);
+  color: var(--text-muted);
+}
+
+/* Choice badge */
+.priorities-choice-badge {
   display: inline-block;
   margin-left: 8px;
   padding: 2px 8px;
@@ -1194,12 +776,12 @@
   vertical-align: middle;
   white-space: nowrap;
 }
-.priorities-catalog-badge--1 {
+.priorities-choice-badge--1 {
   background: #FCD34D;
   color: #78350F;
   box-shadow: 0 0 8px rgba(252, 211, 77, 0.5);
 }
-.priorities-catalog-badge--2 { background: #CBD5E1; color: #1E293B; }
-.priorities-catalog-badge--3 { background: #D97706; color: #fff; }
-.priorities-catalog-badge--4,
-.priorities-catalog-badge--5 { background: var(--primary); color: #fff; }
+.priorities-choice-badge--2 { background: #CBD5E1; color: #1E293B; }
+.priorities-choice-badge--3 { background: #D97706; color: #fff; }
+.priorities-choice-badge--4,
+.priorities-choice-badge--5 { background: var(--primary); color: #fff; }

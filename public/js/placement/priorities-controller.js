@@ -241,8 +241,9 @@
   }
 
   function renderPriorityList(results) {
-    if (results.length < 1) return '';
+    if (!results || results.length < 1) return '';
 
+    // Sort by priority ascending
     var sorted = results.slice().sort(function (a, b) {
       return (parseInt(a.priority, 10) || 999) - (parseInt(b.priority, 10) || 999);
     });
@@ -253,17 +254,33 @@
               esc(t('priority_head', 'Your Priority Choices')) +
             '</div>';
 
-    html += '<div class="priorities-list">';
+    html += '<div class="priorities-choice-list">';
     sorted.forEach(function (r) {
       var cat = statusCategory(r.status);
+      var prioNum = parseInt(r.priority, 10);
+      var isTop5 = !isNaN(prioNum) && prioNum >= 1 && prioNum <= 5;
 
-      html += '<div class="priorities-card priorities-card--' + cat + '">';
-      html += '<div class="priorities-num">' + esc(r.priority || '—') + '</div>';
-      html += '<div class="priorities-card-body">';
-      html += '<div class="priorities-dept">' + esc(r.department || '—') + '</div>';
-      html += '<div class="priorities-score">' + esc(t('score_label', 'Score')) + ': ' + esc(r.totalScore || '—') + '</div>';
+      var rowClass = 'priorities-choice-row priorities-choice-row--' + cat;
+      if (isTop5) {
+        if (prioNum === 1) rowClass += ' priorities-choice-row--top1';
+        else if (prioNum === 2) rowClass += ' priorities-choice-row--top2';
+        else if (prioNum === 3) rowClass += ' priorities-choice-row--top3';
+        else rowClass += ' priorities-choice-row--top4-5';
+      }
+
+      var badge = '';
+      if (isTop5) {
+        var suffix = prioNum === 1 ? 'st' : prioNum === 2 ? 'nd' : prioNum === 3 ? 'rd' : 'th';
+        badge = '<span class="priorities-choice-badge priorities-choice-badge--' + prioNum + '">' + prioNum + suffix + ' choice</span>';
+      }
+
+      html += '<div class="' + rowClass + '">';
+      html += '<div class="priorities-choice-num">' + esc(r.priority || '—') + '</div>';
+      html += '<div class="priorities-choice-body">';
+      html += '<div class="priorities-choice-dept">' + esc(r.department || '—') + badge + '</div>';
+      html += '<div class="priorities-choice-score">' + esc(t('score_label', 'Score')) + ': ' + esc(r.totalScore || '—') + '</div>';
       html += '</div>';
-      html += '<div class="priorities-status priorities-status--' + cat + '">' + esc(r.status || '—') + '</div>';
+      html += '<div class="priorities-choice-status priorities-choice-status--' + cat + '">' + esc(r.status || '—') + '</div>';
       html += '</div>';
     });
     html += '</div>';
@@ -1060,20 +1077,11 @@
       var html = '';
       html += renderResultCard(results);
       html += renderScoreBreakdown(criteria);
-      html += renderStanding(placement, criteria);
-      html += renderDepartmentCatalog(placement);
       html += renderPriorityList(results);
-      html += renderSimulator(criteria);
-      html += renderActionGuide();
-      html += renderPreSubmitChecklist();
-      html += renderSnapshotPanel(placement);
 
       container.innerHTML = html;
 
-      wireSimulator(container);
       wireCopyButton(container, results);
-      wireChecklist(container);
-      wireSnapshot(container, data);
 
       this.rendered = true;
     }
