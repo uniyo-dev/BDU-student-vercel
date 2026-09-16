@@ -637,25 +637,38 @@
   font-weight: 800;
   color: var(--primary);
 }
-.rankings-tr--me {
-  background: color-mix(in srgb, var(--primary) 20%, transparent) !important;
-  outline: 2px solid var(--primary);
-  outline-offset: -2px;
-  position: relative;
-  animation: pulse-me 2s ease-in-out infinite;
-}
+/* ─── YOUR row highlight (td-based — renders on all browsers) ─── */
 .rankings-tr--me td {
-  font-weight: 800;
-  color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 14%, var(--bg-card)) !important;
+  font-weight: 800 !important;
+  color: var(--text-primary) !important;
 }
-@keyframes pulse-me {
-  0%, 100% {
-    background: color-mix(in srgb, var(--primary) 20%, transparent);
-  }
-  50% {
-    background: color-mix(in srgb, var(--primary) 30%, transparent);
-  }
+.rankings-tr--me td:first-child {
+  position: relative;
+  padding-left: 14px;
 }
+/* 4px colored bookmark stripe on the left edge */
+.rankings-tr--me td:first-child::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--primary);
+  border-radius: 2px 0 0 2px;
+}
+/* Slight tint on the row-level total column for extra pop */
+.rankings-tr--me td.rankings-td--bold {
+  color: var(--primary) !important;
+  font-weight: 900 !important;
+}
+/* Dashed bottom border to close the row visually */
+.rankings-tr--me td {
+  border-bottom: 1px dashed color-mix(in srgb, var(--primary) 40%, transparent) !important;
+}
+
+/* YOUR chip — unchanged size, slight glow for visibility */
 .rankings-you-chip {
   display: inline-block;
   padding: 3px 8px;
