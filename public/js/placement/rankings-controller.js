@@ -13,7 +13,6 @@
     semester: '',
     year: '',
     term: '',
-    gender: '',
     applicationStatus: ''
   };
   var _lookups = null;
@@ -108,7 +107,6 @@
       if (_filters.semester && String(s.semester || '') !== _filters.semester) return false;
       if (_filters.year && String(s.year || '') !== _filters.year) return false;
       if (_filters.term && (s.term || '') !== _filters.term) return false;
-      if (_filters.gender && (s.gender || '') !== _filters.gender) return false;
       if (_filters.applicationStatus && (s.applicationStatus || s.status || '') !== _filters.applicationStatus) return false;
       return true;
     });
@@ -220,16 +218,6 @@
     html += '</select>';
     html += '</div>';
 
-    // Gender
-    html += '<div class="rankings-filter-field">';
-    html += '<label class="rankings-filter-label">Gender</label>';
-    html += '<select class="rankings-filter-select" data-filter="gender" data-dropdown>';
-    html += '<option value="">Any</option>';
-    html += '<option value="M"' + (_filters.gender === 'M' ? ' selected' : '') + '>Male</option>';
-    html += '<option value="F"' + (_filters.gender === 'F' ? ' selected' : '') + '>Female</option>';
-    html += '</select>';
-    html += '</div>';
-
     // Application Status
     html += '<div class="rankings-filter-field">';
     html += '<label class="rankings-filter-label">Application Status</label>';
@@ -276,7 +264,7 @@
     }
     if (clearBtn) {
       clearBtn.addEventListener('click', function () {
-        _filters = { department: '', priority: '', academicYear: '', semester: '', year: '', term: '', gender: '', applicationStatus: '' };
+        _filters = { department: '', priority: '', academicYear: '', semester: '', year: '', term: '', applicationStatus: '' };
         _currentPage = 1;
         renderFilterPanel();
         renderLeaderboardTable();
@@ -431,10 +419,7 @@
     });
     var total = students.length;
 
-    // Apply client-side gender filter (if set)
-    var visibleStudents = _filters.gender
-      ? students.filter(function (s) { return (s.gender || '').toUpperCase() === _filters.gender; })
-      : students;
+    var visibleStudents = students;
 
     var html = '<div class="rankings-section">' + head;
 
@@ -595,7 +580,7 @@
         }
         if (clearBtn) {
           clearBtn.addEventListener('click', function () {
-            _filters = { department: '', priority: '', academicYear: '', semester: '', year: '', term: '', gender: '', applicationStatus: '' };
+            _filters = { department: '', priority: '', academicYear: '', semester: '', year: '', term: '', applicationStatus: '' };
             _currentPage = 1;
             renderFilterPanel(allStudents, selectionOptions);
             renderLeaderboardTable(allStudents, bio);
