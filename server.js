@@ -1033,8 +1033,12 @@ const server = http.createServer(async (req, res) => {
         const year = years[0] ? years[0].Year : 1;
         const term = terms[0] ? terms[0].Term : 'II';
 
-        // Fire parallel requests for each department at priority=1
-        const promises = departments.map(function (d) {
+        // ─── Helpers for throttled fetching ───
+        function sleep(ms) {
+          return new Promise(function (resolve) { setTimeout(resolve, ms); });
+        }
+
+        function fetchOneDept(d) {
           const params = new URLSearchParams({
             destinationCurriculumTblCode: d.DestinationCurriculumTblCode,
             acYear: acYear,
@@ -1066,9 +1070,46 @@ const server = http.createServer(async (req, res) => {
                 count: 0,
               };
             });
+        }
+
+        // ─── Batch fetch: 5 at a time, 250ms between batches ───
+        async function fetchAllThrottled(list) {
+          const out = [];
+          const BATCH_SIZE = 5;
+          for (let i = 0; i < list.length; i += BATCH_SIZE) {
+            const batch = list.slice(i, i + BATCH_SIZE);
+            const batchResults = await Promise.all(batch.map(fetchOneDept));
+            out.push.apply(out, batchResults);
+            if (i + BATCH_SIZE < list.length) {
+              await sleep(250);
+            }
+          }
+          return out;
+        }
+
+        console.log('[POPULAR] fetching', departments.length, 'departments (throttled, 5 at a time)…');
+        const t0 = Date.now();
+        let results = await fetchAllThrottled(departments);
+        console.log('[POPULAR] first pass done in', ((Date.now() - t0) / 1000).toFixed(1), 's');
+
+        // ─── Retry any zeros once ───
+        const zeroDepts = departments.filter(function (d) {
+          const nameOnly = String(d.DestProgam || '').split('->')[0].trim();
+          return results.find(function (r) { return r.department === nameOnly; }).count === 0;
         });
 
-        const results = await Promise.all(promises);
+        if (zeroDepts.length > 0) {
+          console.log('[POPULAR] retrying', zeroDepts.length, 'departments that returned 0…');
+          await sleep(1000);
+          const retried = await fetchAllThrottled(zeroDepts);
+          retried.forEach(function (rt) {
+            const idx = results.findIndex(function (r) { return r.department === rt.department; });
+            if (idx !== -1) results[idx] = rt;
+          });
+          const stillZero = results.filter(function (r) { return r.count === 0; }).length;
+          console.log('[POPULAR] after retry, still 0:', stillZero, '/', results.length);
+        }
+
         results.sort(function (a, b) { return b.count - a.count; });
         results.forEach(function (r, i) { r.rank = i + 1; });
 
