@@ -408,6 +408,7 @@
                 '<span>Student Leaderboard</span>' +
               '</div>';
 
+    // 1. Get full student list from the server response
     var students = data.students || [];
     if (students.length === 0) {
       section.innerHTML = '<div class="rankings-section">' + head +
@@ -416,26 +417,25 @@
       return;
     }
 
-    // Sort by totalScore descending (already sorted by BDU, but be safe)
-    visibleStudents.sort(function (a, b) {
+    // 2. Apply all client-side filters
+    var visible = applyFilters(students);
+
+    // 3. Sort by totalScore descending
+    visible.sort(function (a, b) {
       return (parseFloat(b.totalScore) || 0) - (parseFloat(a.totalScore) || 0);
     });
 
-    // Compute gender counts from the full student list (before filtering)
+    // 4. Compute gender counts FROM THE FILTERED LIST
     var male = 0, female = 0, unknown = 0;
-    students.forEach(function (s) {
+    visible.forEach(function (s) {
       var g = (s.gender || '').toUpperCase();
       if (g === 'M') male++;
       else if (g === 'F') female++;
       else unknown++;
     });
-    var total = students.length;
+    var total = visible.length;
 
-    // Apply ALL client-side filters (department, priority, gender, etc.)
-    // The server already filtered by department+priority, but if other filters
-    // are set (gender, applicationStatus, etc.), apply them here.
-    var visibleStudents = applyFilters(students);
-
+    // 5. Build the HTML
     var html = '<div class="rankings-section">' + head;
 
     // ─── Summary bar ───
@@ -444,12 +444,12 @@
     html += '<div class="rankings-summary-gender">';
     if (male > 0) {
       html += '<span class="rankings-gender-chip rankings-gender-chip--male">' +
-                'Male: ' + male + ' (' + Math.round(male / total * 100) + '%)' +
+                'Male: ' + male + (total > 0 ? ' (' + Math.round(male / total * 100) + '%)' : '') +
               '</span>';
     }
     if (female > 0) {
       html += '<span class="rankings-gender-chip rankings-gender-chip--female">' +
-                'Female: ' + female + ' (' + Math.round(female / total * 100) + '%)' +
+                'Female: ' + female + (total > 0 ? ' (' + Math.round(female / total * 100) + '%)' : '') +
               '</span>';
     }
     if (unknown > 0) {
@@ -458,6 +458,7 @@
     html += '</div>';
     html += '</div>';
 
+    // ─── Table ───
     html += '<div class="rankings-table-wrap">';
     html += '<table class="rankings-table">';
     html += '<thead><tr>';
@@ -473,7 +474,7 @@
     html += '<th>Placement</th>';
     html += '</tr></thead><tbody>';
 
-    visibleStudents.forEach(function (s, i) {
+    visible.forEach(function (s, i) {
       var isMe = myId && String(s.studentId || '').toUpperCase() === myId;
       var statusClass = '';
       if (s.placementStatus === 'Selected') statusClass = 'rankings-status--selected';
@@ -482,9 +483,6 @@
 
       html += '<tr' + (isMe ? ' class="rankings-tr--me"' : '') + '>';
       html += '<td class="rankings-td--num">' + (i + 1) + '</td>';
-      if (isMe) {
-        // Insert a YOU marker on the ID cell
-      }
       html += '<td class="rankings-td--mono">' + esc(s.studentId || '—') + (isMe ? ' <span class="rankings-you-chip">YOU</span>' : '') + '</td>';
       html += '<td class="rankings-td--num">' + esc(s.highschoolExam || '—') + '</td>';
       html += '<td class="rankings-td--num">' + esc(s.programExam || '—') + '</td>';
