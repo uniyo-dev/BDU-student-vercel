@@ -1464,3 +1464,19 @@
   background: color-mix(in srgb, #F472B6 20%, transparent);
   color: #F9A8D4;
 }
+
+
+/* ─── Dark Angels link tab (anchor styled like a button) ─── */
+.tab-switch-btn--link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+.tab-switch-btn--link:hover,
+.tab-switch-btn--link:focus {
+  color: var(--primary, #2563eb);
+  text-decoration: none;
+}
