@@ -1036,6 +1036,7 @@ const server = http.createServer(async (req, res) => {
         ]);
 
         const departments = JSON.parse(deptRes.body || '{}').data || [];
+        const priorities = JSON.parse(prioRes.body || '{}').data || [];
         const acYears = JSON.parse(acYearRes.body || '{}').data || [];
         const semesters = JSON.parse(semRes.body || '{}').data || [];
         const years = JSON.parse(yearRes.body || '{}').data || [];
