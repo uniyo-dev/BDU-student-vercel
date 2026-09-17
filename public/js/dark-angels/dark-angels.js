@@ -117,29 +117,26 @@
   function renderHero(sim) {
     if (!els.result) return;
 
-    var my = sim.myAssignment;
-    var a = my
-      ? '<div class="da-hero da-hero--assigned">' +
-          '<div class="da-hero-label">If placement stopped right now</div>' +
-          '<div class="da-hero-dept">' + esc(my.department) + '</div>' +
-          '<div class="da-hero-meta">' +
-            'Your choice #' + esc(my.priority != null ? my.priority : '—') +
-            ' · Score ' + esc(my.score != null ? my.score.toFixed(2) : '—') +
-            ' · Rank ' + esc(sim.myRank != null ? sim.myRank : '—') +
-            ' of ' + esc(sim.totalApplicants) +
-          '</div>' +
-        '</div>'
-      : '<div class="da-hero da-hero--none">' +
-          '<div class="da-hero-label">If placement stopped right now</div>' +
-          '<div class="da-hero-dept">Not assigned</div>' +
-          '<div class="da-hero-meta">' +
-            'Rank ' + esc(sim.myRank != null ? sim.myRank : '—') +
-            ' of ' + esc(sim.totalApplicants) +
-            ' · None of your choices have seats left in this simulation.' +
-          '</div>' +
-        '</div>';
+    var my = sim.myAssignment || null;
+    var rankTxt = (sim.myRank != null) ? ('#' + sim.myRank + ' of ' + sim.totalApplicants) : ('— of ' + (sim.totalApplicants || '—'));
+    var scoreTxt = (my && my.score != null) ? Number(my.score).toFixed(2) : '—';
+    var prioTxt = (my && my.priority != null) ? ('choice #' + my.priority) : '—';
+    var deptTxt = (my && my.department) ? my.department : 'Not assigned';
+    var deptClass = (my && my.department) ? 'da-destiny--assigned' : 'da-destiny--none';
 
-    els.result.innerHTML = a;
+    var html = '';
+    html += '<div class="da-destiny ' + deptClass + '">';
+    html += '  <div class="da-destiny-eyebrow">Your Destiny</div>';
+    html += '  <div class="da-destiny-dept">' + esc(deptTxt) + '</div>';
+    html += '  <div class="da-destiny-sub">if placement stopped right now</div>';
+    html += '  <div class="da-destiny-meta">';
+    html += '    <div class="da-destiny-meta-item"><span class="da-destiny-meta-value">' + esc(rankTxt) + '</span><span class="da-destiny-meta-label">Rank</span></div>';
+    html += '    <div class="da-destiny-meta-item"><span class="da-destiny-meta-value">' + esc(scoreTxt) + '</span><span class="da-destiny-meta-label">Score</span></div>';
+    html += '    <div class="da-destiny-meta-item"><span class="da-destiny-meta-value">' + esc(prioTxt) + '</span><span class="da-destiny-meta-label">Priority</span></div>';
+    html += '  </div>';
+    html += '</div>';
+
+    els.result.innerHTML = html;
   }
 
   function renderDepartments(sim) {
@@ -217,7 +214,9 @@
 
   function renderAll(sim) {
     if (!els.result) return;
-    els.result.innerHTML = renderHero(sim) + renderDepartments(sim) + renderAlternatives(sim);
+    renderHero(sim);
+    var extra = renderDepartments(sim) + renderAlternatives(sim);
+    if (extra) els.result.insertAdjacentHTML('beforeend', extra);
     renderMethod(sim);
   }
 

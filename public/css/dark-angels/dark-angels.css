@@ -1,81 +1,137 @@
-/* ============================================================
-   Dark Angels — Placement Simulation
-   Self-contained styles. All rules scoped under .da-*.
-   Uses only theme tokens from /css/shared/variables.css and
-   /css/shared/theme.css so light/dark modes work unchanged.
-   ============================================================ */
+/* ═══════════════════════════════════════════════════════════
+   Dark Angels — Mystical Oracle Theme
+   Standalone. Ignores app theme on purpose.
+   Palette: deep cosmos + gold prophecy
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+  --da-bg-0: #05060d;
+  --da-bg-1: #0b0d1a;
+  --da-bg-2: #131629;
+  --da-surface: rgba(20, 23, 43, 0.7);
+  --da-border: rgba(212, 175, 55, 0.22);
+  --da-border-soft: rgba(212, 175, 55, 0.10);
+  --da-gold: #d4af37;
+  --da-gold-bright: #f5d76e;
+  --da-gold-soft: rgba(212, 175, 55, 0.14);
+  --da-text: #e8e6dd;
+  --da-text-dim: #8b8a80;
+  --da-text-mute: #5a5a5a;
+  --da-danger: #ff6b6b;
+  --da-success: #6ee7a7;
+}
 
 .da-page {
   min-height: 100vh;
   padding: 24px 16px 96px;
-  background: var(--bg, #ffffff);
-  color: var(--text, #111827);
+  background:
+    radial-gradient(circle at 20% 0%, rgba(212, 175, 55, 0.08), transparent 45%),
+    radial-gradient(circle at 80% 20%, rgba(109, 40, 217, 0.10), transparent 50%),
+    linear-gradient(180deg, var(--da-bg-0) 0%, var(--da-bg-1) 50%, var(--da-bg-2) 100%);
+  color: var(--da-text);
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* ── Star field (pure CSS, no images) ── */
+.da-page::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(1px 1px at 12% 18%, rgba(255,255,255,0.75), transparent 60%),
+    radial-gradient(1px 1px at 26% 42%, rgba(255,255,255,0.55), transparent 60%),
+    radial-gradient(1px 1px at 44% 12%, rgba(255,255,255,0.85), transparent 60%),
+    radial-gradient(1px 1px at 61% 33%, rgba(255,255,255,0.65), transparent 60%),
+    radial-gradient(1px 1px at 78% 22%, rgba(255,255,255,0.75), transparent 60%),
+    radial-gradient(1px 1px at 88% 55%, rgba(255,255,255,0.55), transparent 60%),
+    radial-gradient(1px 1px at 8% 68%, rgba(255,255,255,0.65), transparent 60%),
+    radial-gradient(1px 1px at 33% 82%, rgba(255,255,255,0.50), transparent 60%),
+    radial-gradient(1px 1px at 72% 88%, rgba(255,255,255,0.70), transparent 60%),
+    radial-gradient(1px 1px at 92% 76%, rgba(255,255,255,0.55), transparent 60%),
+    radial-gradient(1.5px 1.5px at 55% 62%, rgba(212,175,55,0.6), transparent 60%),
+    radial-gradient(1.5px 1.5px at 15% 92%, rgba(212,175,55,0.5), transparent 60%);
+  background-size: 100% 100%;
+  opacity: 0.9;
+  z-index: 0;
+  animation: da-twinkle 6s ease-in-out infinite alternate;
+}
+@keyframes da-twinkle {
+  from { opacity: 0.6; }
+  to   { opacity: 1; }
 }
 
 .da-container {
+  position: relative;
+  z-index: 1;
   max-width: 720px;
   margin: 0 auto;
 }
 
-/* ─── Header ─── */
+/* ── Header ── */
 .da-header {
   text-align: center;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 .da-title {
-  font-size: 28px;
-  font-weight: 800;
-  letter-spacing: -0.02em;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 38px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
   margin: 0 0 6px;
-  background: linear-gradient(135deg, #6D28D9 0%, #2563eb 100%);
+  background: linear-gradient(180deg, var(--da-gold-bright) 0%, var(--da-gold) 60%, #a17f1f 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  text-shadow: 0 0 24px rgba(212, 175, 55, 0.25);
 }
 .da-subtitle {
-  font-size: 14px;
-  color: var(--text-muted, #6b7280);
+  font-size: 13px;
+  color: var(--da-text-dim);
   margin: 0;
+  font-style: italic;
+  letter-spacing: 0.04em;
 }
 
-/* ─── Countdown ─── */
+/* ── Countdown ── */
 .da-countdown {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 8px;
-  margin: 20px 0;
-  padding: 16px;
-  background: var(--bg-elevated, #f9fafb);
-  border: 1px solid var(--border, #e5e7eb);
+  margin: 18px 0;
+  padding: 16px 12px;
+  background: var(--da-surface);
+  border: 1px solid var(--da-border);
   border-radius: 12px;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 0 24px rgba(212, 175, 55, 0.06);
 }
-.da-countdown-cell {
-  text-align: center;
-}
+.da-countdown-cell { text-align: center; }
 .da-countdown-value {
-  font-size: 24px;
-  font-weight: 800;
-  font-variant-numeric: tabular-nums;
-  color: var(--text, #111827);
-  line-height: 1.1;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--da-gold-bright);
+  line-height: 1.05;
+  text-shadow: 0 0 12px rgba(245, 215, 110, 0.35);
 }
 .da-countdown-label {
-  font-size: 11px;
+  font-size: 10px;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--text-muted, #6b7280);
-  margin-top: 4px;
+  letter-spacing: 0.14em;
+  color: var(--da-text-dim);
+  margin-top: 6px;
 }
-.da-countdown--frozen .da-countdown-value {
-  color: var(--danger, #dc2626);
-}
+.da-countdown--frozen .da-countdown-value { color: var(--da-danger); text-shadow: 0 0 12px rgba(255,107,107,0.5); }
 
-/* ─── Action bar ─── */
+/* ── Action buttons ── */
 .da-actions {
   display: flex;
-  gap: 8px;
-  margin: 20px 0;
+  gap: 10px;
+  margin: 18px 0;
 }
 .da-btn {
   flex: 1;
@@ -84,226 +140,328 @@
   border-radius: 10px;
   font-size: 15px;
   font-weight: 700;
+  letter-spacing: 0.03em;
   cursor: pointer;
-  transition: transform 0.12s, opacity 0.12s;
+  transition: transform 0.12s, box-shadow 0.2s, background 0.2s;
   font-family: inherit;
 }
-.da-btn:active {
-  transform: scale(0.98);
-}
-.da-btn:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
-}
+.da-btn:active { transform: scale(0.985); }
+.da-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
 .da-btn--primary {
-  background: linear-gradient(135deg, #6D28D9 0%, #2563eb 100%);
-  color: #ffffff;
+  background: linear-gradient(135deg, var(--da-gold-bright) 0%, var(--da-gold) 55%, #b8912b 100%);
+  color: #1a1406;
+  box-shadow: 0 0 22px rgba(212, 175, 55, 0.4), inset 0 1px 0 rgba(255,255,255,0.4);
 }
+.da-btn--primary:hover:not(:disabled) {
+  box-shadow: 0 0 30px rgba(212, 175, 55, 0.6), inset 0 1px 0 rgba(255,255,255,0.5);
+}
+
 .da-btn--ghost {
   background: transparent;
-  color: var(--text, #111827);
-  border: 1px solid var(--border, #e5e7eb);
+  color: var(--da-gold);
+  border: 1px solid var(--da-border);
+}
+.da-btn--ghost:hover:not(:disabled) {
+  background: var(--da-gold-soft);
 }
 
-/* ─── Status message ─── */
+/* ── Quota toggle ── */
+.da-quota-toggle {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  margin: 12px 0 18px;
+  background: var(--da-surface);
+  border: 1px solid var(--da-border-soft);
+  border-radius: 10px;
+  cursor: pointer;
+  user-select: none;
+}
+.da-quota-toggle input[type="checkbox"] {
+  margin-top: 2px;
+  width: 18px; height: 18px;
+  accent-color: var(--da-gold);
+  cursor: pointer;
+}
+.da-quota-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--da-text);
+  line-height: 1.4;
+}
+.da-quota-hint {
+  display: block;
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--da-text-dim);
+  margin-top: 2px;
+  font-style: italic;
+}
+
+/* ── Status line ── */
 .da-status {
   min-height: 20px;
-  margin: 12px 0;
-  font-size: 13px;
-  color: var(--text-muted, #6b7280);
-  text-align: center;
-}
-.da-status--error {
-  color: var(--danger, #dc2626);
-}
-.da-status--frozen {
-  color: var(--danger, #dc2626);
-  font-weight: 700;
-}
-
-/* ─── Hero result ─── */
-.da-hero {
-  margin: 24px 0;
-  padding: 28px 20px;
-  border-radius: 16px;
-  background: var(--bg-elevated, #f9fafb);
-  border: 1px solid var(--border, #e5e7eb);
-  text-align: center;
-}
-.da-hero--assigned {
-  background: linear-gradient(135deg, rgba(109,40,217,0.08) 0%, rgba(37,99,235,0.08) 100%);
-  border-color: rgba(109,40,217,0.35);
-}
-.da-hero--none {
-  background: rgba(220,38,38,0.06);
-  border-color: rgba(220,38,38,0.3);
-}
-.da-hero-label {
+  margin: 10px 0;
   font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--text-muted, #6b7280);
-  margin-bottom: 8px;
+  color: var(--da-text-dim);
+  text-align: center;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  letter-spacing: 0.02em;
 }
-.da-hero-dept {
-  font-size: 26px;
-  font-weight: 800;
-  color: var(--text, #111827);
-  line-height: 1.2;
-  margin-bottom: 8px;
+.da-status--error { color: var(--da-danger); }
+.da-status--frozen { color: var(--da-danger); font-weight: 700; }
+
+/* ═══════════════════════════════════════════════════════════
+   DESTINY CARD — the oracle's answer
+   ═══════════════════════════════════════════════════════════ */
+.da-destiny {
+  position: relative;
+  margin: 24px 0;
+  padding: 32px 20px 26px;
+  border-radius: 16px;
+  text-align: center;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(212, 175, 55, 0.16), transparent 70%),
+    linear-gradient(180deg, rgba(20, 23, 43, 0.85) 0%, rgba(11, 13, 26, 0.95) 100%);
+  border: 1px solid var(--da-border);
+  box-shadow:
+    0 0 40px rgba(212, 175, 55, 0.15),
+    inset 0 0 60px rgba(212, 175, 55, 0.05);
+  overflow: hidden;
 }
-.da-hero-meta {
-  font-size: 13px;
-  color: var(--text-muted, #6b7280);
+.da-destiny::before {
+  content: "";
+  position: absolute;
+  top: -2px; left: 50%;
+  width: 80%;
+  height: 2px;
+  transform: translateX(-50%);
+  background: linear-gradient(90deg, transparent, var(--da-gold-bright), transparent);
+  filter: blur(0.5px);
+}
+.da-destiny--none {
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 107, 107, 0.12), transparent 70%),
+    linear-gradient(180deg, rgba(30, 15, 20, 0.85) 0%, rgba(11, 13, 26, 0.95) 100%);
+  border-color: rgba(255, 107, 107, 0.3);
+}
+.da-destiny--none::before {
+  background: linear-gradient(90deg, transparent, var(--da-danger), transparent);
 }
 
-/* ─── Section ─── */
+.da-destiny-eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--da-gold);
+  margin-bottom: 14px;
+  opacity: 0.85;
+}
+.da-destiny--none .da-destiny-eyebrow { color: var(--da-danger); }
+
+.da-destiny-dept {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 6px;
+  background: linear-gradient(180deg, #ffffff 0%, var(--da-gold-bright) 55%, var(--da-gold) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 32px rgba(245, 215, 110, 0.35);
+  word-break: break-word;
+}
+.da-destiny--none .da-destiny-dept {
+  background: linear-gradient(180deg, #ffffff, #ffb3b3);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+.da-destiny-sub {
+  font-size: 12px;
+  font-style: italic;
+  color: var(--da-text-dim);
+  letter-spacing: 0.04em;
+  margin-bottom: 22px;
+}
+.da-destiny-meta {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  padding-top: 18px;
+  border-top: 1px solid var(--da-border-soft);
+}
+.da-destiny-meta-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.da-destiny-meta-value {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--da-gold-bright);
+}
+.da-destiny-meta-label {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--da-text-mute);
+}
+
+/* ═══ SECTIONS ═══ */
 .da-section {
-  margin: 20px 0;
-  padding: 20px;
-  background: var(--bg-elevated, #f9fafb);
-  border: 1px solid var(--border, #e5e7eb);
+  margin: 22px 0;
+  padding: 20px 18px;
+  background: var(--da-surface);
+  border: 1px solid var(--da-border-soft);
   border-radius: 12px;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 }
 .da-section-head {
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 700;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--text-muted, #6b7280);
-  margin-bottom: 12px;
+  color: var(--da-gold);
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--da-border-soft);
 }
 
-/* ─── Department rows ─── */
+/* ── Department rows ── */
 .da-dept-row {
   display: grid;
   grid-template-columns: 1fr auto;
-  gap: 8px 12px;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--border, #e5e7eb);
+  gap: 6px 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.06);
 }
-.da-dept-row:last-child {
-  border-bottom: none;
-}
+.da-dept-row:last-child { border-bottom: none; }
 .da-dept-name {
   font-size: 14px;
   font-weight: 600;
-  color: var(--text, #111827);
+  color: var(--da-text);
   grid-column: 1;
 }
 .da-dept-num {
-  font-size: 13px;
-  color: var(--text-muted, #6b7280);
-  font-variant-numeric: tabular-nums;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 12px;
+  color: var(--da-text-dim);
   grid-column: 2;
   text-align: right;
+  white-space: nowrap;
 }
 .da-dept-bar {
   grid-column: 1 / -1;
-  height: 6px;
-  background: var(--border, #e5e7eb);
-  border-radius: 3px;
+  height: 4px;
+  background: rgba(212, 175, 55, 0.08);
+  border-radius: 2px;
   overflow: hidden;
+  margin-top: 4px;
 }
 .da-dept-bar-fill {
   height: 100%;
-  border-radius: 3px;
-  background: linear-gradient(90deg, #6D28D9, #2563eb);
-  transition: width 0.4s ease;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--da-gold) 0%, var(--da-gold-bright) 100%);
+  box-shadow: 0 0 8px rgba(245, 215, 110, 0.5);
+  transition: width 0.5s ease;
 }
 .da-dept-bar-fill--full {
-  background: linear-gradient(90deg, #dc2626, #ef4444);
+  background: linear-gradient(90deg, #ff6b6b, #ff9d9d);
+  box-shadow: 0 0 8px rgba(255,107,107,0.5);
 }
 .da-dept-mine {
   display: inline-block;
   margin-left: 6px;
-  padding: 1px 7px;
-  font-size: 10px;
-  font-weight: 700;
+  padding: 1px 8px;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  background: linear-gradient(135deg, #6D28D9 0%, #2563eb 100%);
-  color: #ffffff;
+  background: linear-gradient(135deg, var(--da-gold-bright), var(--da-gold));
+  color: #1a1406;
   border-radius: 999px;
   vertical-align: middle;
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
 }
 
-/* ─── Alternatives ─── */
+/* ── Alternatives ── */
 .da-alt-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 12px;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--border, #e5e7eb);
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.06);
 }
-.da-alt-row:last-child {
-  border-bottom: none;
-}
+.da-alt-row:last-child { border-bottom: none; }
 .da-alt-dept {
   font-size: 14px;
   font-weight: 600;
-  color: var(--text, #111827);
+  color: var(--da-text);
 }
 .da-alt-reason {
-  font-size: 12px;
-  color: var(--text-muted, #6b7280);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 11px;
+  color: var(--da-text-dim);
+  margin-top: 2px;
 }
 .da-alt-chip {
   display: inline-block;
   padding: 3px 10px;
-  font-size: 11px;
-  font-weight: 700;
-  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  border-radius: 999px;
+  white-space: nowrap;
 }
-.da-alt-chip--yes {
-  background: rgba(16,185,129,0.15);
-  color: #059669;
-}
-.da-alt-chip--no {
-  background: rgba(220,38,38,0.12);
-  color: #dc2626;
-}
+.da-alt-chip--yes { background: rgba(110, 231, 167, 0.14); color: var(--da-success); }
+.da-alt-chip--no { background: rgba(255, 107, 107, 0.14); color: var(--da-danger); }
 .da-alt-chip--here {
-  background: rgba(109,40,217,0.15);
-  color: #6D28D9;
+  background: linear-gradient(135deg, var(--da-gold-bright), var(--da-gold));
+  color: #1a1406;
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
 }
 
-/* ─── Method footer ─── */
+/* ── Method footer ── */
 .da-method {
-  margin-top: 24px;
-  padding: 14px 16px;
-  background: var(--bg-elevated, #f9fafb);
-  border: 1px solid var(--border, #e5e7eb);
+  margin-top: 26px;
+  padding: 16px 18px;
+  background: rgba(20, 23, 43, 0.5);
+  border: 1px solid var(--da-border-soft);
   border-radius: 10px;
-  font-size: 12px;
-  color: var(--text-muted, #6b7280);
-  line-height: 1.6;
+  font-size: 11.5px;
+  line-height: 1.7;
+  color: var(--da-text-dim);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
 }
-.da-method strong {
-  color: var(--text, #111827);
-}
+.da-method strong { color: var(--da-gold); }
+.da-method em { font-style: italic; color: var(--da-text-mute); }
 
-/* ─── Empty state ─── */
+/* ── Empty state ── */
 .da-empty {
   text-align: center;
-  padding: 32px 16px;
-  color: var(--text-muted, #6b7280);
+  padding: 40px 20px;
+  color: var(--da-text-dim);
 }
 .da-empty-title {
-  font-size: 16px;
+  font-family: Georgia, serif;
+  font-size: 17px;
   font-weight: 700;
-  color: var(--text, #111827);
-  margin-bottom: 6px;
+  color: var(--da-text);
+  margin-bottom: 8px;
 }
 
-/* ─── Spinner (local, does not reuse shared .spinner) ─── */
+/* ── Spinner ── */
 .da-spinner {
   display: inline-block;
-  width: 14px;
-  height: 14px;
+  width: 14px; height: 14px;
   border: 2px solid currentColor;
   border-right-color: transparent;
   border-radius: 50%;
@@ -311,48 +469,13 @@
   vertical-align: middle;
   margin-right: 6px;
 }
-@keyframes da-spin {
-  to { transform: rotate(360deg); }
-}
+@keyframes da-spin { to { transform: rotate(360deg); } }
 
-/* ─── Responsive ─── */
+/* ── Responsive ── */
 @media (max-width: 480px) {
-  .da-countdown-value { font-size: 20px; }
-  .da-hero-dept { font-size: 22px; }
-  .da-title { font-size: 24px; }
-}
-
-
-/* ─── Female quota toggle ─── */
-.da-quota-toggle {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 12px 14px;
-  margin: 12px 0;
-  background: var(--bg-elevated, #f9fafb);
-  border: 1px solid var(--border, #e5e7eb);
-  border-radius: 10px;
-  cursor: pointer;
-  user-select: none;
-}
-.da-quota-toggle input[type="checkbox"] {
-  margin-top: 2px;
-  width: 18px;
-  height: 18px;
-  accent-color: #6D28D9;
-  cursor: pointer;
-}
-.da-quota-label {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text, #111827);
-  line-height: 1.4;
-}
-.da-quota-hint {
-  display: block;
-  font-size: 11px;
-  font-weight: 400;
-  color: var(--text-muted, #6b7280);
-  margin-top: 2px;
+  .da-title { font-size: 30px; }
+  .da-countdown-value { font-size: 22px; }
+  .da-destiny-dept { font-size: 24px; }
+  .da-destiny { padding: 26px 16px 22px; }
+  .da-destiny-meta-value { font-size: 13px; }
 }
