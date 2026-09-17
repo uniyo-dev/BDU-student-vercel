@@ -61,6 +61,26 @@
       </span>
     </label>
 
+    <section class="da-reorder-section" id="da-reorder-section" hidden>
+      <div class="da-reorder-head">
+        <span class="da-reorder-title">Reorder Your Choices</span>
+        <span class="da-reorder-hint">Tap ↑↓ to move a choice. Then test the new order.</span>
+      </div>
+      <div class="da-reorder-list" id="da-reorder-list"></div>
+      <div class="da-reorder-actions">
+        <button type="button" class="da-btn da-btn--primary" id="da-reorder-test">
+          Test This Order
+        </button>
+        <button type="button" class="da-btn da-btn--ghost" id="da-reorder-reset">
+          Reset to Submitted
+        </button>
+      </div>
+    </section>
+
+    <section class="da-compare-section" id="da-compare-section" hidden>
+      <!-- filled by JS -->
+    </section>
+
     <div class="da-status" id="da-status" role="status" aria-live="polite"></div>
 
     <section id="da-result" aria-live="polite"></section>

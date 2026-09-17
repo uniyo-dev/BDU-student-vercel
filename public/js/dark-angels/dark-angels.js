@@ -384,6 +384,11 @@
         applyFemaleQuota: !!(els.quotaToggle && els.quotaToggle.checked)
       });
       renderAll(sim);
+      if (!_submittedChoices) {
+        _submittedChoices = getResultsChoices();
+        _reorderedChoices = _submittedChoices.slice();
+      }
+      renderReorderPanel();
       var suffix = frozen ? ' (frozen)' : '';
       setStatus('Simulated ' + allStudents.length + ' applicant rows \u00b7 ' +
                 new Date().toLocaleTimeString() + suffix, '');
@@ -398,6 +403,200 @@
     if (els.method) els.method.innerHTML = '';
     setStatus('');
     renderEmpty('Ready to simulate');
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  // REORDER PANEL — "What if I put X #1?"
+  // ═══════════════════════════════════════════════════════════
+  var _reorderedChoices = null;   // null = not edited; array = user's custom order
+  var _submittedChoices = null;   // original submitted order
+
+  function getResultsChoices() {
+    var student = readStudent();
+    if (!student || !student.placement) return [];
+    var results = student.placement.results || [];
+    // Sort by priority ascending (server should already do this)
+    return results.slice().sort(function (a, b) {
+      return (parseInt(a.priority, 10) || 999) - (parseInt(b.priority, 10) || 999);
+    }).map(function (r) {
+      return {
+        department: String(r.department || '').trim(),
+        priority: parseInt(r.priority, 10) || 0,
+        totalScore: r.totalScore || ''
+      };
+    }).filter(function (c) { return c.department; });
+  }
+
+  function renderReorderPanel() {
+    var list = document.getElementById('da-reorder-list');
+    var section = document.getElementById('da-reorder-section');
+    if (!list || !section) return;
+
+    if (!_submittedChoices) {
+      _submittedChoices = getResultsChoices();
+      _reorderedChoices = _submittedChoices.slice();
+    }
+
+    if (!_reorderedChoices.length) {
+      section.hidden = true;
+      return;
+    }
+
+    var html = '';
+    _reorderedChoices.forEach(function (c, i) {
+      var upDisabled = (i === 0) ? ' disabled' : '';
+      var downDisabled = (i === _reorderedChoices.length - 1) ? ' disabled' : '';
+      html += '<div class="da-reorder-row" data-idx="' + i + '">';
+      html += '  <div class="da-reorder-rank">' + (i + 1) + '</div>';
+      html += '  <div class="da-reorder-dept">' + esc(c.department) + '</div>';
+      html += '  <div class="da-reorder-arrows">';
+      html += '    <button type="button" class="da-reorder-btn" data-move="up" data-idx="' + i + '"' + upDisabled + '>↑</button>';
+      html += '    <button type="button" class="da-reorder-btn" data-move="down" data-idx="' + i + '"' + downDisabled + '>↓</button>';
+      html += '  </div>';
+      html += '</div>';
+    });
+    list.innerHTML = html;
+    section.hidden = false;
+
+    list.querySelectorAll('[data-move]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var idx = parseInt(btn.getAttribute('data-idx'), 10);
+        var dir = btn.getAttribute('data-move');
+        if (isNaN(idx)) return;
+        var target = (dir === 'up') ? idx - 1 : idx + 1;
+        if (target < 0 || target >= _reorderedChoices.length) return;
+        var tmp = _reorderedChoices[idx];
+        _reorderedChoices[idx] = _reorderedChoices[target];
+        _reorderedChoices[target] = tmp;
+        renderReorderPanel();
+      });
+    });
+  }
+
+  function hasReorderChanged() {
+    if (!_submittedChoices || !_reorderedChoices) return false;
+    if (_submittedChoices.length !== _reorderedChoices.length) return true;
+    for (var i = 0; i < _submittedChoices.length; i++) {
+      if (_submittedChoices[i].department !== _reorderedChoices[i].department) return true;
+    }
+    return false;
+  }
+
+  function getReorderedResults() {
+    if (!_reorderedChoices) return [];
+    return _reorderedChoices.map(function (c, i) {
+      return {
+        department: c.department,
+        priority: i + 1,
+        totalScore: c.totalScore,
+        status: ''
+      };
+    });
+  }
+
+  function testReorderedOrder() {
+    var student = readStudent();
+    if (!student || !student.placement) {
+      setStatus('No student data in session.', 'error');
+      return;
+    }
+
+    var rows = readApplicantCache();
+    if (!rows || !rows.length) {
+      setStatus('Applicants not loaded yet. Tap Simulate Now first.', 'error');
+      return;
+    }
+
+    var bio = student.biography || {};
+    var placement = student.placement || {};
+    var selectionOptions = placement.selectionOptions || [];
+
+    try {
+      var simNew = window.DarkAngelsSimulator.simulate({
+        allStudents: rows,
+        selectionOptions: selectionOptions,
+        myStudentId: bio.studentId,
+        myResults: getReorderedResults(),
+        applyFemaleQuota: !!(els.quotaToggle && els.quotaToggle.checked)
+      });
+
+      var simCurrent = window.DarkAngelsSimulator.simulate({
+        allStudents: rows,
+        selectionOptions: selectionOptions,
+        myStudentId: bio.studentId,
+        myResults: placement.results || [],
+        applyFemaleQuota: !!(els.quotaToggle && els.quotaToggle.checked)
+      });
+
+      renderComparison(simCurrent, simNew);
+    } catch (e) {
+      setStatus('Reorder test error: ' + (e.message || 'unknown'), 'error');
+    }
+  }
+
+  function renderComparison(simCurrent, simNew) {
+    var section = document.getElementById('da-compare-section');
+    if (!section) return;
+
+    var curDept = simCurrent.myAssignment ? simCurrent.myAssignment.department : null;
+    var newDept = simNew.myAssignment ? simNew.myAssignment.department : null;
+
+    var html = '<div class="da-compare-head">Comparison</div>';
+    html += '<div class="da-compare-grid">';
+    html += '  <div class="da-compare-cell' + (curDept ? '' : ' da-compare-cell--none') + '">';
+    html += '    <div class="da-compare-label">Current Order</div>';
+    html += '    <div class="da-compare-dept">' + esc(curDept || 'Not assigned') + '</div>';
+    html += '  </div>';
+    html += '  <div class="da-compare-cell' + (newDept ? '' : ' da-compare-cell--none') + '">';
+    html += '    <div class="da-compare-label">This Order</div>';
+    html += '    <div class="da-compare-dept">' + esc(newDept || 'Not assigned') + '</div>';
+    html += '  </div>';
+    html += '</div>';
+
+    var deltaTxt, deltaClass;
+    if (curDept === newDept) {
+      deltaTxt = 'No change — same department either way.';
+      deltaClass = ' da-compare-delta--same';
+    } else if (!newDept) {
+      deltaTxt = 'This order would leave you <strong>unassigned</strong>.';
+      deltaClass = ' da-compare-delta--bad';
+    } else if (!curDept) {
+      deltaTxt = 'This order would <strong>assign you</strong> where you currently have nothing.';
+      deltaClass = '';
+    } else {
+      var curIdx = _submittedChoices.findIndex(function (c) { return c.department === curDept; });
+      var newIdx = _reorderedChoices.findIndex(function (c) { return c.department === newDept; });
+      if (curIdx >= 0 && newIdx >= 0 && newIdx < curIdx) {
+        deltaTxt = 'This order gets you a <strong>higher preference</strong> department.';
+        deltaClass = '';
+      } else if (curIdx >= 0 && newIdx >= 0 && newIdx > curIdx) {
+        deltaTxt = 'This order lands you in a <strong>lower preference</strong> department.';
+        deltaClass = ' da-compare-delta--bad';
+      } else {
+        deltaTxt = 'Assignment would change from <strong>' + esc(curDept) + '</strong> to <strong>' + esc(newDept) + '</strong>.';
+        deltaClass = '';
+      }
+    }
+    html += '<div class="da-compare-delta' + deltaClass + '">' + deltaTxt + '</div>';
+
+    section.innerHTML = html;
+    section.hidden = false;
+  }
+
+  function wireReorderPanel() {
+    var testBtn = document.getElementById('da-reorder-test');
+    var resetBtn = document.getElementById('da-reorder-reset');
+    if (testBtn) {
+      testBtn.addEventListener('click', testReorderedOrder);
+    }
+    if (resetBtn) {
+      resetBtn.addEventListener('click', function () {
+        _reorderedChoices = (_submittedChoices || []).slice();
+        renderReorderPanel();
+        var compareSection = document.getElementById('da-compare-section');
+        if (compareSection) compareSection.hidden = true;
+      });
+    }
   }
 
   // ─── Boot ───────────────────────────────────────────────────
@@ -420,6 +619,8 @@
         }
       });
     }
+
+    wireReorderPanel();
 
     // Initial state
     if (isFrozen()) {
