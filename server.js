@@ -1064,7 +1064,7 @@ const server = http.createServer(async (req, res) => {
                 }
                 return arr.map(function (row) {
                   return {
-                    studentId: row.StudentID || row.studentId || '',
+                    studentId: row.StudentNo || row.StudentID || row.studentId || '',
                     fullName: row.FullName || row.fullName ||
                               ((row.FirstName || '') + ' ' + (row.FatherName || '')).trim(),
                     department: deptName,
