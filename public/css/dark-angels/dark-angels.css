@@ -1,0 +1,323 @@
+/* ============================================================
+   Dark Angels — Placement Simulation
+   Self-contained styles. All rules scoped under .da-*.
+   Uses only theme tokens from /css/shared/variables.css and
+   /css/shared/theme.css so light/dark modes work unchanged.
+   ============================================================ */
+
+.da-page {
+  min-height: 100vh;
+  padding: 24px 16px 96px;
+  background: var(--bg, #ffffff);
+  color: var(--text, #111827);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+.da-container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+/* ─── Header ─── */
+.da-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+.da-title {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0 0 6px;
+  background: linear-gradient(135deg, #6D28D9 0%, #2563eb 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.da-subtitle {
+  font-size: 14px;
+  color: var(--text-muted, #6b7280);
+  margin: 0;
+}
+
+/* ─── Countdown ─── */
+.da-countdown {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin: 20px 0;
+  padding: 16px;
+  background: var(--bg-elevated, #f9fafb);
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 12px;
+}
+.da-countdown-cell {
+  text-align: center;
+}
+.da-countdown-value {
+  font-size: 24px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--text, #111827);
+  line-height: 1.1;
+}
+.da-countdown-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted, #6b7280);
+  margin-top: 4px;
+}
+.da-countdown--frozen .da-countdown-value {
+  color: var(--danger, #dc2626);
+}
+
+/* ─── Action bar ─── */
+.da-actions {
+  display: flex;
+  gap: 8px;
+  margin: 20px 0;
+}
+.da-btn {
+  flex: 1;
+  padding: 14px 20px;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.12s, opacity 0.12s;
+  font-family: inherit;
+}
+.da-btn:active {
+  transform: scale(0.98);
+}
+.da-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.da-btn--primary {
+  background: linear-gradient(135deg, #6D28D9 0%, #2563eb 100%);
+  color: #ffffff;
+}
+.da-btn--ghost {
+  background: transparent;
+  color: var(--text, #111827);
+  border: 1px solid var(--border, #e5e7eb);
+}
+
+/* ─── Status message ─── */
+.da-status {
+  min-height: 20px;
+  margin: 12px 0;
+  font-size: 13px;
+  color: var(--text-muted, #6b7280);
+  text-align: center;
+}
+.da-status--error {
+  color: var(--danger, #dc2626);
+}
+.da-status--frozen {
+  color: var(--danger, #dc2626);
+  font-weight: 700;
+}
+
+/* ─── Hero result ─── */
+.da-hero {
+  margin: 24px 0;
+  padding: 28px 20px;
+  border-radius: 16px;
+  background: var(--bg-elevated, #f9fafb);
+  border: 1px solid var(--border, #e5e7eb);
+  text-align: center;
+}
+.da-hero--assigned {
+  background: linear-gradient(135deg, rgba(109,40,217,0.08) 0%, rgba(37,99,235,0.08) 100%);
+  border-color: rgba(109,40,217,0.35);
+}
+.da-hero--none {
+  background: rgba(220,38,38,0.06);
+  border-color: rgba(220,38,38,0.3);
+}
+.da-hero-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted, #6b7280);
+  margin-bottom: 8px;
+}
+.da-hero-dept {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--text, #111827);
+  line-height: 1.2;
+  margin-bottom: 8px;
+}
+.da-hero-meta {
+  font-size: 13px;
+  color: var(--text-muted, #6b7280);
+}
+
+/* ─── Section ─── */
+.da-section {
+  margin: 20px 0;
+  padding: 20px;
+  background: var(--bg-elevated, #f9fafb);
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 12px;
+}
+.da-section-head {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted, #6b7280);
+  margin-bottom: 12px;
+}
+
+/* ─── Department rows ─── */
+.da-dept-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border, #e5e7eb);
+}
+.da-dept-row:last-child {
+  border-bottom: none;
+}
+.da-dept-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text, #111827);
+  grid-column: 1;
+}
+.da-dept-num {
+  font-size: 13px;
+  color: var(--text-muted, #6b7280);
+  font-variant-numeric: tabular-nums;
+  grid-column: 2;
+  text-align: right;
+}
+.da-dept-bar {
+  grid-column: 1 / -1;
+  height: 6px;
+  background: var(--border, #e5e7eb);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.da-dept-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #6D28D9, #2563eb);
+  transition: width 0.4s ease;
+}
+.da-dept-bar-fill--full {
+  background: linear-gradient(90deg, #dc2626, #ef4444);
+}
+.da-dept-mine {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 7px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: linear-gradient(135deg, #6D28D9 0%, #2563eb 100%);
+  color: #ffffff;
+  border-radius: 999px;
+  vertical-align: middle;
+}
+
+/* ─── Alternatives ─── */
+.da-alt-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border, #e5e7eb);
+}
+.da-alt-row:last-child {
+  border-bottom: none;
+}
+.da-alt-dept {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text, #111827);
+}
+.da-alt-reason {
+  font-size: 12px;
+  color: var(--text-muted, #6b7280);
+}
+.da-alt-chip {
+  display: inline-block;
+  padding: 3px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.da-alt-chip--yes {
+  background: rgba(16,185,129,0.15);
+  color: #059669;
+}
+.da-alt-chip--no {
+  background: rgba(220,38,38,0.12);
+  color: #dc2626;
+}
+.da-alt-chip--here {
+  background: rgba(109,40,217,0.15);
+  color: #6D28D9;
+}
+
+/* ─── Method footer ─── */
+.da-method {
+  margin-top: 24px;
+  padding: 14px 16px;
+  background: var(--bg-elevated, #f9fafb);
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 10px;
+  font-size: 12px;
+  color: var(--text-muted, #6b7280);
+  line-height: 1.6;
+}
+.da-method strong {
+  color: var(--text, #111827);
+}
+
+/* ─── Empty state ─── */
+.da-empty {
+  text-align: center;
+  padding: 32px 16px;
+  color: var(--text-muted, #6b7280);
+}
+.da-empty-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text, #111827);
+  margin-bottom: 6px;
+}
+
+/* ─── Spinner (local, does not reuse shared .spinner) ─── */
+.da-spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: da-spin 0.7s linear infinite;
+  vertical-align: middle;
+  margin-right: 6px;
+}
+@keyframes da-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 480px) {
+  .da-countdown-value { font-size: 20px; }
+  .da-hero-dept { font-size: 22px; }
+  .da-title { font-size: 24px; }
+}

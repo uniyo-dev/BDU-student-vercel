@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+  <title>Dark Angels — Placement Simulation | BD Buddy</title>
+  <meta name="description" content="Live placement projection for BDU students. See what department you would be assigned if placement stopped right now." />
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Shared theme (read-only) -->
+  <link rel="stylesheet" href="/css/shared/variables.css">
+  <link rel="stylesheet" href="/css/shared/theme.css">
+  <link rel="stylesheet" href="/css/shared/reset.css">
+
+  <!-- Dark Angels -->
+  <link rel="stylesheet" href="/css/dark-angels/dark-angels.css">
+</head>
+<body class="da-page">
+
+  <div class="da-container">
+
+    <header class="da-header">
+      <h1 class="da-title">Dark Angels</h1>
+      <p class="da-subtitle">What if placement stopped right now?</p>
+    </header>
+
+    <section class="da-countdown" id="da-countdown" aria-label="Time remaining until stop time">
+      <div class="da-countdown-cell">
+        <div class="da-countdown-value" id="da-cd-days">--</div>
+        <div class="da-countdown-label">Days</div>
+      </div>
+      <div class="da-countdown-cell">
+        <div class="da-countdown-value" id="da-cd-hours">--</div>
+        <div class="da-countdown-label">Hours</div>
+      </div>
+      <div class="da-countdown-cell">
+        <div class="da-countdown-value" id="da-cd-mins">--</div>
+        <div class="da-countdown-label">Minutes</div>
+      </div>
+      <div class="da-countdown-cell">
+        <div class="da-countdown-value" id="da-cd-secs">--</div>
+        <div class="da-countdown-label">Seconds</div>
+      </div>
+    </section>
+
+    <div class="da-actions">
+      <button type="button" class="da-btn da-btn--primary" id="da-btn-run">
+        Simulate Now
+      </button>
+      <button type="button" class="da-btn da-btn--ghost" id="da-btn-reset">
+        Reset View
+      </button>
+    </div>
+
+    <div class="da-status" id="da-status" role="status" aria-live="polite"></div>
+
+    <section id="da-result" aria-live="polite"></section>
+
+    <footer class="da-method" id="da-method">
+      <strong>Dark Angels</strong> reads only the placement data BDU already sent to your browser.
+      It never submits anything, never stores anything, and never guesses.
+      Full method details appear here after your first simulation.
+    </footer>
+
+  </div>
+
+  <!-- Load order: simulator first, then controller -->
+  <script src="/js/dark-angels/simulator.js"></script>
+  <script src="/js/dark-angels/dark-angels.js"></script>
+
+</body>
+</html>
