@@ -122,26 +122,43 @@
                : (rawGen === 'F' || rawGen === 'FEMALE' || rawGen === 'F') ? 'F' : 'U';
     }
 
-    // Clone Purging / Deduplication Rule
-    var matchedCloneKey = null;
-    if (myScore !== null) {
-      var myScoreStr = myScore.toFixed(3);
-      var cloneSigPrefix = myScoreStr + '|' + myGender;
-      
-      for (var key in students) {
-        if (key.indexOf(cloneSigPrefix) === 0) {
-          matchedCloneKey = key;
-          break; // Found the clone!
-        }
+    // (clone collection handled below by CLONE-MERGE-FIX)
+
+    // CLONE-MERGE-FIX: C-practical splitting can create MULTIPLE clones of
+    // the user (e.g. "52.48|F#0", "52.48|F#1", ...). We must remove ALL of
+    // them and merge their choices into one record for the real user,
+    // otherwise leftover clones compete with the user for their own seat.
+    if (myScore !== null && myId) {
+      var _prefix = myScore.toFixed(3) + '|' + myGender;
+      var _cloneKeys = [];
+      for (var _k in students) {
+        if (_k.indexOf(_prefix) === 0) _cloneKeys.push(_k);
+      }
+      if (_cloneKeys.length > 0) {
+        var _allChoices = [];
+        _cloneKeys.forEach(function (k) {
+          students[k].choices.forEach(function (c) { _allChoices.push(c); });
+          delete students[k];
+        });
+        var _seen = {};
+        var _unique = [];
+        _allChoices.forEach(function (c) {
+          var kk = c.department + '|' + c.priority;
+          if (_seen[kk]) return;
+          _seen[kk] = 1;
+          _unique.push(c);
+        });
+        _unique.sort(function (a, b) { return a.priority - b.priority; });
+        students[myId] = {
+          studentId: myId,
+          score: myScore,
+          gender: myGender,
+          choices: _unique
+        };
       }
     }
 
-    if (matchedCloneKey) {
-      // Safely swap out anonymized clone key for the authenticated user's ID
-      students[myId] = students[matchedCloneKey];
-      students[myId].studentId = myId;
-      delete students[matchedCloneKey];
-    } else if (myId && !students[myId]) {
+    if (myId && !students[myId]) {
       // Fallback: build user profile directly if no clone matches
       var myRec = { studentId: myId, score: myScore, gender: myGender, choices: [] };
       (opts.myResults || []).forEach(function (r) {
