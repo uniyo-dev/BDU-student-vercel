@@ -1,45 +1,41 @@
-// Dark Angels — Placement Simulation Controller
+// Dark Angels — Placement Simulation Controller (v3.0 - Stable)
 // Reads:  sessionStorage.bdu_student_data (current student)
-//         POST /api/placement/rankings  (fresh allStudents on button click)
-// Writes: nothing. Read-only. Does not touch existing session keys.
-//
-// Depends on: window.DarkAngelsSimulator (simulator.js, must load first)
-//
-// Behaviour:
-//   - Countdown ticks every second to stop time (2026-09-18T23:59:59 +03:00).
-//   - "Simulate Now" button fetches fresh data, runs the simulation, renders.
-//   - After stop time: button disabled, banner "FINAL", last result frozen.
-//   - No auto-refresh. No background polling. One request per click.
+//         POST /api/placement/all-applicants  (fresh allStudents on button click)
+// Depends on: window.DarkAngelsSimulator (simulator.js)
 
 (function () {
   'use strict';
 
-  // ─── Config ─────────────────────────────────────────────────
-  var STOP_ISO = '2026-09-18T23:59:59+03:00';       // Ethiopian local time
+  // ─── Configuration ──────────────────────────────────────────
+  var STOP_ISO = '2026-09-18T23:59:59+03:00'; // Ethiopian local time
   var SESSION_KEY_STUDENT = 'bdu_student_data';
   var SESSION_KEY_SID = 'bd_session_id';
-  var RANKINGS_ENDPOINT = '/api/placement/rankings';
+  var ALL_KEY = 'bdu_all_applicants';
+  var CACHE_TTL_MS = 15 * 60 * 1000;
 
-  // ─── DOM refs (resolved on DOMContentLoaded) ────────────────
+  // ─── State ──────────────────────────────────────────────────
+  var _reorderedChoices = null;
+  var _submittedChoices = null;
+
+  // ─── DOM References ─────────────────────────────────────────
   var els = {};
 
   function q(id) { return document.getElementById(id); }
 
   function resolveEls() {
-    els.countdown = q('da-countdown');
-    els.cdDays    = q('da-cd-days');
-    els.cdHours   = q('da-cd-hours');
-    els.cdMins    = q('da-cd-mins');
-    els.cdSecs    = q('da-cd-secs');
-    els.btnRun    = q('da-btn-run');
-    els.btnReset  = q('da-btn-reset');
-    els.status    = q('da-status');
-    els.result    = q('da-result');
-    els.method    = q('da-method');
+    els.countdown   = q('da-countdown');
+    els.cdDays      = q('da-cd-days');
+    els.cdHours     = q('da-cd-hours');
+    els.cdMins      = q('da-cd-mins');
+    els.cdSecs      = q('da-cd-secs');
+    els.btnRun      = q('da-btn-run');
+    els.btnReset    = q('da-btn-reset');
+    els.status      = q('da-status');
+    els.result      = q('da-result');
+    els.method      = q('da-method');
     els.quotaToggle = q('da-quota');
   }
 
-  // ─── Session helpers ────────────────────────────────────────
   function readStudent() {
     try {
       var raw = sessionStorage.getItem(SESSION_KEY_STUDENT);
@@ -54,7 +50,6 @@
     return sessionStorage.getItem(SESSION_KEY_SID) || null;
   }
 
-  // ─── Escaping ───────────────────────────────────────────────
   function esc(s) {
     return String(s == null ? '' : s)
       .replace(/&/g, '&amp;')
@@ -63,7 +58,6 @@
       .replace(/"/g, '&quot;');
   }
 
-  // ─── Time helpers ───────────────────────────────────────────
   function getStopMs() {
     return new Date(STOP_ISO).getTime();
   }
@@ -106,19 +100,20 @@
     setInterval(renderCountdown, 1000);
   }
 
-  // ─── Status helper ──────────────────────────────────────────
   function setStatus(msg, kind) {
     if (!els.status) return;
     els.status.textContent = msg || '';
     els.status.className = 'da-status' + (kind ? ' da-status--' + kind : '');
   }
 
-  // ─── Rendering ──────────────────────────────────────────────
   function renderHero(sim) {
     if (!els.result) return;
 
     var my = sim.myAssignment || null;
-    var rankTxt = (sim.myRank != null) ? ('#' + sim.myRank + ' of ' + sim.totalApplicants) : ('— of ' + (sim.totalApplicants || '—'));
+    var rankTxt = (sim.myRank != null)
+      ? ('#' + sim.myRank + ' of ' + sim.totalApplicants)
+      : ('— of ' + (sim.totalApplicants || '—'));
+
     var scoreTxt = (my && my.score != null) ? Number(my.score).toFixed(2) : '—';
     var prioTxt = (my && my.priority != null) ? ('choice #' + my.priority) : '—';
     var deptTxt = (my && my.department) ? my.department : 'Not assigned';
@@ -146,7 +141,6 @@
 
     var myDept = sim.myAssignment ? sim.myAssignment.department : null;
 
-    // Sort: my dept first, then by fill% desc, then alphabetical
     var sorted = depts.slice().sort(function (a, b) {
       if (a.department === myDept) return -1;
       if (b.department === myDept) return 1;
@@ -185,9 +179,9 @@
       if (a.reason === 'assigned') {
         chip = '<span class="da-alt-chip da-alt-chip--here">Your slot</span>';
       } else if (a.wouldAssign) {
-        chip = '<span class="da-alt-chip da-alt-chip--yes">Seats left</span>';
+        chip = '<span class="da-alt-chip da-alt-chip--yes">' + esc(a.reason) + '</span>';
       } else {
-        chip = '<span class="da-alt-chip da-alt-chip--no">Full</span>';
+        chip = '<span class="da-alt-chip da-alt-chip--no">' + esc(a.reason) + '</span>';
       }
       html += '<div class="da-alt-row">';
       html +=   '<div>' +
@@ -207,10 +201,10 @@
     if (!els.method) return;
     var m = sim.method || {};
     els.method.innerHTML =
-      '<strong>Method:</strong> BDU does not expose real student IDs. Applicants are cross-referenced by (score, gender) and split into candidates when a signature appears in more rows than one student could hold. <br>' +
-      '<strong>Score source:</strong> ' + esc(m.scoreSource) + '<br>' +
-      '<strong>Tie-break:</strong> ' + esc(m.tieBreak) + '<br>' +
-      '<strong>Stop time:</strong> Sep 18, 2026 23:59 (Ethiopia time)';
+      '<strong>Method:</strong> Real-time Strict Score-Merit engine. Deduplication safeguards active.<br>' +
+      '<strong>Score source:</strong> ' + esc(m.scoreSource || 'BDU totalScore') + '<br>' +
+      '<strong>Tie-break rule:</strong> ' + esc(m.tieBreak || 'Deterministic index') + '<br>' +
+      '<strong>Cutoff window:</strong> ' + STOP_ISO;
   }
 
   function renderAll(sim) {
@@ -225,49 +219,12 @@
     if (!els.result) return;
     els.result.innerHTML =
       '<div class="da-empty">' +
-        '<div class="da-empty-title">' + esc(msg || 'Nothing to show yet') + '</div>' +
-        '<div>Tap Simulate Now to run the placement projection.</div>' +
+        '<div class="da-empty-title">' + esc(msg || 'Ready to simulate') + '</div>' +
+        '<div>Tap Simulate Now to project your official placement destiny.</div>' +
       '</div>';
   }
 
-  // ─── Silent auto-fetch on page load ─────────────────────────
-  // Called once when the page opens. Fetches all-applicants in the
-  // background without running a simulation — so when the user taps
-  // Simulate Now, everything is already cached and instant.
-  function autoFetchOnLoad() {
-    var cached = readApplicantCache();
-    if (cached && cached.length) {
-      setStatus('Ready — ' + cached.length + ' applicants loaded.');
-      renderEmpty('Ready to simulate');
-      return;
-    }
-
-    var sid = readSessionId();
-    if (!sid) {
-      setStatus('Please log in to use Dark Angels.', 'error');
-      renderEmpty('Not logged in');
-      return;
-    }
-
-    setStatus('Fetching applicants from BDU…');
-    var t0 = Date.now();
-    fetchAllApplicants(sid)
-      .then(function (rows) {
-        var secs = ((Date.now() - t0) / 1000).toFixed(1);
-        setStatus('Ready — ' + rows.length + ' applicants fetched in ' + secs + 's.');
-        renderEmpty('Ready to simulate');
-      })
-      .catch(function (err) {
-        setStatus('Fetch failed: ' + (err.message || 'unknown') + ' — tap Simulate Now to retry.', 'error');
-        renderEmpty('Could not load applicants');
-      });
-  }
-
-  // ─── Simulation runner ──────────────────────────────────────
-  // ─── Applicant cache (session-scoped) ───────────────────────
-  var ALL_KEY = 'bdu_all_applicants';   // { at: ms, rows: [...] }
-  var CACHE_TTL_MS = 15 * 60 * 1000;
-
+  // ─── Cache Operations ───────────────────────────────────────
   function readApplicantCache() {
     try {
       var raw = sessionStorage.getItem(ALL_KEY);
@@ -284,9 +241,7 @@
   function writeApplicantCache(rows) {
     try {
       sessionStorage.setItem(ALL_KEY, JSON.stringify({ at: Date.now(), rows: rows }));
-    } catch (e) {
-      // sessionStorage full or disabled — silently skip caching
-    }
+    } catch (e) {}
   }
 
   function clearApplicantCache() {
@@ -313,6 +268,34 @@
       });
   }
 
+  function autoFetchOnLoad() {
+    var cached = readApplicantCache();
+    if (cached && cached.length) {
+      setStatus('Ready — ' + cached.length + ' applicants loaded.');
+      renderEmpty('Ready to simulate');
+      return;
+    }
+
+    var sid = readSessionId();
+    if (!sid) {
+      setStatus('Please log in to use Dark Angels.', 'error');
+      renderEmpty('Not logged in');
+      return;
+    }
+
+    setStatus('Fetching live applicant data from BDU…');
+    fetchAllApplicants(sid)
+      .then(function (rows) {
+        setStatus('Ready — ' + rows.length + ' applicants fetched from BDU.');
+        renderEmpty('Ready to simulate');
+      })
+      .catch(function (err) {
+        setStatus('Fetch failed: ' + (err.message || 'unknown') + ' — tap Simulate Now to retry.', 'error');
+        renderEmpty('Could not load applicants');
+      });
+  }
+
+  // ─── Simulation Run ─────────────────────────────────────────
   function runSimulation(forceRefresh) {
     var student = readStudent();
     if (!student || !student.placement) {
@@ -332,23 +315,21 @@
       return;
     }
 
-    // Frozen — do not fetch or re-simulate
     if (isFrozen()) {
       setStatus('Placement window closed. Results frozen.', 'frozen');
       if (els.btnRun) els.btnRun.disabled = true;
-      var cachedRowsFrozen = readApplicantCache();
-      if (cachedRowsFrozen && cachedRowsFrozen.length) {
-        runSimWith(cachedRowsFrozen, results, selectionOptions, bio, true);
+      var cachedRows = readApplicantCache();
+      if (cachedRows && cachedRows.length) {
+        runSimWith(cachedRows, results, selectionOptions, bio, true);
       } else {
         renderEmpty('Frozen — window closed');
       }
       return;
     }
 
-    // Use cache unless caller forced a refresh
     var cached = forceRefresh ? null : readApplicantCache();
     if (cached && cached.length) {
-      setStatus('Using cached applicants from ' + new Date(Date.now()).toLocaleTimeString() + '…');
+      setStatus('Using cached applicants from ' + new Date().toLocaleTimeString() + '…');
       runSimWith(cached, results, selectionOptions, bio, false);
       return;
     }
@@ -360,7 +341,7 @@
       return;
     }
 
-    setStatus('Fetching applicants from BDU (first time takes ~6s)…');
+    setStatus('Fetching all applicants from BDU…');
     if (els.btnRun) els.btnRun.disabled = true;
 
     fetchAllApplicants(sid)
@@ -391,8 +372,7 @@
       }
       renderReorderPanel();
       var suffix = frozen ? ' (frozen)' : '';
-      setStatus('Simulated ' + allStudents.length + ' applicant rows \u00b7 ' +
-                new Date().toLocaleTimeString() + suffix, '');
+      setStatus('Simulated ' + allStudents.length + ' applicant rows · ' + new Date().toLocaleTimeString() + suffix, '');
     } catch (e) {
       setStatus('Simulation error: ' + (e.message || 'unknown'), 'error');
     }
@@ -406,17 +386,11 @@
     renderEmpty('Ready to simulate');
   }
 
-  // ═══════════════════════════════════════════════════════════
-  // REORDER PANEL — "What if I put X #1?"
-  // ═══════════════════════════════════════════════════════════
-  var _reorderedChoices = null;   // null = not edited; array = user's custom order
-  var _submittedChoices = null;   // original submitted order
-
+  // ─── Reorder Panel ──────────────────────────────────────────
   function getResultsChoices() {
     var student = readStudent();
     if (!student || !student.placement) return [];
     var results = student.placement.results || [];
-    // Sort by priority ascending (server should already do this)
     return results.slice().sort(function (a, b) {
       return (parseInt(a.priority, 10) || 999) - (parseInt(b.priority, 10) || 999);
     }).map(function (r) {
@@ -472,15 +446,6 @@
         renderReorderPanel();
       });
     });
-  }
-
-  function hasReorderChanged() {
-    if (!_submittedChoices || !_reorderedChoices) return false;
-    if (_submittedChoices.length !== _reorderedChoices.length) return true;
-    for (var i = 0; i < _submittedChoices.length; i++) {
-      if (_submittedChoices[i].department !== _reorderedChoices[i].department) return true;
-    }
-    return false;
   }
 
   function getReorderedResults() {
@@ -600,11 +565,9 @@
     }
   }
 
-  // ─── Boot ───────────────────────────────────────────────────
+  // ─── DOM Init ───────────────────────────────────────────────
   document.addEventListener('DOMContentLoaded', function () {
     resolveEls();
-
-    // Countdown always ticks, even after freeze (shows 00:00:00).
     startCountdown();
 
     if (els.btnRun) {
@@ -623,28 +586,16 @@
 
     wireReorderPanel();
 
-    // Initial state
     if (isFrozen()) {
       if (els.btnRun) els.btnRun.disabled = true;
       setStatus('Placement window closed. Results frozen.', 'frozen');
       renderEmpty('Frozen — window closed');
     } else {
       renderEmpty('Preparing…');
-      // autoFetchOnLoad: silently fetch fresh applicants in the background
       autoFetchOnLoad();
-    }
-
-    // Footer note: describe the actual data source
-    if (els.method && !isFrozen()) {
-      var modeNote = (els.quotaToggle && els.quotaToggle.checked)
-        ? '<br><em>Mode: <strong>soft female quota (20% reserved, unused seats released)</strong>. Experimental.</em>'
-        : '<br><em>Mode: score-order only. Tick the box above to apply BDU\'s 20% female quota model.</em>';
-      els.method.innerHTML += '<br><br><em>Data source: BDU live via the BD Buddy server. ' +
-        'Results are cached for 15 minutes.</em>' + modeNote;
     }
   });
 
-  // Expose for debugging
   window.DarkAngels = {
     run: runSimulation,
     reset: resetView,

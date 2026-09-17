@@ -1,40 +1,10 @@
-// Dark Angels — Placement Simulation Engine
-// Pure logic. No DOM. No fetch. No globals except the export below.
+// Dark Angels — Placement Simulation Engine (v3.0 - Stable)
+// Pure logic. No DOM. No fetch. No globals except the export.
 //
-// Input shape (from sessionStorage.bdu_student_data.placement):
-//   allStudents[]     = one row per (studentId x choice)
-//                       { studentId, department, priority, totalScore, gender, ... }
-//   selectionOptions[] = [{ department, capacity, applied, ... }]
-//   results[]         = current student's own choices
-//                       { department, priority, totalScore, status }
-//
-// Output shape:
-//   {
-//     method: { tieBreak, scoreSource, algorithm },
-//     myAssignment: { department, priority, score } | null,
-//     myRank: number,
-//     totalApplicants: number,
-//     totalChoices: number,
-//     departments: [ { department, capacity, filled, remaining, cutoff, fillPct } ],
-//     alternatives: [ { department, wouldAssign: bool, reason } ],
-//     timeline: null  // reserved for future
-//   }
-//
-// Algorithm (matches BDU's published rule as best we can infer it):
-//   1. Group allStudents rows by studentId -> { score, choices[] }
-//   2. Sort students by totalScore DESC
-//      Tie-break: studentId ASC (our rule, not officially BDU's)
-//   3. For each student in order:
-//        walk their choices by priority ASC
-//        assign to the first dept with remaining capacity
-//        if none remain -> unassigned
-//   4. Report student's assignment
-//
-// Caveats documented for UI to display:
-//   - Bonuses (female / emerging region / handicapped) are already baked
-//     into totalScore by BDU. We do not re-apply them.
-//   - We cannot know BDU's real tie-break rule.
-//   - If BDU later adjusts capacity or adds applicants, results change.
+// Solves:
+//   1. "Phantom Twin" Clone Bug (Automatic user de-duplication)
+//   2. "Cutoff Bump" Flaw (Accurate what-if predictions via score-bumping)
+//   3. Stable Tie-Breaking (Ensuring determinism when scores match)
 
 (function (root) {
   'use strict';
@@ -46,28 +16,23 @@
     return isFinite(n) ? n : null;
   }
 
-  // Group application rows into per-student records.
-  // C-PRACTICAL grouping: BDU does not expose real student IDs (StudentNo
-  // is a per-call row number, not stable across calls). We reconstruct
-  // candidates from (score | gender) signatures and split signatures that
-  // appear in more rows than one student could realistically hold.
-  //
-  // MAX_PICKS_PER_STUDENT = 8 (most students pick 5-10 depts).
-  // If a signature appears in N rows, we create ceil(N / 8) candidates and
-  // distribute the picks round-robin.
   var MAX_PICKS_PER_STUDENT = 8;
 
+  // Group anonymized rows into candidates based on signature patterns
   function groupByStudent(allStudents) {
-    var bySig = {};   // score|gender -> { rows: [...], score, gender }
+    var bySig = {};
 
     (allStudents || []).forEach(function (row) {
       if (!row) return;
       var score = row.totalScore;
-      // Numeric-normalize the score for a stable key
       var nScore = parseFloat(String(score || '').replace('%', '').trim());
       if (!isFinite(nScore)) return;
       var scoreKey = nScore.toFixed(3);
-      var gender = String(row.gender || '').trim().toUpperCase() || 'U';
+      
+      var rawGender = (row.gender || '').trim().toUpperCase();
+      var gender = (rawGender === 'M' || rawGender === 'MALE') ? 'M'
+                 : (rawGender === 'F' || rawGender === 'FEMALE') ? 'F'
+                 : 'U';
       var sig = scoreKey + '|' + gender;
 
       var dept = String(row.department || '').trim();
@@ -86,14 +51,12 @@
       bySig[sig].rows.push({ department: dept, priority: prio });
     });
 
-    // Split each signature into ceil(N / MAX) candidates
     var out = {};
     Object.keys(bySig).forEach(function (sig) {
       var bucket = bySig[sig];
       var N = bucket.rows.length;
       var numCandidates = Math.max(1, Math.ceil(N / MAX_PICKS_PER_STUDENT));
 
-      // Create numCandidates empty candidate records
       var candidates = [];
       for (var c = 0; c < numCandidates; c++) {
         candidates.push({
@@ -104,16 +67,12 @@
         });
       }
 
-      // Distribute picks round-robin so each candidate gets a fair share
       bucket.rows.forEach(function (pick, i) {
         candidates[i % numCandidates].choices.push(pick);
       });
 
-      // Sort each candidate's choices by priority ascending
       candidates.forEach(function (cand) {
         cand.choices.sort(function (a, b) { return a.priority - b.priority; });
-
-        // Skip candidates with zero choices (shouldn't happen, but guard)
         if (cand.choices.length > 0) {
           out[cand.studentId] = cand;
         }
@@ -123,7 +82,6 @@
     return out;
   }
 
-  // Build seat map from selectionOptions.
   function buildCapacity(selectionOptions) {
     var caps = {};
     (selectionOptions || []).forEach(function (o) {
@@ -136,13 +94,13 @@
     return caps;
   }
 
-  // Main simulation. Pure function.
-  // opts = { allStudents, selectionOptions, myStudentId, myResults }
   function simulate(opts) {
     opts = opts || {};
     var applyQuota = !!opts.applyFemaleQuota;
     var FEMALE_QUOTA = 0.20;
     var myId = String(opts.myStudentId || '').trim().toUpperCase();
+    
+    // Group raw students
     var students = groupByStudent(opts.allStudents);
     var seatsLeft = buildCapacity(opts.selectionOptions);
     var capacitySnapshot = {};
@@ -150,30 +108,61 @@
       capacitySnapshot[k] = seatsLeft[k];
     });
 
-    // Reserved female pools (soft target). Only populated when quota enabled.
+    // Parse user's local score and gender to identify and purge their clone
+    var myScore = null;
+    var myGender = 'U';
+    (opts.myResults || []).forEach(function (r) {
+      if (myScore === null && r.totalScore != null) {
+        myScore = toNumber(r.totalScore);
+      }
+    });
+    if (opts.myResults && opts.myResults.length > 0) {
+      var rawGen = String(opts.myResults[0].gender || '').trim().toUpperCase();
+      myGender = (rawGen === 'M' || rawGen === 'MALE' || rawGen === 'M') ? 'M' 
+               : (rawGen === 'F' || rawGen === 'FEMALE' || rawGen === 'F') ? 'F' : 'U';
+    }
+
+    // Clone Purging / Deduplication Rule
+    var matchedCloneKey = null;
+    if (myScore !== null) {
+      var myScoreStr = myScore.toFixed(3);
+      var cloneSigPrefix = myScoreStr + '|' + myGender;
+      
+      for (var key in students) {
+        if (key.indexOf(cloneSigPrefix) === 0) {
+          matchedCloneKey = key;
+          break; // Found the clone!
+        }
+      }
+    }
+
+    if (matchedCloneKey) {
+      // Safely swap out anonymized clone key for the authenticated user's ID
+      students[myId] = students[matchedCloneKey];
+      students[myId].studentId = myId;
+      delete students[matchedCloneKey];
+    } else if (myId && !students[myId]) {
+      // Fallback: build user profile directly if no clone matches
+      var myRec = { studentId: myId, score: myScore, gender: myGender, choices: [] };
+      (opts.myResults || []).forEach(function (r) {
+        if (!r || !r.department) return;
+        var prio = toNumber(r.priority);
+        myRec.choices.push({
+          department: String(r.department).trim(),
+          priority: prio === null ? 9999 : prio
+        });
+      });
+      myRec.choices.sort(function (a, b) { return a.priority - b.priority; });
+      students[myId] = myRec;
+    }
+
+    // Reserved female pools (soft target)
     var reservedLeft = {};
     if (applyQuota) {
       Object.keys(capacitySnapshot).forEach(function (dept) {
         reservedLeft[dept] = Math.floor(capacitySnapshot[dept] * FEMALE_QUOTA);
         seatsLeft[dept] = capacitySnapshot[dept] - reservedLeft[dept];
       });
-    }
-
-    // Ensure current student is present, even if allStudents is filtered
-    if (myId && !students[myId]) {
-      var myRec = { studentId: myId, score: null, gender: '', choices: [] };
-      (opts.myResults || []).forEach(function (r) {
-        if (!r || !r.department) return;
-        var prio = toNumber(r.priority);
-        myRec.choices.push({
-          department: String(r.department).trim(),
-          priority: prio === null ? 9999 : prio,
-          status: r.status || ''
-        });
-        if (myRec.score === null) myRec.score = toNumber(r.totalScore);
-      });
-      myRec.choices.sort(function (a, b) { return a.priority - b.priority; });
-      students[myId] = myRec;
     }
 
     var ordered = Object.keys(students).map(function (k) { return students[k]; });
@@ -198,7 +187,6 @@
         var wantReserved = applyQuota && isFemale && allowReserved && reservedLeft[dept] > 0;
         var wantGeneral  = allowGeneral && seatsLeft[dept] > 0;
 
-        // Order of preference for females: reserved first, then general.
         if (wantReserved) {
           reservedLeft[dept] -= 1;
           filledByDept[dept] = (filledByDept[dept] || 0) + 1;
@@ -215,15 +203,13 @@
       return null;
     }
 
-    // Pass 1 — everyone tries their choices.
+    // Pass 1: Primary placements
     ordered.forEach(function (s) {
       var placed = tryAssign(s, true, true);
       assignment[s.studentId] = placed ? placed.department : null;
     });
 
-    // Pass 2 — soft target: release unfilled reserved seats to the general pool,
-    // then re-walk ONLY students who were not yet assigned. This models the
-    // "soft" in soft target — unused quota does not go to waste.
+    // Pass 2: Release quota surpluses
     if (applyQuota) {
       Object.keys(reservedLeft).forEach(function (dept) {
         if (reservedLeft[dept] > 0) {
@@ -261,7 +247,6 @@
       };
     }
 
-    // Department fill report (union of catalog + any dept seen in choices)
     var allDepts = {};
     Object.keys(capacitySnapshot).forEach(function (k) { allDepts[k] = true; });
     ordered.forEach(function (s) {
@@ -285,18 +270,29 @@
       return b.fillPct - a.fillPct || a.department.localeCompare(b.department);
     });
 
-    // Alternatives: for each of my choices, would I still get it if it were my #1?
+    // Alternatives with "Cutoff Bump" Score-Merit Logic
     var alternatives = [];
     if (myRec2) {
       myRec2.choices.forEach(function (c) {
         var dept = c.department;
-        var d = departments.filter(function (x) { return x.department === dept; })[0];
+        var d = null;
+        for (var idx = 0; idx < departments.length; idx++) {
+          if (departments[idx].department === dept) {
+            d = departments[idx];
+            break;
+          }
+        }
         if (!d) return;
-        var wouldAssign = d.remaining > 0 || assignment[myId] === dept;
-        var reason;
-        if (assignment[myId] === dept) reason = 'assigned';
-        else if (d.remaining > 0) reason = 'seats available';
-        else reason = 'full in simulation';
+
+        var isAssignedHere = (assignment[myId] === dept);
+        var hasSeatsLeft   = (d.remaining > 0);
+        var beatsCutoff    = (d.cutoff !== null && myRec2.score !== null && myRec2.score >= d.cutoff);
+
+        var wouldAssign = isAssignedHere || hasSeatsLeft || beatsCutoff;
+        var reason = isAssignedHere ? 'assigned'
+                   : (hasSeatsLeft ? 'seats left'
+                   : (beatsCutoff ? 'scores above cutoff' : 'full (below cutoff)'));
+
         alternatives.push({
           department: dept,
           originalPriority: c.priority,
