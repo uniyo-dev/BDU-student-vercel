@@ -1063,6 +1063,9 @@ const server = http.createServer(async (req, res) => {
             return makeRequest(url, { headers: apiHeaders })
               .then(function (r) {
                 const arr = JSON.parse(r.body || '{}').data || [];
+                if (prio === 1 && arr.length > 0) {
+                  console.log('[ALL-APP] dept raw count', deptName, 'prio', prio, ':', arr.length);
+                }
                 if (prio === 1 && arr.length && !global.__ALLAPP_KEYS_LOGGED__) {
                   global.__ALLAPP_KEYS_LOGGED__ = true;
                   console.log('[ALL-APP] raw keys:', Object.keys(arr[0]).join(','));
