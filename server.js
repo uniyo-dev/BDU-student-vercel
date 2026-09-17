@@ -255,12 +255,6 @@ async function handleLogin(req, res) {
       ]);
       rawCriteria = JSON.parse(criteriaRes.body).data || [];
       rawResults = JSON.parse(resultRes.body).data || [];
-      if (!rawResults.length) {
-        console.log('[LOGIN-DEBUG] raw result summary empty. Body:', (resultRes.body || '').slice(0, 400));
-      } else {
-        console.log('[LOGIN-DEBUG] result count:', rawResults.length);
-        console.log('[LOGIN-DEBUG] sample result:', JSON.stringify(rawResults[0]).slice(0, 400));
-      }
       rawSelectionPriority = JSON.parse(selectionRes.body).data || [];
     } catch(e) {}
 
@@ -1053,7 +1047,6 @@ const server = http.createServer(async (req, res) => {
           .map(p => p.PriorityName)
           .filter(v => v != null)
           .slice(0, 5);
-        console.log('[ALL-APP] priorities to fetch:', JSON.stringify(priorityNums));
 
         function sleep(ms) {
           return new Promise(function (resolve) { setTimeout(resolve, ms); });
@@ -1105,10 +1098,10 @@ const server = http.createServer(async (req, res) => {
           }
         }
 
-        console.log('[ALL-APP] fetching', combos.length, 'combos (' + departments.length + ' depts x ' + priorityNums.length + ' priorities)…');
+        console.log('[ALL-APP] SERIAL-PACED fetching', combos.length, 'combos (1-at-a-time, 300ms gap)…');
         const t0 = Date.now();
         const allRows = [];
-        const BATCH = 4;
+        const BATCH = 1;   // SERIAL-PACED: one request at a time, avoids BDU burst scoping
 
         for (let i = 0; i < combos.length; i += BATCH) {
           const batch = combos.slice(i, i + BATCH);
@@ -1116,10 +1109,8 @@ const server = http.createServer(async (req, res) => {
             return fetchCombo(c.dept, c.prio);
           }));
           results.forEach(function (r) { allRows.push.apply(allRows, r); });
-          if (i + BATCH < combos.length) await sleep(150);
+          if (i + BATCH < combos.length) await sleep(300);
         }
-
-        console.log('[ALL-APP] fetched', allRows.length, 'raw rows in', ((Date.now() - t0) / 1000).toFixed(1), 's');
 
         // Dedupe by (studentId, dept, priority)
         const seen = new Set();
@@ -1133,7 +1124,6 @@ const server = http.createServer(async (req, res) => {
         }
 
         const uniqIds = new Set(deduped.map(r => String(r.studentId || '').trim().toUpperCase()).filter(Boolean));
-        console.log('[ALL-APP] after dedupe:', deduped.length, 'rows,', uniqIds.size, 'unique students');
 
         session.allApplicantsCache = {
           expiresAt: Date.now() + 15 * 60 * 1000,
