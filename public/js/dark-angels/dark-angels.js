@@ -242,6 +242,7 @@
     var bio = student.biography || {};
     var results = placement.results || [];
     var selectionOptions = placement.selectionOptions || [];
+    var allStudents = placement.allStudents || [];
 
     if (!results.length) {
       setStatus('You have not submitted any placement choices yet.', 'error');
@@ -249,64 +250,31 @@
       return;
     }
 
-    // If frozen, we do not fetch, we do not re-simulate. Just show frozen state.
+    if (!allStudents.length) {
+      setStatus('BDU has not published applicant data yet. Try again after results start rolling out.', 'error');
+      renderEmpty('No applicant data yet');
+      return;
+    }
+
+    // Frozen window — do not recompute, just report state
     if (isFrozen()) {
       setStatus('Placement window closed. Results frozen.', 'frozen');
-      renderEmpty('Frozen — window closed');
       if (els.btnRun) els.btnRun.disabled = true;
-      return;
     }
 
-    var sid = readSessionId();
-    if (!sid) {
-      setStatus('Session expired. Please log out and log back in.', 'error');
-      return;
-    }
-
-    setStatus('Fetching fresh applicants from BDU…');
-    if (els.btnRun) els.btnRun.disabled = true;
-
-    fetch(RANKINGS_ENDPOINT, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        sessionId: sid,
-        department: '',
-        priority: '',
-        acYear: '',
-        semester: '',
-        year: '',
-        term: ''
-      })
-    })
-      .then(function (r) { return r.json(); })
-      .then(function (data) {
-        if (!data || !data.success) {
-          throw new Error((data && data.error) || 'Server returned an error.');
-        }
-        var freshAllStudents = (data.data && data.data.allStudents) || [];
-        var freshSelection = (data.data && data.data.selectionOptions) || selectionOptions;
-
-        if (!freshAllStudents.length) {
-          throw new Error('BDU returned no applicant rows.');
-        }
-
-        var sim = window.DarkAngelsSimulator.simulate({
-          allStudents: freshAllStudents,
-          selectionOptions: freshSelection,
-          myStudentId: bio.studentId,
-          myResults: results
-        });
-
-        renderAll(sim);
-        setStatus('Simulation updated · ' + new Date().toLocaleTimeString(), '');
-      })
-      .catch(function (err) {
-        setStatus('Error: ' + (err.message || 'Unknown'), 'error');
-      })
-      .finally(function () {
-        if (els.btnRun) els.btnRun.disabled = isFrozen();
+    try {
+      var sim = window.DarkAngelsSimulator.simulate({
+        allStudents: allStudents,
+        selectionOptions: selectionOptions,
+        myStudentId: bio.studentId,
+        myResults: results
       });
+      renderAll(sim);
+      var suffix = isFrozen() ? ' (frozen)' : '';
+      setStatus('Simulated from data captured at login \u00b7 ' + new Date().toLocaleTimeString() + suffix, '');
+    } catch (e) {
+      setStatus('Simulation error: ' + (e.message || 'unknown'), 'error');
+    }
   }
 
   function resetView() {
@@ -337,6 +305,12 @@
       renderEmpty('Frozen — window closed');
     } else {
       renderEmpty('Ready to simulate');
+    }
+
+    // Gentle notice: data source is login-cached, no live fetch
+    if (els.method && !isFrozen()) {
+      els.method.innerHTML += '<br><br><em>Data source: the applicant list BDU sent when you logged in. ' +
+        'Re-login to refresh scores.</em>';
     }
   });
 
