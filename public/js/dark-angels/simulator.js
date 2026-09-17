@@ -110,6 +110,8 @@
   // opts = { allStudents, selectionOptions, myStudentId, myResults }
   function simulate(opts) {
     opts = opts || {};
+    var applyQuota = !!opts.applyFemaleQuota;
+    var FEMALE_QUOTA = 0.20;
     var myId = String(opts.myStudentId || '').trim().toUpperCase();
     var students = groupByStudent(opts.allStudents);
     var seatsLeft = buildCapacity(opts.selectionOptions);
@@ -117,6 +119,15 @@
     Object.keys(seatsLeft).forEach(function (k) {
       capacitySnapshot[k] = seatsLeft[k];
     });
+
+    // Reserved female pools (soft target). Only populated when quota enabled.
+    var reservedLeft = {};
+    if (applyQuota) {
+      Object.keys(capacitySnapshot).forEach(function (dept) {
+        reservedLeft[dept] = Math.floor(capacitySnapshot[dept] * FEMALE_QUOTA);
+        seatsLeft[dept] = capacitySnapshot[dept] - reservedLeft[dept];
+      });
+    }
 
     // Ensure current student is present, even if allStudents is filtered
     if (myId && !students[myId]) {
@@ -147,25 +158,55 @@
     var cutoffByDept = {};
     var filledByDept = {};
 
-    ordered.forEach(function (s) {
-      var placed = null;
+    function tryAssign(s, allowGeneral, allowReserved) {
       for (var i = 0; i < s.choices.length; i++) {
         var c = s.choices[i];
-        var left = seatsLeft[c.department];
-        if (typeof left === 'undefined') continue; // dept not in catalog — skip
-        if (left > 0) {
-          placed = c;
-          seatsLeft[c.department] = left - 1;
-          filledByDept[c.department] = (filledByDept[c.department] || 0) + 1;
-          // The LAST admitted student's score = dept cutoff (in this run).
-          // Overwrite on every admission so the lowest scoring admitted
-          // student wins the final value.
-          cutoffByDept[c.department] = s.score;
-          break;
+        var dept = c.department;
+        if (typeof seatsLeft[dept] === 'undefined') continue;
+
+        var isFemale = String(s.gender || '').toUpperCase() === 'F';
+        var wantReserved = applyQuota && isFemale && allowReserved && reservedLeft[dept] > 0;
+        var wantGeneral  = allowGeneral && seatsLeft[dept] > 0;
+
+        // Order of preference for females: reserved first, then general.
+        if (wantReserved) {
+          reservedLeft[dept] -= 1;
+          filledByDept[dept] = (filledByDept[dept] || 0) + 1;
+          cutoffByDept[dept] = s.score;
+          return c;
+        }
+        if (wantGeneral) {
+          seatsLeft[dept] -= 1;
+          filledByDept[dept] = (filledByDept[dept] || 0) + 1;
+          cutoffByDept[dept] = s.score;
+          return c;
         }
       }
+      return null;
+    }
+
+    // Pass 1 — everyone tries their choices.
+    ordered.forEach(function (s) {
+      var placed = tryAssign(s, true, true);
       assignment[s.studentId] = placed ? placed.department : null;
     });
+
+    // Pass 2 — soft target: release unfilled reserved seats to the general pool,
+    // then re-walk ONLY students who were not yet assigned. This models the
+    // "soft" in soft target — unused quota does not go to waste.
+    if (applyQuota) {
+      Object.keys(reservedLeft).forEach(function (dept) {
+        if (reservedLeft[dept] > 0) {
+          seatsLeft[dept] = (seatsLeft[dept] || 0) + reservedLeft[dept];
+          reservedLeft[dept] = 0;
+        }
+      });
+      ordered.forEach(function (s) {
+        if (assignment[s.studentId]) return;
+        var placed = tryAssign(s, true, false);
+        if (placed) assignment[s.studentId] = placed.department;
+      });
+    }
 
     var myRank = -1;
     for (var i = 0; i < ordered.length; i++) {
@@ -241,7 +282,10 @@
       method: {
         tieBreak: 'studentId ascending (our rule, not officially BDU\'s)',
         scoreSource: 'BDU totalScore as returned by /api/login (bonuses already applied)',
-        algorithm: 'greedy: sort by score desc, walk choices by priority asc, first dept with seat wins'
+        algorithm: applyQuota
+          ? 'greedy + soft female quota (20% reserved, unfilled seats released)'
+          : 'greedy: sort by score desc, walk choices by priority asc, first dept with seat wins',
+        femaleQuota: applyQuota ? { rate: FEMALE_QUOTA, mode: 'soft target' } : null
       },
       myAssignment: myAssignment,
       myRank: myRank > 0 ? myRank : null,

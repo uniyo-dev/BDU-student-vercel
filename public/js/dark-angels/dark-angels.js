@@ -36,6 +36,7 @@
     els.status    = q('da-status');
     els.result    = q('da-result');
     els.method    = q('da-method');
+    els.quotaToggle = q('da-quota');
   }
 
   // ─── Session helpers ────────────────────────────────────────
@@ -347,7 +348,8 @@
         allStudents: allStudents,
         selectionOptions: selectionOptions,
         myStudentId: bio.studentId,
-        myResults: results
+        myResults: results,
+        applyFemaleQuota: !!(els.quotaToggle && els.quotaToggle.checked)
       });
       renderAll(sim);
       var suffix = frozen ? ' (frozen)' : '';
@@ -379,6 +381,13 @@
     if (els.btnReset) {
       els.btnReset.addEventListener('click', resetView);
     }
+    if (els.quotaToggle) {
+      els.quotaToggle.addEventListener('change', function () {
+        if (els.result && els.result.innerHTML) {
+          runSimulation(false);
+        }
+      });
+    }
 
     // Initial state
     if (isFrozen()) {
@@ -391,8 +400,11 @@
 
     // Footer note: describe the actual data source
     if (els.method && !isFrozen()) {
+      var modeNote = (els.quotaToggle && els.quotaToggle.checked)
+        ? '<br><em>Mode: <strong>soft female quota (20% reserved, unused seats released)</strong>. Experimental.</em>'
+        : '<br><em>Mode: score-order only. Tick the box above to apply BDU\'s 20% female quota model.</em>';
       els.method.innerHTML += '<br><br><em>Data source: BDU live via the BD Buddy server. ' +
-        'Results are cached for 15 minutes. Tap Reset View to clear the cache.</em>';
+        'Results are cached for 15 minutes.</em>' + modeNote;
     }
   });
 

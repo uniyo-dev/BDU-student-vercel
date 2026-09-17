@@ -321,3 +321,38 @@
   .da-hero-dept { font-size: 22px; }
   .da-title { font-size: 24px; }
 }
+
+
+/* ─── Female quota toggle ─── */
+.da-quota-toggle {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  margin: 12px 0;
+  background: var(--bg-elevated, #f9fafb);
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 10px;
+  cursor: pointer;
+  user-select: none;
+}
+.da-quota-toggle input[type="checkbox"] {
+  margin-top: 2px;
+  width: 18px;
+  height: 18px;
+  accent-color: #6D28D9;
+  cursor: pointer;
+}
+.da-quota-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text, #111827);
+  line-height: 1.4;
+}
+.da-quota-hint {
+  display: block;
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--text-muted, #6b7280);
+  margin-top: 2px;
+}
