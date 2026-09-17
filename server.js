@@ -1188,6 +1188,13 @@ const server = http.createServer(async (req, res) => {
           if (i + BATCH_SIZE < departments.length) await sleep(250);
         }
         console.log('[ALL-APP] fetched', allRows.length, 'rows in', ((Date.now() - t0) / 1000).toFixed(1), 's');
+        try {
+          const uniqIds = new Set(allRows.map(r => String(r.studentId || '').trim().toUpperCase()).filter(Boolean));
+          console.log('[ALL-APP] unique student IDs:', uniqIds.size);
+          console.log('[ALL-APP] sample row[0]:', JSON.stringify(allRows[0] || null).slice(0, 400));
+          console.log('[ALL-APP] sample row[1]:', JSON.stringify(allRows[1] || null).slice(0, 400));
+          console.log('[ALL-APP] sample row[500]:', JSON.stringify(allRows[500] || null).slice(0, 400));
+        } catch (e) { console.error('[ALL-APP-DEBUG]', e.message); }
 
         // Cache for 15 min
         session.allApplicantsCache = {
