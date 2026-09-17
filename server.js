@@ -255,6 +255,12 @@ async function handleLogin(req, res) {
       ]);
       rawCriteria = JSON.parse(criteriaRes.body).data || [];
       rawResults = JSON.parse(resultRes.body).data || [];
+      if (!rawResults.length) {
+        console.log('[LOGIN-DEBUG] raw result summary empty. Body:', (resultRes.body || '').slice(0, 400));
+      } else {
+        console.log('[LOGIN-DEBUG] result count:', rawResults.length);
+        console.log('[LOGIN-DEBUG] sample result:', JSON.stringify(rawResults[0]).slice(0, 400));
+      }
       rawSelectionPriority = JSON.parse(selectionRes.body).data || [];
     } catch(e) {}
 
