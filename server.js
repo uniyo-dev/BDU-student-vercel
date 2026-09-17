@@ -988,9 +988,14 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  // All applicants — returns the FULL row list per (student × choice).
+  // All applicants — OPTION-B-MARKER
   // POST /api/placement/all-applicants  { sessionId }
-  // Clones the throttled loop from /api/placement/popular but keeps raw rows.
+  //
+  // Uses the SAME source as the rankings tab: GetDepartmentApplicationSummary
+  // called once per (department, priority) pair — 30 depts x 5 priorities = 150.
+  // Each call returns the real ranked student list for that combo.
+  // The simulator now sees the same pool the rankings tab shows.
+  //
   // Cached per session for 15 min.
   if (req.url === '/api/placement/all-applicants' && req.method === 'POST') {
     let body = '';
@@ -1004,7 +1009,6 @@ const server = http.createServer(async (req, res) => {
           return res.end(JSON.stringify({ success: false, error: 'Session expired. Please log out and log back in.' }));
         }
 
-        // Return cache if fresh
         const now = Date.now();
         if (session.allApplicantsCache && session.allApplicantsCache.expiresAt > now) {
           res.writeHead(200, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
@@ -1021,9 +1025,10 @@ const server = http.createServer(async (req, res) => {
           'X-Requested-With': 'XMLHttpRequest'
         };
 
-        // Fetch lookups — dept + year/sem/term, same as popular
-        const [deptRes, acYearRes, semRes, yearRes, termRes] = await Promise.all([
+        // Step 1 — lookups
+        const [deptRes, prioRes, acYearRes, semRes, yearRes, termRes] = await Promise.all([
           makeRequest('/Placement/GetDestinationDepartment', { headers: apiHeaders }),
+          makeRequest('/Placement/GetSelectionPriority', { headers: apiHeaders }),
           makeRequest('/Placement/GetAcYear', { headers: apiHeaders }),
           makeRequest('/Placement/GetSemester', { headers: apiHeaders }),
           makeRequest('/Placement/GetYear', { headers: apiHeaders }),
@@ -1041,89 +1046,91 @@ const server = http.createServer(async (req, res) => {
         const year = years[0] ? years[0].Year : 1;
         const term = terms[0] ? terms[0].Term : 'II';
 
+        const priorityNums = [1, 2, 3, 4, 5];
+
         function sleep(ms) {
           return new Promise(function (resolve) { setTimeout(resolve, ms); });
         }
 
-        // Fetch every (dept × priority 1..5) combination for this dept.
-        // We capture rows across the top 5 priorities so we have each
-        // student's ranked choice list, not just their #1.
-        function fetchOneDeptAllPriorities(d) {
-          const deptName = String(d.DestProgam || '').split('->')[0].trim();
-          const tasks = [1, 2, 3, 4, 5].map(function (prio) {
-            const params = new URLSearchParams({
-              destinationCurriculumTblCode: d.DestinationCurriculumTblCode,
-              acYear: acYear,
-              batch: year,
-              semester: semester,
-              term: term,
-              priority: prio,
-            });
-            const url = '/Placement/GetDepartmentApplicationSummary?' + params.toString();
-            return makeRequest(url, { headers: apiHeaders })
-              .then(function (r) {
-                const arr = JSON.parse(r.body || '{}').data || [];
-                if (prio === 1 && arr.length > 0) {
-                  console.log('[ALL-APP] dept raw count', deptName, 'prio', prio, ':', arr.length);
-                }
-                if (prio === 1 && arr.length && !global.__ALLAPP_KEYS_LOGGED__) {
-                  global.__ALLAPP_KEYS_LOGGED__ = true;
-                  console.log('[ALL-APP] raw keys:', Object.keys(arr[0]).join(','));
-                  console.log('[ALL-APP] raw sample:', JSON.stringify(arr[0]).slice(0, 500));
-                }
-                return arr.map(function (row) {
-                  return {
-                    studentId: row.StudentNo || row.StudentID || row.studentId || '',
-                    fullName: row.FullName || row.fullName ||
-                              ((row.FirstName || '') + ' ' + (row.FatherName || '')).trim(),
-                    department: deptName,
-                    priority: prio,
-                    totalScore: row.TotalResult || row.TotalScore || '',
-                    status: row.ApplicationStatus || row.PlacementStatus || '',
-                    highschoolExam: row.HighschoolExam || row.NonExamTotalResult || row.NoneExamTotalResult || '',
-                    programExam: row.Exam || row.ExamResult || '',
-                    gender: row.Gender || '',
-                    academicStatus: row.AcademicStatus || row.AcademicStanding || row.AcademicResult || '',
-                    applicationStatus: row.ApplicationStatus || '',
-                    placementStatus: row.PlacementStatus || '',
-                    academicYear: row.AcYear || row.AcademicYear || '',
-                    semester: row.Semester || '',
-                    year: row.Year || row.AcademicYearShort || '',
-                    term: row.AcademicTerm || row.Term || ''
-                  };
-                });
-              })
-              .catch(function () { return []; });
+        function fetchCombo(dept, prio) {
+          const deptName = String(dept.DestProgam || '').split('->')[0].trim();
+          const params = new URLSearchParams({
+            destinationCurriculumTblCode: dept.DestinationCurriculumTblCode,
+            acYear: acYear,
+            batch: year,
+            semester: semester,
+            term: term,
+            priority: prio,
           });
-          return Promise.all(tasks).then(function (groups) {
-            // Flatten — one array of rows per dept
-            return groups.reduce(function (acc, g) { return acc.concat(g); }, []);
-          });
+          const url = '/Placement/GetDepartmentApplicationSummary?' + params.toString();
+
+          return makeRequest(url, { headers: apiHeaders })
+            .then(function (r) {
+              const arr = JSON.parse(r.body || '{}').data || [];
+              return arr.map(function (row) {
+                return {
+                  studentId: String(row.StudentNo || row.StudentID || row.studentId || ''),
+                  fullName: row.FullName || row.fullName ||
+                            ((row.FirstName || '') + ' ' + (row.FatherName || '')).trim(),
+                  department: deptName,
+                  priority: prio,
+                  totalScore: row.TotalScore != null ? String(row.TotalScore)
+                             : (row.TotalResult != null ? String(row.TotalResult) : ''),
+                  highschoolExam: row.NoneExamTotalResult != null ? String(row.NoneExamTotalResult)
+                                 : (row.HighschoolExam != null ? String(row.HighschoolExam) : ''),
+                  programExam: row.ExamResult != null ? String(row.ExamResult)
+                              : (row.Exam != null ? String(row.Exam) : ''),
+                  gender: row.Sex || row.Gender || '',
+                  academicStatus: row.FinalStatus || row.AcademicStatus || '',
+                  applicationStatus: row.ApplicationStatus || '',
+                  placementStatus: row.PlacementStatus || '',
+                  studentCurriculumTblCode: row.StudentCurriculumTblCode || null,
+                };
+              });
+            })
+            .catch(function () { return []; });
         }
 
-        const BATCH_SIZE = 3;
-        const allRows = [];
-        console.log('[ALL-APP] fetching', departments.length, 'departments × 5 priorities (throttled)…');
+        const combos = [];
+        for (let d = 0; d < departments.length; d++) {
+          for (let p = 0; p < priorityNums.length; p++) {
+            combos.push({ dept: departments[d], prio: priorityNums[p] });
+          }
+        }
+
+        console.log('[ALL-APP] fetching', combos.length, 'combos (' + departments.length + ' depts x ' + priorityNums.length + ' priorities)…');
         const t0 = Date.now();
-        for (let i = 0; i < departments.length; i += BATCH_SIZE) {
-          const batch = departments.slice(i, i + BATCH_SIZE);
-          const results = await Promise.all(batch.map(fetchOneDeptAllPriorities));
-          results.forEach(function (r) { allRows.push.apply(allRows, r); });
-          if (i + BATCH_SIZE < departments.length) await sleep(250);
-        }
-        console.log('[ALL-APP] fetched', allRows.length, 'rows in', ((Date.now() - t0) / 1000).toFixed(1), 's');
-        try {
-          const uniqIds = new Set(allRows.map(r => String(r.studentId || '').trim().toUpperCase()).filter(Boolean));
-          console.log('[ALL-APP] unique student IDs:', uniqIds.size);
-          console.log('[ALL-APP] sample row[0]:', JSON.stringify(allRows[0] || null).slice(0, 400));
-          console.log('[ALL-APP] sample row[1]:', JSON.stringify(allRows[1] || null).slice(0, 400));
-          console.log('[ALL-APP] sample row[500]:', JSON.stringify(allRows[500] || null).slice(0, 400));
-        } catch (e) { console.error('[ALL-APP-DEBUG]', e.message); }
+        const allRows = [];
+        const BATCH = 4;
 
-        // Cache for 15 min
+        for (let i = 0; i < combos.length; i += BATCH) {
+          const batch = combos.slice(i, i + BATCH);
+          const results = await Promise.all(batch.map(function (c) {
+            return fetchCombo(c.dept, c.prio);
+          }));
+          results.forEach(function (r) { allRows.push.apply(allRows, r); });
+          if (i + BATCH < combos.length) await sleep(150);
+        }
+
+        console.log('[ALL-APP] fetched', allRows.length, 'raw rows in', ((Date.now() - t0) / 1000).toFixed(1), 's');
+
+        // Dedupe by (studentId, dept, priority)
+        const seen = new Set();
+        const deduped = [];
+        for (let i = 0; i < allRows.length; i++) {
+          const r = allRows[i];
+          const key = r.studentId + '|' + r.department + '|' + r.priority;
+          if (r.studentId && seen.has(key)) continue;
+          seen.add(key);
+          deduped.push(r);
+        }
+
+        const uniqIds = new Set(deduped.map(r => String(r.studentId || '').trim().toUpperCase()).filter(Boolean));
+        console.log('[ALL-APP] after dedupe:', deduped.length, 'rows,', uniqIds.size, 'unique students');
+
         session.allApplicantsCache = {
           expiresAt: Date.now() + 15 * 60 * 1000,
-          data: allRows
+          data: deduped
         };
         touchBDUSession(sessionId);
 
@@ -1131,7 +1138,7 @@ const server = http.createServer(async (req, res) => {
         res.end(JSON.stringify({
           success: true,
           cached: false,
-          data: { allStudents: allRows }
+          data: { allStudents: deduped }
         }));
       } catch (err) {
         console.error('[ALL-APP]', err.stack || err.message);
@@ -1141,6 +1148,7 @@ const server = http.createServer(async (req, res) => {
     });
     return;
   }
+
 
   // Popular departments — count of students who ranked each dept #1
   // POST /api/placement/popular  { sessionId }
