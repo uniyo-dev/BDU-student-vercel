@@ -229,6 +229,39 @@
       '</div>';
   }
 
+  // ─── Silent auto-fetch on page load ─────────────────────────
+  // Called once when the page opens. Fetches all-applicants in the
+  // background without running a simulation — so when the user taps
+  // Simulate Now, everything is already cached and instant.
+  function autoFetchOnLoad() {
+    var cached = readApplicantCache();
+    if (cached && cached.length) {
+      setStatus('Ready — ' + cached.length + ' applicants loaded.');
+      renderEmpty('Ready to simulate');
+      return;
+    }
+
+    var sid = readSessionId();
+    if (!sid) {
+      setStatus('Please log in to use Dark Angels.', 'error');
+      renderEmpty('Not logged in');
+      return;
+    }
+
+    setStatus('Fetching applicants from BDU…');
+    var t0 = Date.now();
+    fetchAllApplicants(sid)
+      .then(function (rows) {
+        var secs = ((Date.now() - t0) / 1000).toFixed(1);
+        setStatus('Ready — ' + rows.length + ' applicants fetched in ' + secs + 's.');
+        renderEmpty('Ready to simulate');
+      })
+      .catch(function (err) {
+        setStatus('Fetch failed: ' + (err.message || 'unknown') + ' — tap Simulate Now to retry.', 'error');
+        renderEmpty('Could not load applicants');
+      });
+  }
+
   // ─── Simulation runner ──────────────────────────────────────
   // ─── Applicant cache (session-scoped) ───────────────────────
   var ALL_KEY = 'bdu_all_applicants';   // { at: ms, rows: [...] }
@@ -394,7 +427,9 @@
       setStatus('Placement window closed. Results frozen.', 'frozen');
       renderEmpty('Frozen — window closed');
     } else {
-      renderEmpty('Ready to simulate');
+      renderEmpty('Preparing…');
+      // autoFetchOnLoad: silently fetch fresh applicants in the background
+      autoFetchOnLoad();
     }
 
     // Footer note: describe the actual data source
