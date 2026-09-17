@@ -1147,6 +1147,11 @@ const server = http.createServer(async (req, res) => {
             return makeRequest(url, { headers: apiHeaders })
               .then(function (r) {
                 const arr = JSON.parse(r.body || '{}').data || [];
+                if (prio === 1 && arr.length && !global.__ALLAPP_KEYS_LOGGED__) {
+                  global.__ALLAPP_KEYS_LOGGED__ = true;
+                  console.log('[ALL-APP] raw keys:', Object.keys(arr[0]).join(','));
+                  console.log('[ALL-APP] raw sample:', JSON.stringify(arr[0]).slice(0, 500));
+                }
                 return arr.map(function (row) {
                   return {
                     studentId: row.StudentID || row.studentId || '',
