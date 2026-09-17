@@ -1,10 +1,5 @@
-// Dark Angels — Placement Simulation Engine (v3.0 - Stable)
+// Dark Angels — Placement Simulation Engine (v3.1 - clone-merge)
 // Pure logic. No DOM. No fetch. No globals except the export.
-//
-// Solves:
-//   1. "Phantom Twin" Clone Bug (Automatic user de-duplication)
-//   2. "Cutoff Bump" Flaw (Accurate what-if predictions via score-bumping)
-//   3. Stable Tie-Breaking (Ensuring determinism when scores match)
 
 (function (root) {
   'use strict';
@@ -17,18 +12,18 @@
   }
 
   var MAX_PICKS_PER_STUDENT = 8;
+  var FEMALE_QUOTA = 0.20;
 
-  // Group anonymized rows into candidates based on signature patterns
+  // ─── Group anonymized rows into candidates by (score|gender) ───
   function groupByStudent(allStudents) {
     var bySig = {};
 
     (allStudents || []).forEach(function (row) {
       if (!row) return;
-      var score = row.totalScore;
-      var nScore = parseFloat(String(score || '').replace('%', '').trim());
+      var nScore = parseFloat(String(row.totalScore || '').replace('%', '').trim());
       if (!isFinite(nScore)) return;
       var scoreKey = nScore.toFixed(3);
-      
+
       var rawGender = (row.gender || '').trim().toUpperCase();
       var gender = (rawGender === 'M' || rawGender === 'MALE') ? 'M'
                  : (rawGender === 'F' || rawGender === 'FEMALE') ? 'F'
@@ -42,11 +37,7 @@
       if (isNaN(prio)) prio = 9999;
 
       if (!bySig[sig]) {
-        bySig[sig] = {
-          score: nScore,
-          gender: gender,
-          rows: []
-        };
+        bySig[sig] = { score: nScore, gender: gender, rows: [] };
       }
       bySig[sig].rows.push({ department: dept, priority: prio });
     });
@@ -97,83 +88,71 @@
   function simulate(opts) {
     opts = opts || {};
     var applyQuota = !!opts.applyFemaleQuota;
-    var FEMALE_QUOTA = 0.20;
     var myId = String(opts.myStudentId || '').trim().toUpperCase();
-    
-    // Group raw students
+
     var students = groupByStudent(opts.allStudents);
     var seatsLeft = buildCapacity(opts.selectionOptions);
     var capacitySnapshot = {};
-    Object.keys(seatsLeft).forEach(function (k) {
-      capacitySnapshot[k] = seatsLeft[k];
-    });
+    Object.keys(seatsLeft).forEach(function (k) { capacitySnapshot[k] = seatsLeft[k]; });
 
-    // Parse user's local score and gender to identify and purge their clone
+    // ─── Parse the user's own score + gender ───
     var myScore = null;
     var myGender = 'U';
     (opts.myResults || []).forEach(function (r) {
-      if (myScore === null && r.totalScore != null) {
-        myScore = toNumber(r.totalScore);
-      }
+      if (myScore === null && r && r.totalScore != null) myScore = toNumber(r.totalScore);
     });
     if (opts.myResults && opts.myResults.length > 0) {
       var rawGen = String(opts.myResults[0].gender || '').trim().toUpperCase();
-      myGender = (rawGen === 'M' || rawGen === 'MALE' || rawGen === 'M') ? 'M' 
-               : (rawGen === 'F' || rawGen === 'FEMALE' || rawGen === 'F') ? 'F' : 'U';
+      myGender = (rawGen === 'M' || rawGen === 'MALE') ? 'M'
+               : (rawGen === 'F' || rawGen === 'FEMALE') ? 'F'
+               : 'U';
     }
 
-    // (clone collection handled below by CLONE-MERGE-FIX)
-
-    // CLONE-MERGE-FIX: C-practical splitting can create MULTIPLE clones of
-    // the user (e.g. "52.48|F#0", "52.48|F#1", ...). We must remove ALL of
-    // them and merge their choices into one record for the real user,
-    // otherwise leftover clones compete with the user for their own seat.
+    // ─── CLONE-MERGE: collect ALL clones matching (score|gender) ───
     if (myScore !== null && myId) {
-      var _prefix = myScore.toFixed(3) + '|' + myGender;
-      var _cloneKeys = [];
-      for (var _k in students) {
-        if (_k.indexOf(_prefix) === 0) _cloneKeys.push(_k);
+      var sigPrefix = myScore.toFixed(3) + '|' + myGender;
+      var cloneKeys = [];
+      for (var k in students) {
+        if (k.indexOf(sigPrefix) === 0) cloneKeys.push(k);
       }
-      if (_cloneKeys.length > 0) {
-        var _allChoices = [];
-        _cloneKeys.forEach(function (k) {
-          students[k].choices.forEach(function (c) { _allChoices.push(c); });
+      if (cloneKeys.length > 0) {
+        var mergedChoices = [];
+        cloneKeys.forEach(function (k) {
+          students[k].choices.forEach(function (c) { mergedChoices.push(c); });
           delete students[k];
         });
-        var _seen = {};
-        var _unique = [];
-        _allChoices.forEach(function (c) {
+        // Dedupe (dept|priority)
+        var seen = {};
+        var unique = [];
+        mergedChoices.forEach(function (c) {
           var kk = c.department + '|' + c.priority;
-          if (_seen[kk]) return;
-          _seen[kk] = 1;
-          _unique.push(c);
+          if (seen[kk]) return;
+          seen[kk] = 1;
+          unique.push(c);
         });
-        _unique.sort(function (a, b) { return a.priority - b.priority; });
+        unique.sort(function (a, b) { return a.priority - b.priority; });
         students[myId] = {
           studentId: myId,
           score: myScore,
           gender: myGender,
-          choices: _unique
+          choices: unique
         };
       }
     }
 
+    // Fallback if still missing
     if (myId && !students[myId]) {
-      // Fallback: build user profile directly if no clone matches
-      var myRec = { studentId: myId, score: myScore, gender: myGender, choices: [] };
+      var rec = { studentId: myId, score: myScore, gender: myGender, choices: [] };
       (opts.myResults || []).forEach(function (r) {
         if (!r || !r.department) return;
-        var prio = toNumber(r.priority);
-        myRec.choices.push({
-          department: String(r.department).trim(),
-          priority: prio === null ? 9999 : prio
-        });
+        var p = toNumber(r.priority);
+        rec.choices.push({ department: String(r.department).trim(), priority: p === null ? 9999 : p });
       });
-      myRec.choices.sort(function (a, b) { return a.priority - b.priority; });
-      students[myId] = myRec;
+      rec.choices.sort(function (a, b) { return a.priority - b.priority; });
+      students[myId] = rec;
     }
 
-    // Reserved female pools (soft target)
+    // ─── Reserved female pools (soft target) ───
     var reservedLeft = {};
     if (applyQuota) {
       Object.keys(capacitySnapshot).forEach(function (dept) {
@@ -182,6 +161,7 @@
       });
     }
 
+    // ─── Order by score desc, tie-break by id asc ───
     var ordered = Object.keys(students).map(function (k) { return students[k]; });
     ordered.sort(function (a, b) {
       var as = a.score === null ? -Infinity : a.score;
@@ -199,11 +179,9 @@
         var c = s.choices[i];
         var dept = c.department;
         if (typeof seatsLeft[dept] === 'undefined') continue;
-
         var isFemale = String(s.gender || '').toUpperCase() === 'F';
         var wantReserved = applyQuota && isFemale && allowReserved && reservedLeft[dept] > 0;
-        var wantGeneral  = allowGeneral && seatsLeft[dept] > 0;
-
+        var wantGeneral = allowGeneral && seatsLeft[dept] > 0;
         if (wantReserved) {
           reservedLeft[dept] -= 1;
           filledByDept[dept] = (filledByDept[dept] || 0) + 1;
@@ -220,13 +198,13 @@
       return null;
     }
 
-    // Pass 1: Primary placements
+    // Pass 1
     ordered.forEach(function (s) {
       var placed = tryAssign(s, true, true);
       assignment[s.studentId] = placed ? placed.department : null;
     });
 
-    // Pass 2: Release quota surpluses
+    // Pass 2: release unused reserved, re-walk the unassigned
     if (applyQuota) {
       Object.keys(reservedLeft).forEach(function (dept) {
         if (reservedLeft[dept] > 0) {
@@ -246,29 +224,24 @@
       if (ordered[i].studentId === myId) { myRank = i + 1; break; }
     }
 
-    var myRec2 = students[myId] || null;
+    var myRec = students[myId] || null;
     var myAssignment = null;
-    if (myRec2 && assignment[myId]) {
+    if (myRec && assignment[myId]) {
       var assignedDept = assignment[myId];
       var assignedChoice = null;
-      for (var j = 0; j < myRec2.choices.length; j++) {
-        if (myRec2.choices[j].department === assignedDept) {
-          assignedChoice = myRec2.choices[j];
-          break;
-        }
+      for (var j = 0; j < myRec.choices.length; j++) {
+        if (myRec.choices[j].department === assignedDept) { assignedChoice = myRec.choices[j]; break; }
       }
       myAssignment = {
         department: assignedDept,
         priority: assignedChoice ? assignedChoice.priority : null,
-        score: myRec2.score
+        score: myRec.score
       };
     }
 
     var allDepts = {};
     Object.keys(capacitySnapshot).forEach(function (k) { allDepts[k] = true; });
-    ordered.forEach(function (s) {
-      s.choices.forEach(function (c) { allDepts[c.department] = true; });
-    });
+    ordered.forEach(function (s) { s.choices.forEach(function (c) { allDepts[c.department] = true; }); });
 
     var departments = Object.keys(allDepts).map(function (name) {
       var cap = capacitySnapshot[name] || 0;
@@ -287,29 +260,22 @@
       return b.fillPct - a.fillPct || a.department.localeCompare(b.department);
     });
 
-    // Alternatives with "Cutoff Bump" Score-Merit Logic
     var alternatives = [];
-    if (myRec2) {
-      myRec2.choices.forEach(function (c) {
+    if (myRec) {
+      myRec.choices.forEach(function (c) {
         var dept = c.department;
         var d = null;
         for (var idx = 0; idx < departments.length; idx++) {
-          if (departments[idx].department === dept) {
-            d = departments[idx];
-            break;
-          }
+          if (departments[idx].department === dept) { d = departments[idx]; break; }
         }
         if (!d) return;
-
         var isAssignedHere = (assignment[myId] === dept);
-        var hasSeatsLeft   = (d.remaining > 0);
-        var beatsCutoff    = (d.cutoff !== null && myRec2.score !== null && myRec2.score >= d.cutoff);
-
+        var hasSeatsLeft = (d.remaining > 0);
+        var beatsCutoff = (d.cutoff !== null && myRec.score !== null && myRec.score >= d.cutoff);
         var wouldAssign = isAssignedHere || hasSeatsLeft || beatsCutoff;
         var reason = isAssignedHere ? 'assigned'
                    : (hasSeatsLeft ? 'seats left'
                    : (beatsCutoff ? 'scores above cutoff' : 'full (below cutoff)'));
-
         alternatives.push({
           department: dept,
           originalPriority: c.priority,
