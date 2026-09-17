@@ -1046,7 +1046,13 @@ const server = http.createServer(async (req, res) => {
         const year = years[0] ? years[0].Year : 1;
         const term = terms[0] ? terms[0].Term : 'II';
 
-        const priorityNums = [1, 2, 3, 4, 5];
+        // Use the SAME priority format the rankings tab uses (PriorityName),
+        // not a hardcoded integer. This is what makes BDU return the full pool.
+        const priorityNums = (priorities || [])
+          .map(p => p.PriorityName)
+          .filter(v => v != null)
+          .slice(0, 5);
+        console.log('[ALL-APP] priorities to fetch:', JSON.stringify(priorityNums));
 
         function sleep(ms) {
           return new Promise(function (resolve) { setTimeout(resolve, ms); });
