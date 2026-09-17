@@ -351,7 +351,7 @@
       });
       renderAll(sim);
       var suffix = frozen ? ' (frozen)' : '';
-      setStatus('Simulated ' + allStudents.length + ' applicant rows \\u00b7 ' +
+      setStatus('Simulated ' + allStudents.length + ' applicant rows \u00b7 ' +
                 new Date().toLocaleTimeString() + suffix, '');
     } catch (e) {
       setStatus('Simulation error: ' + (e.message || 'unknown'), 'error');
@@ -389,10 +389,10 @@
       renderEmpty('Ready to simulate');
     }
 
-    // Gentle notice: data source is login-cached, no live fetch
+    // Footer note: describe the actual data source
     if (els.method && !isFrozen()) {
-      els.method.innerHTML += '<br><br><em>Data source: the applicant list BDU sent when you logged in. ' +
-        'Re-login to refresh scores.</em>';
+      els.method.innerHTML += '<br><br><em>Data source: BDU live via the BD Buddy server. ' +
+        'Results are cached for 15 minutes. Tap Reset View to clear the cache.</em>';
     }
   });
 
