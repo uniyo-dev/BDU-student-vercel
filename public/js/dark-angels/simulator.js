@@ -47,50 +47,80 @@
   }
 
   // Group application rows into per-student records.
-  function groupByStudent(allStudents) {
-    var byId = {};
-    (allStudents || []).forEach(function (row) {
-      if (!row || !row.studentId) return;
-      var id = String(row.studentId).trim().toUpperCase();
-      if (!id) return;
+  // C-PRACTICAL grouping: BDU does not expose real student IDs (StudentNo
+  // is a per-call row number, not stable across calls). We reconstruct
+  // candidates from (score | gender) signatures and split signatures that
+  // appear in more rows than one student could realistically hold.
+  //
+  // MAX_PICKS_PER_STUDENT = 8 (most students pick 5-10 depts).
+  // If a signature appears in N rows, we create ceil(N / 8) candidates and
+  // distribute the picks round-robin.
+  var MAX_PICKS_PER_STUDENT = 8;
 
-      var rec = byId[id];
-      if (!rec) {
-        rec = byId[id] = {
-          studentId: id,
-          score: toNumber(row.totalScore),
-          gender: row.gender || '',
-          choices: []
-        };
-      } else if (rec.score === null) {
-        rec.score = toNumber(row.totalScore);
-      }
+  function groupByStudent(allStudents) {
+    var bySig = {};   // score|gender -> { rows: [...], score, gender }
+
+    (allStudents || []).forEach(function (row) {
+      if (!row) return;
+      var score = row.totalScore;
+      // Numeric-normalize the score for a stable key
+      var nScore = parseFloat(String(score || '').replace('%', '').trim());
+      if (!isFinite(nScore)) return;
+      var scoreKey = nScore.toFixed(3);
+      var gender = String(row.gender || '').trim().toUpperCase() || 'U';
+      var sig = scoreKey + '|' + gender;
 
       var dept = String(row.department || '').trim();
       if (!dept) return;
 
-      var prio = toNumber(row.priority);
-      if (prio === null) prio = 9999;
+      var prio = parseInt(row.priority, 10);
+      if (isNaN(prio)) prio = 9999;
 
-      // Avoid duplicates (BDU sometimes double-lists)
-      for (var i = 0; i < rec.choices.length; i++) {
-        if (rec.choices[i].department === dept) return;
+      if (!bySig[sig]) {
+        bySig[sig] = {
+          score: nScore,
+          gender: gender,
+          rows: []
+        };
       }
-      rec.choices.push({
-        department: dept,
-        priority: prio,
-        status: row.status || ''
+      bySig[sig].rows.push({ department: dept, priority: prio });
+    });
+
+    // Split each signature into ceil(N / MAX) candidates
+    var out = {};
+    Object.keys(bySig).forEach(function (sig) {
+      var bucket = bySig[sig];
+      var N = bucket.rows.length;
+      var numCandidates = Math.max(1, Math.ceil(N / MAX_PICKS_PER_STUDENT));
+
+      // Create numCandidates empty candidate records
+      var candidates = [];
+      for (var c = 0; c < numCandidates; c++) {
+        candidates.push({
+          studentId: sig + '#' + c,
+          score: bucket.score,
+          gender: bucket.gender,
+          choices: []
+        });
+      }
+
+      // Distribute picks round-robin so each candidate gets a fair share
+      bucket.rows.forEach(function (pick, i) {
+        candidates[i % numCandidates].choices.push(pick);
+      });
+
+      // Sort each candidate's choices by priority ascending
+      candidates.forEach(function (cand) {
+        cand.choices.sort(function (a, b) { return a.priority - b.priority; });
+
+        // Skip candidates with zero choices (shouldn't happen, but guard)
+        if (cand.choices.length > 0) {
+          out[cand.studentId] = cand;
+        }
       });
     });
 
-    // Sort each student's choices by priority ascending
-    Object.keys(byId).forEach(function (id) {
-      byId[id].choices.sort(function (a, b) {
-        return a.priority - b.priority;
-      });
-    });
-
-    return byId;
+    return out;
   }
 
   // Build seat map from selectionOptions.

@@ -1,4 +1,4 @@
-// Offline test for DarkAngelsSimulator.
+// Offline test for DarkAngelsSimulator. // C-PRACTICAL test.
 // Run: node scripts/test_simulator.js
 //
 // Fixture scenario (5 students, 3 departments, each capacity 2):
@@ -35,16 +35,18 @@ const fixture = {
     { department: 'EE', capacity: 2 },
     { department: 'ME', capacity: 2 },
   ],
+  // C-PRACTICAL test: distinct scores, gender fixed to 'U' so the only
+  // distinguishing signature is the score itself.
   allStudents: [
-    { studentId: 'A', totalScore: 95, department: 'CS', priority: 1 },
-    { studentId: 'A', totalScore: 95, department: 'EE', priority: 2 },
-    { studentId: 'B', totalScore: 90, department: 'CS', priority: 1 },
-    { studentId: 'B', totalScore: 90, department: 'ME', priority: 2 },
-    { studentId: 'C', totalScore: 80, department: 'EE', priority: 1 },
-    { studentId: 'D', totalScore: 70, department: 'CS', priority: 1 },
-    { studentId: 'STU-001', totalScore: 85, department: 'CS', priority: 1 },
-    { studentId: 'STU-001', totalScore: 85, department: 'EE', priority: 2 },
-    { studentId: 'STU-001', totalScore: 85, department: 'ME', priority: 3 },
+    { studentId: 'A',       totalScore: 95, gender: 'U', department: 'CS', priority: 1 },
+    { studentId: 'A',       totalScore: 95, gender: 'U', department: 'EE', priority: 2 },
+    { studentId: 'B',       totalScore: 90, gender: 'U', department: 'CS', priority: 1 },
+    { studentId: 'B',       totalScore: 90, gender: 'U', department: 'ME', priority: 2 },
+    { studentId: 'C',       totalScore: 80, gender: 'U', department: 'EE', priority: 1 },
+    { studentId: 'D',       totalScore: 70, gender: 'U', department: 'CS', priority: 1 },
+    { studentId: 'STU-001', totalScore: 85, gender: 'U', department: 'CS', priority: 1 },
+    { studentId: 'STU-001', totalScore: 85, gender: 'U', department: 'EE', priority: 2 },
+    { studentId: 'STU-001', totalScore: 85, gender: 'U', department: 'ME', priority: 3 },
   ],
 };
 

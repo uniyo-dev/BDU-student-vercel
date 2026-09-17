@@ -134,6 +134,7 @@
     html += '    <div class="da-destiny-meta-item"><span class="da-destiny-meta-value">' + esc(scoreTxt) + '</span><span class="da-destiny-meta-label">Score</span></div>';
     html += '    <div class="da-destiny-meta-item"><span class="da-destiny-meta-value">' + esc(prioTxt) + '</span><span class="da-destiny-meta-label">Priority</span></div>';
     html += '  </div>';
+    html += '  <div class="da-destiny-scope">Simulated against ' + esc(sim.totalApplicants) + ' applicants in your cohort</div>';
     html += '</div>';
 
     els.result.innerHTML = html;
@@ -206,7 +207,7 @@
     if (!els.method) return;
     var m = sim.method || {};
     els.method.innerHTML =
-      '<strong>Method:</strong> ' + esc(m.algorithm) + '<br>' +
+      '<strong>Method:</strong> BDU does not expose real student IDs. Applicants are cross-referenced by (score, gender) and split into candidates when a signature appears in more rows than one student could hold. <br>' +
       '<strong>Score source:</strong> ' + esc(m.scoreSource) + '<br>' +
       '<strong>Tie-break:</strong> ' + esc(m.tieBreak) + '<br>' +
       '<strong>Stop time:</strong> Sep 18, 2026 23:59 (Ethiopia time)';
