@@ -1,6 +1,19 @@
 (function() {
   'use strict';
 
+  // SESSION_REDIRECT_INSTALLED: if any fetch to /api/placement/* returns
+  // "Session expired", bounce the user to the login page immediately.
+  function handleSessionExpired() {
+    try {
+      sessionStorage.removeItem('bd_session_id');
+      sessionStorage.removeItem('bdu_student_data');
+    } catch (e) {}
+    if (window.location.pathname !== '/') {
+      window.location.replace('/?expired=1');
+    }
+  }
+
+
 
 
   // ─── Module state ─────────────────────────────────
@@ -312,6 +325,10 @@
       .then(function (r) { return r.json(); })
       .then(function (data) {
         if (!data.success) {
+          if (data.error && data.error.indexOf('Session') !== -1) {
+            handleSessionExpired();
+            return;
+          }
           var section = document.getElementById('filter-section');
           if (section) section.innerHTML = '<div class="rankings-section"><div class="rankings-empty-inline">' + esc(data.error || 'Could not load filters.') + '</div></div>';
           return;
@@ -392,6 +409,10 @@
       .then(function (r) { return r.json(); })
       .then(function (data) {
         if (!data.success) {
+          if (data.error && data.error.indexOf('Session') !== -1) {
+            handleSessionExpired();
+            return;
+          }
           section.innerHTML = '<div class="rankings-section">' +
             '<div class="rankings-empty-inline">' + (data.error || 'Could not load rankings.') + '</div>' +
           '</div>';

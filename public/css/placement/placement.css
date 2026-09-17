@@ -1480,3 +1480,29 @@
   color: var(--primary, #2563eb);
   text-decoration: none;
 }
+
+
+/* ─── Dark Angels quick-access button (header) ─── */
+.angels-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: rgba(255,255,255,0.18);
+  color: inherit;
+  border: 1px solid rgba(255,255,255,0.35);
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.angels-btn:hover,
+.angels-btn:focus {
+  background: rgba(255,255,255,0.28);
+  text-decoration: none;
+}
+.angels-btn svg {
+  flex-shrink: 0;
+}
