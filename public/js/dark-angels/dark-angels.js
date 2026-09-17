@@ -230,7 +230,56 @@
   }
 
   // ─── Simulation runner ──────────────────────────────────────
-  function runSimulation() {
+  // ─── Applicant cache (session-scoped) ───────────────────────
+  var ALL_KEY = 'bdu_all_applicants';   // { at: ms, rows: [...] }
+  var CACHE_TTL_MS = 15 * 60 * 1000;
+
+  function readApplicantCache() {
+    try {
+      var raw = sessionStorage.getItem(ALL_KEY);
+      if (!raw) return null;
+      var obj = JSON.parse(raw);
+      if (!obj || !obj.at || !Array.isArray(obj.rows)) return null;
+      if (Date.now() - obj.at > CACHE_TTL_MS) return null;
+      return obj.rows;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function writeApplicantCache(rows) {
+    try {
+      sessionStorage.setItem(ALL_KEY, JSON.stringify({ at: Date.now(), rows: rows }));
+    } catch (e) {
+      // sessionStorage full or disabled — silently skip caching
+    }
+  }
+
+  function clearApplicantCache() {
+    try { sessionStorage.removeItem(ALL_KEY); } catch (e) {}
+  }
+
+  function fetchAllApplicants(sid) {
+    return fetch('/api/placement/all-applicants', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sessionId: sid })
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (!data || !data.success) {
+          throw new Error((data && data.error) || 'Server returned an error.');
+        }
+        var rows = (data.data && data.data.allStudents) || [];
+        if (!rows.length) {
+          throw new Error('BDU returned no applicant rows.');
+        }
+        writeApplicantCache(rows);
+        return rows;
+      });
+  }
+
+  function runSimulation(forceRefresh) {
     var student = readStudent();
     if (!student || !student.placement) {
       setStatus('No student data in session. Please log in again.', 'error');
@@ -242,7 +291,6 @@
     var bio = student.biography || {};
     var results = placement.results || [];
     var selectionOptions = placement.selectionOptions || [];
-    var allStudents = placement.allStudents || [];
 
     if (!results.length) {
       setStatus('You have not submitted any placement choices yet.', 'error');
@@ -250,18 +298,50 @@
       return;
     }
 
-    if (!allStudents.length) {
-      setStatus('BDU has not published applicant data yet. Try again after results start rolling out.', 'error');
-      renderEmpty('No applicant data yet');
-      return;
-    }
-
-    // Frozen window — do not recompute, just report state
+    // Frozen — do not fetch or re-simulate
     if (isFrozen()) {
       setStatus('Placement window closed. Results frozen.', 'frozen');
       if (els.btnRun) els.btnRun.disabled = true;
+      var cachedRowsFrozen = readApplicantCache();
+      if (cachedRowsFrozen && cachedRowsFrozen.length) {
+        runSimWith(cachedRowsFrozen, results, selectionOptions, bio, true);
+      } else {
+        renderEmpty('Frozen — window closed');
+      }
+      return;
     }
 
+    // Use cache unless caller forced a refresh
+    var cached = forceRefresh ? null : readApplicantCache();
+    if (cached && cached.length) {
+      setStatus('Using cached applicants from ' + new Date(Date.now()).toLocaleTimeString() + '…');
+      runSimWith(cached, results, selectionOptions, bio, false);
+      return;
+    }
+
+    var sid = readSessionId();
+    if (!sid) {
+      setStatus('Session expired. Please log out and log back in.', 'error');
+      renderEmpty('Session expired');
+      return;
+    }
+
+    setStatus('Fetching applicants from BDU (first time takes ~6s)…');
+    if (els.btnRun) els.btnRun.disabled = true;
+
+    fetchAllApplicants(sid)
+      .then(function (rows) {
+        runSimWith(rows, results, selectionOptions, bio, false);
+      })
+      .catch(function (err) {
+        setStatus('Error: ' + (err.message || 'Unknown'), 'error');
+      })
+      .finally(function () {
+        if (els.btnRun) els.btnRun.disabled = isFrozen();
+      });
+  }
+
+  function runSimWith(allStudents, results, selectionOptions, bio, frozen) {
     try {
       var sim = window.DarkAngelsSimulator.simulate({
         allStudents: allStudents,
@@ -270,14 +350,16 @@
         myResults: results
       });
       renderAll(sim);
-      var suffix = isFrozen() ? ' (frozen)' : '';
-      setStatus('Simulated from data captured at login \u00b7 ' + new Date().toLocaleTimeString() + suffix, '');
+      var suffix = frozen ? ' (frozen)' : '';
+      setStatus('Simulated ' + allStudents.length + ' applicant rows \\u00b7 ' +
+                new Date().toLocaleTimeString() + suffix, '');
     } catch (e) {
       setStatus('Simulation error: ' + (e.message || 'unknown'), 'error');
     }
   }
 
   function resetView() {
+    clearApplicantCache();
     if (els.result) els.result.innerHTML = '';
     if (els.method) els.method.innerHTML = '';
     setStatus('');
@@ -292,7 +374,7 @@
     startCountdown();
 
     if (els.btnRun) {
-      els.btnRun.addEventListener('click', runSimulation);
+      els.btnRun.addEventListener('click', function () { runSimulation(false); });
     }
     if (els.btnReset) {
       els.btnReset.addEventListener('click', resetView);

@@ -984,6 +984,145 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  // All applicants — returns the FULL row list per (student × choice).
+  // POST /api/placement/all-applicants  { sessionId }
+  // Clones the throttled loop from /api/placement/popular but keeps raw rows.
+  // Cached per session for 15 min.
+  if (req.url === '/api/placement/all-applicants' && req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => body += chunk);
+    req.on('end', async () => {
+      try {
+        const { sessionId } = JSON.parse(body || '{}');
+        const session = getBDUSession(sessionId);
+        if (!session) {
+          res.writeHead(401, { 'Content-Type': 'application/json' });
+          return res.end(JSON.stringify({ success: false, error: 'Session expired. Please log out and log back in.' }));
+        }
+
+        // Return cache if fresh
+        const now = Date.now();
+        if (session.allApplicantsCache && session.allApplicantsCache.expiresAt > now) {
+          res.writeHead(200, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
+          return res.end(JSON.stringify({
+            success: true,
+            cached: true,
+            data: { allStudents: session.allApplicantsCache.data }
+          }));
+        }
+
+        const apiHeaders = {
+          'Cookie': session.cookies,
+          'Accept': 'application/json, text/plain, */*',
+          'X-Requested-With': 'XMLHttpRequest'
+        };
+
+        // Fetch lookups — dept + year/sem/term, same as popular
+        const [deptRes, acYearRes, semRes, yearRes, termRes] = await Promise.all([
+          makeRequest('/Placement/GetDestinationDepartment', { headers: apiHeaders }),
+          makeRequest('/Placement/GetAcYear', { headers: apiHeaders }),
+          makeRequest('/Placement/GetSemester', { headers: apiHeaders }),
+          makeRequest('/Placement/GetYear', { headers: apiHeaders }),
+          makeRequest('/Placement/GetTerm', { headers: apiHeaders }),
+        ]);
+
+        const departments = JSON.parse(deptRes.body || '{}').data || [];
+        const acYears = JSON.parse(acYearRes.body || '{}').data || [];
+        const semesters = JSON.parse(semRes.body || '{}').data || [];
+        const years = JSON.parse(yearRes.body || '{}').data || [];
+        const terms = JSON.parse(termRes.body || '{}').data || [];
+
+        const acYear = acYears[0] ? acYears[0].AcYear : '2025/2026';
+        const semester = semesters[0] ? semesters[0].Semester : 2;
+        const year = years[0] ? years[0].Year : 1;
+        const term = terms[0] ? terms[0].Term : 'II';
+
+        function sleep(ms) {
+          return new Promise(function (resolve) { setTimeout(resolve, ms); });
+        }
+
+        // Fetch every (dept × priority 1..5) combination for this dept.
+        // We capture rows across the top 5 priorities so we have each
+        // student's ranked choice list, not just their #1.
+        function fetchOneDeptAllPriorities(d) {
+          const deptName = String(d.DestProgam || '').split('->')[0].trim();
+          const tasks = [1, 2, 3, 4, 5].map(function (prio) {
+            const params = new URLSearchParams({
+              destinationCurriculumTblCode: d.DestinationCurriculumTblCode,
+              acYear: acYear,
+              batch: year,
+              semester: semester,
+              term: term,
+              priority: prio,
+            });
+            const url = '/Placement/GetDepartmentApplicationSummary?' + params.toString();
+            return makeRequest(url, { headers: apiHeaders })
+              .then(function (r) {
+                const arr = JSON.parse(r.body || '{}').data || [];
+                return arr.map(function (row) {
+                  return {
+                    studentId: row.StudentID || row.studentId || '',
+                    fullName: row.FullName || row.fullName ||
+                              ((row.FirstName || '') + ' ' + (row.FatherName || '')).trim(),
+                    department: deptName,
+                    priority: prio,
+                    totalScore: row.TotalResult || row.TotalScore || '',
+                    status: row.ApplicationStatus || row.PlacementStatus || '',
+                    highschoolExam: row.HighschoolExam || row.NonExamTotalResult || row.NoneExamTotalResult || '',
+                    programExam: row.Exam || row.ExamResult || '',
+                    gender: row.Gender || '',
+                    academicStatus: row.AcademicStatus || row.AcademicStanding || row.AcademicResult || '',
+                    applicationStatus: row.ApplicationStatus || '',
+                    placementStatus: row.PlacementStatus || '',
+                    academicYear: row.AcYear || row.AcademicYear || '',
+                    semester: row.Semester || '',
+                    year: row.Year || row.AcademicYearShort || '',
+                    term: row.AcademicTerm || row.Term || ''
+                  };
+                });
+              })
+              .catch(function () { return []; });
+          });
+          return Promise.all(tasks).then(function (groups) {
+            // Flatten — one array of rows per dept
+            return groups.reduce(function (acc, g) { return acc.concat(g); }, []);
+          });
+        }
+
+        const BATCH_SIZE = 3;
+        const allRows = [];
+        console.log('[ALL-APP] fetching', departments.length, 'departments × 5 priorities (throttled)…');
+        const t0 = Date.now();
+        for (let i = 0; i < departments.length; i += BATCH_SIZE) {
+          const batch = departments.slice(i, i + BATCH_SIZE);
+          const results = await Promise.all(batch.map(fetchOneDeptAllPriorities));
+          results.forEach(function (r) { allRows.push.apply(allRows, r); });
+          if (i + BATCH_SIZE < departments.length) await sleep(250);
+        }
+        console.log('[ALL-APP] fetched', allRows.length, 'rows in', ((Date.now() - t0) / 1000).toFixed(1), 's');
+
+        // Cache for 15 min
+        session.allApplicantsCache = {
+          expiresAt: Date.now() + 15 * 60 * 1000,
+          data: allRows
+        };
+        touchBDUSession(sessionId);
+
+        res.writeHead(200, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
+        res.end(JSON.stringify({
+          success: true,
+          cached: false,
+          data: { allStudents: allRows }
+        }));
+      } catch (err) {
+        console.error('[ALL-APP]', err.stack || err.message);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: false, error: err.message }));
+      }
+    });
+    return;
+  }
+
   // Popular departments — count of students who ranked each dept #1
   // POST /api/placement/popular  { sessionId }
   // Fires 30 parallel requests, caches result per session for 15 min.
