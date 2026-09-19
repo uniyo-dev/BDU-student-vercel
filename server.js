@@ -309,11 +309,26 @@ async function handleLogin(req, res) {
       }),
     }));
     
+    // [RAW-RESULTS] dump the raw BDU placement rows once
+    if (rawResults.length > 0) {
+      console.log('[RAW-RESULTS] keys:', Object.keys(rawResults[0]).join(','));
+      console.log('[RAW-RESULTS] sample[0]:', JSON.stringify(rawResults[0]).slice(0, 800));
+      const statuses = rawResults.map(r => ({
+        dept: r.DestinationDepartment,
+        priority: r.Priority,
+        applicationStatus: r.ApplicationStatus,
+        placementStatus: r.PlacementStatus
+      }));
+      console.log('[RAW-RESULTS] statuses:', JSON.stringify(statuses).slice(0, 1500));
+    }
+
     const placementResults = rawResults.map(p => ({
       department: p.DestinationDepartment || '',
       priority: p.Priority || '',
       totalScore: p.TotalResult || '',
       status: p.ApplicationStatus || p.PlacementStatus || '',
+      applicationStatus: p.ApplicationStatus || '',
+      placementStatus: p.PlacementStatus || '',
       breakdown: {
         highschoolExam: p.HighschoolExam || '',
         gender: p.Gender || '',
