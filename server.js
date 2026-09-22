@@ -313,13 +313,13 @@ async function handleLogin(req, res) {
     if (rawResults.length > 0) {
       console.log('[RAW-RESULTS] keys:', Object.keys(rawResults[0]).join(','));
       console.log('[RAW-RESULTS] sample[0]:', JSON.stringify(rawResults[0]).slice(0, 800));
-      const statuses = rawResults.map(r => ({
-        dept: r.DestinationDepartment,
-        priority: r.Priority,
-        applicationStatus: r.ApplicationStatus,
-        placementStatus: r.PlacementStatus
-      }));
-      console.log('[RAW-RESULTS] statuses:', JSON.stringify(statuses).slice(0, 1500));
+      rawResults.forEach(function (r, i) {
+        console.log('[RAW-RESULTS] row ' + i +
+          ' | dept=' + (r.DestinationDepartment || '?') +
+          ' | priority=' + (r.Priority || '?') +
+          ' | ApplicationStatus=' + JSON.stringify(r.ApplicationStatus) +
+          ' | PlacementStatus=' + JSON.stringify(r.PlacementStatus));
+      });
     }
 
     const placementResults = rawResults.map(p => ({
