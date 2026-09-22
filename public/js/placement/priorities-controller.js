@@ -107,6 +107,11 @@
     return { rows: rows, total: total };
   }
 
+  // PRIORITIES-TRUTHFUL-FIX
+  // BDU marks every row with ApplicationStatus="Selected" (eligible), so the
+  // old code picked whichever row appeared first and displayed it as the
+  // assignment. We now show the user's submitted #1 choice and add a note
+  // pointing them to the official portal for the real result.
   function renderResultCard(results) {
     if (!results.length) {
       return '<div class="priorities-empty">' +
@@ -116,35 +121,41 @@
       '</div>';
     }
 
-    var selected = null;
-    var others = [];
-    results.forEach(function (r) {
-      if (!selected && statusCategory(r.status) === 'selected') selected = r;
-      else others.push(r);
+    // Sort by priority ascending and take the top choice
+    var sorted = results.slice().sort(function (a, b) {
+      return (parseInt(a.priority, 10) || 999) - (parseInt(b.priority, 10) || 999);
     });
+    var topChoice = sorted[0] || null;
+    var others = sorted.slice(1);
 
     var html = '<div class="priorities-result">';
     html += '<div class="priorities-result-head">' +
               '<span class="priorities-head-icon">' + ICONS.trophy + '</span>' +
-              esc(t('result_head', 'Your Placement Result')) +
+              esc(t('result_head', 'Your Submitted First Choice')) +
             '</div>';
 
-    if (selected) {
+    if (topChoice) {
       html += '<div class="priorities-result-selected">';
       html += '<div class="priorities-badge priorities-badge--selected">' +
                 '<span class="priorities-badge-icon">' + ICONS.trophy + '</span>' +
-                esc(t('selected', 'SELECTED')) + '</div>';
-      html += '<div class="priorities-dept-name">' + esc(selected.department) + '</div>';
+                esc(t('submitted', 'SUBMITTED')) + '</div>';
+      html += '<div class="priorities-dept-name">' + esc(topChoice.department || '—') + '</div>';
       html += '<div class="priorities-meta">' +
-                esc(t('priority_label', 'Priority')) + ': ' + esc(selected.priority || '—') +
+                esc(t('priority_label', 'Priority')) + ': 1st' +
                 ' · ' +
-                esc(t('score_label', 'Score')) + ': ' + esc(selected.totalScore || '—') +
+                esc(t('score_label', 'Score')) + ': ' + esc(topChoice.totalScore || '—') +
               '</div>';
       html += '<button class="priorities-copy-btn" data-copy-summary type="button">' +
                 '<span class="priorities-copy-icon">' + ICONS.copy + '</span>' +
-                esc(t('copy_summary', 'Copy result summary')) +
+                esc(t('copy_summary', 'Copy my choices')) +
               '</button>';
       html += '</div>';
+
+      html += '<div class="priorities-note">' +
+                '<span class="priorities-note-icon">' + ICONS.info + '</span>' +
+                '<span>' + esc(t('assignment_note',
+                  'Your submitted first choice is shown above. BDU does not clearly indicate which department you were assigned to in the data we receive. Check the official portal for your actual placement.')) + '</span>' +
+              '</div>';
     } else {
       html += '<div class="priorities-result-pending">';
       html += '<div class="priorities-badge priorities-badge--pending">' +
@@ -156,11 +167,11 @@
 
     if (others.length) {
       html += '<div class="priorities-others">';
-      html += '<div class="priorities-others-head">' + esc(t('other_choices', 'Other choices')) + '</div>';
+      html += '<div class="priorities-others-head">' + esc(t('other_choices', 'Your other choices')) + '</div>';
       others.forEach(function (r) {
         var cat = statusCategory(r.status);
         html += '<div class="priorities-other-row priorities-other-row--' + cat + '">';
-        html += '<span class="priorities-other-dept">' + esc(r.department || '—') + '</span>';
+        html += '<span class="priorities-other-dept">#' + esc(r.priority || '—') + ' ' + esc(r.department || '—') + '</span>';
         html += '<span class="priorities-other-status">' + esc(r.status || '—') + '</span>';
         html += '</div>';
       });

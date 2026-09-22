@@ -785,3 +785,28 @@
 .priorities-choice-badge--3 { background: #D97706; color: #fff; }
 .priorities-choice-badge--4,
 .priorities-choice-badge--5 { background: var(--primary); color: #fff; }
+
+
+/* --- Truthful assignment note (priorities tab) --- */
+.priorities-note {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  margin: 12px 0;
+  padding: 10px 12px;
+  background: rgba(37, 99, 235, 0.08);
+  border: 1px solid rgba(37, 99, 235, 0.2);
+  border-radius: 8px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #1e3a8a;
+}
+.priorities-note-icon {
+  flex-shrink: 0;
+  display: inline-flex;
+  color: #2563eb;
+}
+.priorities-note-icon svg {
+  width: 16px;
+  height: 16px;
+}
