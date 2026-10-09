@@ -519,6 +519,88 @@ if (req.url === '/api/login') {
     return handleLogin(req, res);
   }
 
+  // POST /api/tg-link — Mini App sends signed summary after login
+  if (req.url === '/api/tg-link' && req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => body += chunk);
+    req.on('end', () => {
+      try {
+        const parsed = JSON.parse(body || '{}');
+        const init_data = parsed.init_data;
+        const summary = parsed.summary;
+        const botToken = process.env.TELEGRAM_BOT_TOKEN;
+        if (!botToken) {
+          res.writeHead(500, {'Content-Type':'application/json'});
+          return res.end(JSON.stringify({ok:false,error:'Server not configured'}));
+        }
+        if (!init_data || !summary) {
+          res.writeHead(400, {'Content-Type':'application/json'});
+          return res.end(JSON.stringify({ok:false,error:'Missing init_data or summary'}));
+        }
+        const tgId = verifyTelegramInitData(init_data, botToken);
+        if (!tgId) {
+          res.writeHead(401, {'Content-Type':'application/json'});
+          return res.end(JSON.stringify({ok:false,error:'Invalid signature'}));
+        }
+        TG_SUMMARIES.set(tgId, Object.assign({}, summary, {
+          expiresAt: Date.now() + TG_TTL_MS,
+          linkedAt: new Date().toISOString(),
+        }));
+        res.writeHead(200, {'Content-Type':'application/json'});
+        res.end(JSON.stringify({ok:true, tg_id:tgId}));
+      } catch (err) {
+        res.writeHead(500, {'Content-Type':'application/json'});
+        res.end(JSON.stringify({ok:false, error:err.message}));
+      }
+    });
+    return;
+  }
+
+  // GET /api/tg-summary?tg=<id> — bot fetches cached summary
+  if (req.url.indexOf('/api/tg-summary') === 0) {
+    const qs = req.url.indexOf('?') >= 0 ? req.url.slice(req.url.indexOf('?')+1) : '';
+    const parts = qs.split('&');
+    let tgId = null;
+    for (const p of parts) {
+      const kv = p.split('=');
+      if (kv[0] === 'tg') tgId = decodeURIComponent(kv[1] || '');
+    }
+    const expectedKey = process.env.BD_BUDDY_API_KEY;
+    const providedKey = req.headers['x-api-key'];
+    if (!expectedKey) {
+      res.writeHead(500, {'Content-Type':'application/json'});
+      return res.end(JSON.stringify({linked:false,error:'Server not configured'}));
+    }
+    if (providedKey !== expectedKey) {
+      res.writeHead(403, {'Content-Type':'application/json'});
+      return res.end(JSON.stringify({linked:false,error:'Forbidden'}));
+    }
+    if (!tgId) {
+      res.writeHead(400, {'Content-Type':'application/json'});
+      return res.end(JSON.stringify({linked:false,error:'Missing tg id'}));
+    }
+    const entry = TG_SUMMARIES.get(tgId);
+    if (!entry || Date.now() > entry.expiresAt) {
+      if (entry) TG_SUMMARIES.delete(tgId);
+      res.writeHead(200, {'Content-Type':'application/json'});
+      return res.end(JSON.stringify({linked:false}));
+    }
+    res.writeHead(200, {'Content-Type':'application/json'});
+    res.end(JSON.stringify({
+      linked: true,
+      name: entry.name,
+      student_id: entry.student_id,
+      program: entry.program,
+      cgpa: entry.cgpa,
+      sgpa: entry.sgpa,
+      credits: entry.credits,
+      percentage: entry.percentage,
+      linked_at: entry.linkedAt,
+    }));
+    return;
+  }
+
+
   // Verification route: /verify/<token>
   if (req.url.startsWith('/verify/')) {
     const verifyPath = path.join(__dirname, 'public', 'pages', 'verify.html');

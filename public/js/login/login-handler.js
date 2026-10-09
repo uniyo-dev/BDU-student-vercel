@@ -24,6 +24,44 @@ document.addEventListener('DOMContentLoaded', function() {
         const response = await Auth.login(username, password);
         
         if (response.success) {
+          // Silent Telegram link
+          try {
+            const tg = window.Telegram && window.Telegram.WebApp;
+            const initData = tg && tg.initData;
+            if (initData) {
+              const student = response.data || {};
+              const bio = student.biography || {};
+              const summary = student.summary || {};
+              const regs = student.registrations || [];
+              const latest = regs.length ? regs[regs.length - 1] : {};
+              let pct = null;
+              try {
+                const flat = (student.courses || []).flatMap(c => c.courses || []);
+                const v = flat.filter(c => c.percentage != null);
+                if (v.length) {
+                  const tc = v.reduce((s, c) => s + (Number(c.credit) || 0), 0);
+                  const wp = v.reduce((s, c) => s + (Number(c.percentage) || 0) * (Number(c.credit) || 0), 0);
+                  pct = tc ? +(wp / tc).toFixed(2) : null;
+                }
+              } catch (e) {}
+              const payload = {
+                name: bio.fullName || '—',
+                student_id: bio.studentId || '—',
+                program: student.program || '—',
+                cgpa: summary.cumulativeGPA != null ? summary.cumulativeGPA : null,
+                sgpa: latest.sgpa != null ? latest.sgpa : null,
+                credits: summary.totalCredits != null ? summary.totalCredits : null,
+                percentage: pct,
+              };
+              fetch('/api/tg-link', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ init_data: initData, summary: payload }),
+              }).catch(() => {});
+            }
+          } catch (e) {}
+          // End Telegram link
+
           window.location.href = '/pages/dashboard.html';
         } else {
           if (errorMsg) errorMsg.textContent = response.error || 'Invalid credentials';
