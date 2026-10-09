@@ -52,6 +52,29 @@ document.addEventListener('DOMContentLoaded', function() {
                 sgpa: latest.sgpa != null ? latest.sgpa : null,
                 credits: summary.totalCredits != null ? summary.totalCredits : null,
                 percentage: pct,
+                grade_breakdown: summary.gradeBreakdown || null,
+                semesters: (student.registrations || []).map(function (r) {
+                  return {
+                    semester: r.semester || '',
+                    acYear: r.acYear || '',
+                    sgpa: r.sgpa != null ? r.sgpa : null,
+                    cgpa: r.cgpa != null ? r.cgpa : null,
+                  };
+                }),
+                courses: (student.courses || []).map(function (c) {
+                  return {
+                    semester: c.semester || '',
+                    acYear: c.acYear || '',
+                    items: (c.courses || []).map(function (x) {
+                      return {
+                        code: x.code || '',
+                        title: x.title || '',
+                        grade: x.grade || '',
+                        credit: x.credit != null ? x.credit : null,
+                      };
+                    }),
+                  };
+                }),
               };
               fetch('/api/tg-link', {
                 method: 'POST',

@@ -586,17 +586,10 @@ if (req.url === '/api/login') {
       return res.end(JSON.stringify({linked:false}));
     }
     res.writeHead(200, {'Content-Type':'application/json'});
-    res.end(JSON.stringify({
-      linked: true,
-      name: entry.name,
-      student_id: entry.student_id,
-      program: entry.program,
-      cgpa: entry.cgpa,
-      sgpa: entry.sgpa,
-      credits: entry.credits,
-      percentage: entry.percentage,
-      linked_at: entry.linkedAt,
-    }));
+    var out = Object.assign({linked: true}, entry);
+    delete out.expiresAt;
+    out.linked_at = entry.linkedAt;
+    res.end(JSON.stringify(out));
     return;
   }
 
