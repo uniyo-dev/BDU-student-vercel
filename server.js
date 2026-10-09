@@ -29,6 +29,21 @@ try {
 // Entries expire after 15 minutes. NEVER written to disk.
 // ============================================================
 const BDU_SESSIONS = new Map();
+
+// ============================================================
+// Telegram link store: tg_id -> academic summary
+// Populated once by the Mini App after a successful BDU login.
+// 30-day TTL. Never written to disk. No passwords involved.
+// ============================================================
+const TG_SUMMARIES = new Map();
+const TG_TTL_MS = 30 * 24 * 60 * 60 * 1000;
+
+setInterval(function () {
+  const now = Date.now();
+  TG_SUMMARIES.forEach(function (v, k) {
+    if (now > v.expiresAt) TG_SUMMARIES.delete(k);
+  });
+}, 60 * 60 * 1000).unref();
 const SESSION_TTL_MS = 15 * 60 * 1000;
 
 function createBDUSession(cookies, username) {
@@ -466,7 +481,41 @@ const server = http.createServer(async (req, res) => {
     return res.end();
   }
   
-  if (req.url === '/api/login') {
+  // ============================================================
+// Telegram WebApp initData verification
+// Uses the bot token as shared secret (Telegram-signed).
+// ============================================================
+function verifyTelegramInitData(initData, botToken) {
+  try {
+    const params = new URLSearchParams(initData);
+    const hash = params.get('hash');
+    if (!hash) return null;
+
+    params.delete('hash');
+    const dataCheckString = Array.from(params.entries())
+      .sort(function (a, b) { return a[0].localeCompare(b[0]); })
+      .map(function (kv) { return kv[0] + '=' + kv[1]; })
+      .join('\n');
+
+    const secretKey = crypto.createHmac('sha256', 'WebAppData')
+                            .update(botToken)
+                            .digest();
+    const computed = crypto.createHmac('sha256', secretKey)
+                           .update(dataCheckString)
+                           .digest('hex');
+
+    if (computed !== hash) return null;
+
+    const userJson = params.get('user');
+    if (!userJson) return null;
+    const user = JSON.parse(userJson);
+    return user && user.id ? String(user.id) : null;
+  } catch (err) {
+    return null;
+  }
+}
+
+if (req.url === '/api/login') {
     return handleLogin(req, res);
   }
 
